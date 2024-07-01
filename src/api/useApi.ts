@@ -15,7 +15,6 @@ const apiInstance = axios.create({
         'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE',
         'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept',
         'Access-Control-Allow-Credentials': 'true',
-
     },
 });
 
@@ -33,11 +32,9 @@ export function useApi(path: string, config:ApiConfig, options : UseAxiosOptions
     const resultData = ref(null);
 
     whenever(query.isFinished, () => {
-
         if (query.response.value && query.response.value.status >= 200 && query.response.value.status < 300) {
             resultData.value = query.response.value.data;
             onResultSuccess.trigger(query.response.value.data);
-
         } else {
             onResultError.trigger(query.response.value ? query.response.value.data : query.error.value);
         }

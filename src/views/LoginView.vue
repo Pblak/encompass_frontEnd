@@ -3,7 +3,6 @@
     <div class="_flex _justify-center _items-center _h-screen">
       <v-card class="_w-96">
         <v-card-title class="_text-center">Login</v-card-title>
-
         <v-card-text>
           <v-chip-group class="_flex justify-center _w-full" v-model="accountType"
                         selected-class="text-green">
