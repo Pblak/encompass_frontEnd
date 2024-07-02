@@ -1,9 +1,14 @@
 <script setup lang="ts">
-import TheWelcome from '../components/TheWelcome.vue'
 </script>
 
 <template>
   <v-app>
+    <v-app-bar>
+      <v-toolbar-title>Home</v-toolbar-title>
+      <v-spacer></v-spacer>
+      <v-btn  to="/login">Login</v-btn>
+      <v-btn  to="/register">Register</v-btn>
+    </v-app-bar>
     <router-view />
   </v-app>
 </template>

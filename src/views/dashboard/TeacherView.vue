@@ -2,19 +2,13 @@
   <v-card flat>
     <v-card-title class="d-flex align-center pe-2" >
       <div class="_flex _gap-2 _items-center">
-        <v-btn icon="fa fa-plus" @click="toggleDialog = true"> </v-btn>
-        <p>Find a Graphics Card</p>
+        <v-btn icon="fa fa-plus" color="primary" @click="toggleDialog = true"> </v-btn>
+        <p> Teacher List </p>
       </div>
       <v-spacer></v-spacer>
       <v-text-field
-          v-model="search"
-          density="compact"
-          label="Search"
-          prepend-inner-icon="fa-thin fa-search"
-          variant="solo-filled"
-          flat
-          hide-details
-          single-line >
+          v-model="search" density="compact"
+          label="Search" prepend-inner-icon="fa-thin fa-search" variant="solo-filled" flat hide-details single-line >
       </v-text-field>
       <v-dialog v-model="toggleDialog" width="auto" >
         <v-card width="600" prepend-icon="fa-duotone fa-user-plus">

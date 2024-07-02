@@ -69,6 +69,18 @@ const router = createRouter({
                     }
                 },
                 {
+                    path: '/dashboard/parent',
+                    name: 'parent',
+                    meta: {
+                        __name: 'parent',
+                        __auth: true,
+                        icon: 'fa-thin fa-adult',
+                    },
+                    components: {
+                        dashboard: () => import('@/views/dashboard/ParentView.vue')
+                    }
+                },
+                {
                     path: '/dashboard/event',
                     name: 'event',
                     meta: {
