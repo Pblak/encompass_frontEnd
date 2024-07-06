@@ -9,6 +9,8 @@
       <v-btn  to="/login">Login</v-btn>
       <v-btn  to="/register">Register</v-btn>
     </v-app-bar>
-    <router-view />
+     <v-main>
+        <router-view />
+     </v-main>
   </v-app>
 </template>

@@ -11,6 +11,10 @@ import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
 import { aliases, fa } from 'vuetify/iconsets/fa'
 
+import Vue3Toastify, { type ToastContainerOptions } from 'vue3-toastify';
+import 'vue3-toastify/dist/index.css';
+
+
 const vuetify = createVuetify({
     components,
     directives,
@@ -23,7 +27,10 @@ const vuetify = createVuetify({
     },
 })
 const app = createApp(App)
-
+app.use(Vue3Toastify, {
+    autoClose: 5000,
+    position: 'bottom-right',
+} as ToastContainerOptions);
 app.use(router)
 app.use(vuetify)
 app.mount('#app')

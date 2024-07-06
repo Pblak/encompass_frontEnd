@@ -39,7 +39,7 @@ export function useTeacher(){
         const q = useApi(
             "/updateTeacher",
             {
-                method: "PUT",
+                method: "POST",
             },{
                 immediate:false,
             });

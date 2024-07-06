@@ -1,7 +1,11 @@
 import {createRouter, createWebHistory} from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import Login from '../views/LoginView.vue'
+import {teacherState} from "@/stats/teacherState";
+import {studentState} from "@/stats/studentState";
 
+const {StudentList} = studentState()
+const {TeacherList} = teacherState()
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
     routes: [
@@ -11,7 +15,6 @@ const router = createRouter({
             component: HomeView,
             children: [
                 {
-                    // login route
                     path: '/login',
                     name: 'login',
                     meta: {
@@ -19,11 +22,19 @@ const router = createRouter({
                         __auth: false
                     },
                     component: Login
+                },
+                {
+                    path: '/register',
+                    name: 'register',
+                    meta: {
+                        __name: 'register',
+                        __auth: false
+                    },
+                    component: () => import('@/views/RegisterView.vue')
                 }
             ]
         },
         {
-            // dashboard route
             path: '/dashboard',
             name: 'dashboard',
             meta: {
@@ -45,6 +56,18 @@ const router = createRouter({
                     }
                 },
                 {
+                    path: '/dashboard/instrument',
+                    name: 'instrument',
+                    meta: {
+                        __name: 'instrument',
+                        __auth: true,
+                        icon: 'fa-thin fa-guitar',
+                    },
+                    components: {
+                        dashboard: () => import('../views/dashboard/InstrumentView.vue')
+                    }
+                },
+                {
                     path: '/dashboard/teacher',
                     name: 'teacher',
                     meta: {
@@ -55,6 +78,35 @@ const router = createRouter({
                     components: {
                         dashboard: () => import('@/views/dashboard/TeacherView.vue')
                     },
+                },
+                {
+                    path: '/dashboard/teacher/:teacher_id',
+                    name: 'TeacherDetails',
+                    meta: {
+                        __name: 'teacher',
+                        __auth: true,
+                        sidebar: false,
+                        icon: 'fa-thin fa-chalkboard-user',
+                    },
+                    components: {
+                        dashboard: () => import('@/views/dashboard/teacher/TeacherDetails.vue')
+                    },
+                    beforeEnter: (to, from, next) => {
+                        const teacher_id = to.params.teacher_id
+                        if (TeacherList.value.length === 0) {
+                            next('/dashboard/teacher')
+                        } else {
+                            console.log("teacher")
+                            const teacher = TeacherList.value.find((teacher: any) => teacher.id === parseInt(teacher_id as string))
+                            console.log("teacher", teacher)
+                            if (teacher === undefined) {
+                                next('/dashboard/teacher')
+                            } else {
+                                next()
+                            }
+                        }
+
+                    }
                 },
                 {
                     path: '/dashboard/student',
@@ -69,12 +121,39 @@ const router = createRouter({
                     }
                 },
                 {
+                    path: '/dashboard/student/:student_id',
+                    name: 'StudentDetails',
+                    meta: {
+                        __name: 'student',
+                        __auth: true,
+                        sidebar: false,
+                        icon: 'fa-thin fa-children',
+                    },
+                    components: {
+                        dashboard: () => import('@/views/dashboard/student/StudentDetails.vue')
+                    },
+                    beforeEnter: (to, from, next) => {
+                        const student_id = to.params.student_id
+                        if (StudentList.value.length === 0) {
+                            next('/dashboard/student')
+                        } else {
+                            const student = StudentList.value.find((student: any) => student.id === parseInt(student_id as string))
+                            if (student === undefined) {
+                                next('/dashboard/student')
+                            } else {
+                                next()
+                            }
+                        }
+
+                    }
+                },
+                {
                     path: '/dashboard/parent',
                     name: 'parent',
                     meta: {
                         __name: 'parent',
                         __auth: true,
-                        icon: 'fa-thin fa-adult',
+                        icon: 'fa-thin fa-person-breastfeeding',
                     },
                     components: {
                         dashboard: () => import('@/views/dashboard/ParentView.vue')

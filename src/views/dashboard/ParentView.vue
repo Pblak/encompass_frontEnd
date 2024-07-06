@@ -2,9 +2,9 @@
   <v-card flat>
     <v-card-title class="d-flex align-center pe-2">
       <div class="_flex _gap-2 _items-center">
-        <v-tooltip text="Tooltip" location="bottom">
+        <v-tooltip text="Create parent" location="bottom">
           <template v-slot:activator="{ props }">
-            <v-btn v-bind="props" icon="fa fa-plus" @click="toggleDialog = true"> </v-btn>
+            <v-btn v-bind="props" color="primary" icon="fa fa-plus" @click="toggleDialog = true"> </v-btn>
           </template>
         </v-tooltip>
 
@@ -34,12 +34,12 @@
     </v-card-title>
     <v-divider></v-divider>
     <v-data-table :headers="headers" item-value="name"  v-model:search="search" :items="ParentList">
-      <template v-slot:item.actions="{ item }">
-        <div class="_flex _gap-3 ">
-          <v-btn size="small" icon="fa-thin fa-edit _text-sm" elevation="0"> </v-btn>
-          <v-btn size="small" icon="fa-thin fa-calendar _text-sm" elevation="0"> </v-btn>
-        </div>
-      </template>
+       <template v-slot:item.actions="{ item }">
+          <div class="_flex _gap-3 ">
+             <v-btn size="small" icon="fa-thin fa-edit _text-sm" elevation="0"> </v-btn>
+             <v-btn size="small" icon="fa-thin fa-calendar _text-sm" elevation="0"> </v-btn>
+          </div>
+       </template>
     </v-data-table>
   </v-card>
 </template>
@@ -50,6 +50,12 @@ import moment from "moment";
 import {parentState} from "@/stats/parentState";
 
 const {useGetParents} = useParent();
+
+const{
+   execute: exeGetParents,
+   onResultSuccess: onSuccessGetParents,
+   } = useGetParents();
+
 const {ParentList } = parentState();
 const toggleDialog = ref(false)
 const headers = [
@@ -61,9 +67,9 @@ const headers = [
   {title: 'Created At', key: 'created_at'},
   {title: 'Actions', key: 'actions', sortable: false},
 ]
-useGetParents().execute();
-useGetParents().onResultSuccess((data) => {
-  ParentList.value = data.map((item: any) => {
+exeGetParents();
+onSuccessGetParents((res:any) => {
+  ParentList.value = res.data.map((item: any) => {
     return {
       id: item.id,
       name: item.name ? item.name : item.first_name + " " + item.last_name,

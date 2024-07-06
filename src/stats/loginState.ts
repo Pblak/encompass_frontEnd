@@ -13,7 +13,7 @@ export const loginState = createGlobalState(() => {
     const isLogin = useStorage("isLogin", false);
     // const userLogin = useStorage("userLogin", null);
     const userLogin = useStorage('userLogin', null, undefined, { serializer: StorageSerializers.object })
-    const loginToken = useStorage("loginToken", null);
+    const loginToken = useStorage("loginToken", '');
     const loginError = ref(null);
 
     const logout = () => {
