@@ -51,20 +51,57 @@ const router = createRouter({
                         __auth: true,
                         icon: 'fa-thin fa-monitor-waveform',
                     },
+                    redirect: {name: 'monitorLesson'},
                     components: {
                         dashboard: () => import('@/views/dashboard/MonitorView.vue')
-                    }
+                    },
+                    children:[
+                        {
+                            path:'/dashboard/monitor/lesson',
+                            name:'monitorLesson',
+                            meta:{
+                                __name:'monitorLesson',
+                                __auth:true,
+                            },
+                            component:()=>import('@/views/dashboard/monitor/MonitorLesson.vue')
+                        }
+                    ]
                 },
                 {
-                    path: '/dashboard/instrument',
-                    name: 'instrument',
+                    path: '/dashboard/lesson',
+                    name: 'lesson',
                     meta: {
-                        __name: 'instrument',
+                        __name: 'Lesson',
                         __auth: true,
-                        icon: 'fa-thin fa-guitar',
+                        icon: 'fa-thin fa-book-open',
+                    },
+                    redirect: {name: 'createLessons'},
+                    components: {
+                        dashboard: () => import('@/views/dashboard/LessonView.vue')
+                    },
+                    children: [
+                        {
+                            path: '/dashboard/lesson/createLessons',
+                            name: 'createLessons',
+                            meta: {
+                                __name: 'Create lesson',
+                                __auth: true,
+                            },
+                            component:  ()=>import('../views/dashboard/lesson/createLessons.vue')
+                        }
+                    ]
+                },
+                {
+                     // room
+                    path: '/dashboard/room',
+                    name: 'room',
+                    meta: {
+                        __name: 'room',
+                        __auth: true,
+                        icon: 'fa-thin fa-door-open',
                     },
                     components: {
-                        dashboard: () => import('../views/dashboard/InstrumentView.vue')
+                        dashboard: () => import('@/views/dashboard/RoomView.vue')
                     }
                 },
                 {
@@ -159,6 +196,19 @@ const router = createRouter({
                         dashboard: () => import('@/views/dashboard/ParentView.vue')
                     }
                 },
+
+                {
+                    path: '/dashboard/instrument',
+                    name: 'instrument',
+                    meta: {
+                        __name: 'instrument',
+                        __auth: true,
+                        icon: 'fa-thin fa-guitar',
+                    },
+                    components: {
+                        dashboard: () => import('../views/dashboard/InstrumentView.vue')
+                    }
+                },
                 {
                     path: '/dashboard/event',
                     name: 'event',
@@ -184,7 +234,6 @@ const router = createRouter({
                         dashboard: () => import('../views/dashboard/MessageView.vue')
                     }
                 }
-
             ]
         },
         {

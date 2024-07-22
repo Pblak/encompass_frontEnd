@@ -1,4 +1,4 @@
-import {createGlobalState, useStorage, StorageSerializers} from "@vueuse/core";
+import {createGlobalState, StorageSerializers, useStorage} from "@vueuse/core";
 
 export interface StudentType {
     id: number;
@@ -21,12 +21,12 @@ interface Infos {
         state: string;
         zip: string;
     },
-    gender?: genderType;
+    gender?: 'man' | 'female';
     allergies?: string;
     birthday?: string;
 }
 
-export const  studentState = createGlobalState(() => {
+export const studentState = createGlobalState(() => {
     const StudentList = useStorage("studentList", [], undefined, {serializer: StorageSerializers.object})
 
     return {

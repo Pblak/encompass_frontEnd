@@ -2,7 +2,7 @@ import {computed, type Ref} from "vue";
 import axios, {type RawAxiosRequestConfig} from "axios";
 import {useAxios, type UseAxiosOptions} from "@vueuse/integrations/useAxios";
 import {createEventHook, whenever} from "@vueuse/core";
-
+import {toastFromResponse} from "@/stats/Utils";
 import {loginState} from "@/stats/loginState";
 
 
@@ -40,6 +40,15 @@ export const apiInstance = axios.create({
     headers: headers
 });
 
+apiInstance.interceptors.response.use(
+    (response) => {
+        toastFromResponse(response);
+        return response;
+    },
+    (error) => {
+        return Promise.reject(error);
+    }
+);
 
 export function useApi<T>(
     path: string = "",
@@ -52,8 +61,7 @@ export function useApi<T>(
 ) {
     const accessToken = loginToken as Ref<string>
 
-    const instance = apiInstance;
-    const query = useAxios<ApiResult<T>>(path, config, instance, options);
+    const query = useAxios<ApiResult<T>>(path, config, apiInstance, options);
 
     const onResultSuccess = createEventHook<T>();
     const onResultError = createEventHook<APIError>();
