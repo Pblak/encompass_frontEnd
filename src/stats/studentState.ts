@@ -7,21 +7,21 @@ export interface StudentType {
     email: string;
     password: string;
     parent_id: number;
-    infos?: Infos
+    infos: Infos
     created_at?: string;
     updated_at?: string;
 }
 
 interface Infos {
     phone1: string;
-    phone2: string;
+    phone2?: string;
     address: {
         street: string;
         city: string;
         state: string;
         zip: string;
     },
-    gender?: 'man' | 'female';
+    gender?: 'male' | 'female';
     allergies?: string;
     birthday?: string;
 }

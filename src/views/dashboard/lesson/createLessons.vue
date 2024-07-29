@@ -57,16 +57,16 @@
                      <v-col>
                         <v-menu>
                            <template v-slot:activator="{ props }">
-                              <v-card >
+                              <v-card>
                                  <v-card-item>
-                                    <v-card-title >
-                                      Start date
+                                    <v-card-title>
+                                       Start date
                                     </v-card-title>
                                     <v-card-subtitle>
                                        {{ moment(formData.start_date).format('LLL') }}
                                     </v-card-subtitle>
                                     <template v-slot:append>
-                                       <v-btn v-bind="props" density="compact" icon>
+                                       <v-btn :icon="true" density="compact" v-bind="props">
                                           <v-icon size="14">fa fa-calendar</v-icon>
                                        </v-btn>
                                     </template>
@@ -75,10 +75,9 @@
                            </template>
                            <v-date-picker
                              :min="moment().add(1, 'days').add('6','hours').format('YYYY-MM-DD')"
-                             @update:model-value="(ev)=>formData.start_date = moment(ev).add('8','hours')
+                             @update:model-value="(ev)=>formData.start_date = moment(ev as string).add('8','hours')
                              .toISOString()"></v-date-picker>
                         </v-menu>
-                     
                      </v-col>
                      
                      <v-col v-if="formData.instrument_plan" cols="12">
@@ -151,7 +150,7 @@ import {teacherState} from "@/stats/teacherState";
 import {studentState} from "@/stats/studentState";
 import {instrumentState} from "@/stats/instrumentState";
 import {useLesson} from "@/api/useLesson";
-import {computed, onMounted, ref, watch} from 'vue';
+import {computed, ref, watch} from 'vue';
 import FullCalendar from "@fullcalendar/vue3";
 import interactionPlugin from "@fullcalendar/interaction";
 import dayGridPlugin from "@fullcalendar/daygrid";
@@ -165,6 +164,7 @@ interface planning {
       day: number
    }>
 }
+
 const {TeacherList} = teacherState();
 const {StudentList} = studentState();
 const {InstrumentList} = instrumentState();
@@ -181,7 +181,7 @@ const formData = ref({
    room_id: '',
    planning: {} as planning,
    frequency: 1,
-   start_date: moment().add('8','hours').toISOString(),
+   start_date: moment().add('8', 'hours').toISOString(),
    instrument_plan: "" as any,
    price: 0,
    active: 1,
@@ -225,16 +225,16 @@ const addEvent = (info: any) => {
    let day = moment(info.start).day();
    let time = moment(info.start).format('HH:mm:ss');
    // limit 3 events per day
-   if ((formData.value.planning[day] && formData.value.planning[day].length >= 2 ) || !formData.value.instrument_plan) {
+   if ((formData.value.planning[day] && formData.value.planning[day].length >= 2) || !formData.value.instrument_plan) {
       return;
    }
-   let duration = formData.value.instrument_plan?.duration?  formData.value.instrument_plan?.duration: 30;
+   let duration = formData.value.instrument_plan?.duration ? formData.value.instrument_plan?.duration : 30;
    // remove event from calendar if there is an event at the same time or plus the duration
    
-    let p = calendarOptions.value.events.filter((ev: any) => {
+   let p = calendarOptions.value.events.filter((ev: any) => {
       let evDay = moment(ev.start).day();
       let evTime = moment(ev.start).format('HH:mm:ss');
-   
+      
       return !(evDay === day &&
         (evTime === time || evTime <= moment(info.start).add(duration, 'minutes').format('HH:mm:ss') ||
           evTime === moment(info.start).subtract(duration, 'minutes').format('HH:mm:ss'))
@@ -243,7 +243,7 @@ const addEvent = (info: any) => {
    
    
    p.push({
-      title: 'New Event',
+      title: '--',
       start: info.start,
       end: moment(info.start).add(formData.value.instrument_plan?.duration, 'minutes').toISOString(),
       allDay: info.allDay
@@ -267,11 +267,10 @@ const calculatePrice = () => {
    formData.value.price = total * parseInt(formData.value.instrument_plan?.price) * formData.value.frequency
    return toCurrency(formData.value.price)
 }
-
 const save = async () => {
    // save the lesson
    if (!FormEl.value) return;
-   let {valid} = await FormEl.value.validate()
+   let {valid} = await (FormEl.value as any).validate()
    if (!valid) return;
    await exeCreateLesson({
       data: formData.value
@@ -279,7 +278,7 @@ const save = async () => {
 }
 onResultSuccessCreateLesson(() => {
    // clear the form
-   if (FormEl.value) FormEl.value.reset();
+   if (FormEl.value) (FormEl.value as any).reset();
    formData.value = {
       teacher_id: '',
       student_id: '',
@@ -288,7 +287,7 @@ onResultSuccessCreateLesson(() => {
       planning: {} as planning,
       frequency: 1,
       instrument_plan: "" as any,
-      start_date: moment().add('8','hours').toISOString(),
+      start_date: moment().add('8', 'hours').toISOString(),
       price: 0,
       active: 1,
       notes: ''
@@ -296,13 +295,13 @@ onResultSuccessCreateLesson(() => {
    calendarOptions.value.events = []
 })
 
-watch(() => formData.value.instrument_id, (newVal) => {
+watch(() => formData.value.instrument_id, () => {
    formData.value.instrument_plan = null;
    formData.value.planning = {} as planning;
    calendarOptions.value.events = []
 }, {deep: true})
 
-watch(() =>formData.value.instrument_plan, (newVal) => {
+watch(() => formData.value.instrument_plan, () => {
    formData.value.planning = {} as planning;
    calendarOptions.value.events = []
 }, {deep: true})

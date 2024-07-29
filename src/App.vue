@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import {onMounted} from "vue";
 import {useLesson} from "@/api/useLesson";
 import {lessonState} from "@/stats/lessonState";
+import {onMounted} from "vue";
 
 const {useGetLessons} = useLesson();
 const {LessonList} = lessonState()
@@ -11,7 +11,6 @@ const {
 } = useGetLessons();
 
 onMounted(() => {
-   console.log(window.Echo);
    window.Echo.channel('lesson-instance')
      .listen('LessonInstanceStatusUpdatedEvent',
        (event: any) => {
@@ -22,7 +21,6 @@ onMounted(() => {
 });
 onGetLessonsSuccess((res: any) => {
    LessonList.value = res.data
-   console.log(LessonList.value)
 })
 
 </script>

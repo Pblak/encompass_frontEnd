@@ -5,66 +5,38 @@ import {parentState} from "@/stats/parentState";
 import {useStudent} from "@/api/useStudent";
 import {useEventBus} from "@vueuse/core";
 
+
+type PushDataType = (data: { validate: boolean, data: StudentType }) => void;
 const props = defineProps<{
    eventForValidate: {
       type: string;
       required: true;
    },
-   pushData: {
-      type: (data: {validate: boolean, data: StudentType}) => void;
-      required: true;
-   }
+   pushData:  PushDataType;
 }>();
-const {on} = useEventBus(props.eventForValidate);
+const {on} = useEventBus( props.eventForValidate as unknown as string);
 const {useCreateStudent , useGetStudents} = useStudent();
 const {ParentList} = parentState();
 const studentForm = ref<StudentType>({
+   id: 0,
    first_name: "",
    last_name: "",
    email: "",
    password: "",
-   parent_id: Number,
+   parent_id: 0,
    infos: {
-      phone: "",
+      phone1: "",
       address: {
          street: "",
          city: "",
          zip: "",
+         state: "",
       },
       gender: "male",
-   },
+   }
 })
 
 const ElForm = ref<any>(null);
-
-const nameRules = [
-   v => !!v || 'Name is required',
-];
-const emailRules = [
-   v => !!v || 'E-mail is required',
-   v => /.+@.+\..+/.test(v) || 'E-mail must be valid',
-];
-
-const passwordRules = [
-   v => !!v || 'Password is required',
-   v => (v && v.length >= 6) || 'Password must be at least 6 characters',
-];
-
-const phoneRules = [
-   v => !!v || 'Phone is required',
-  // validate phone number 534-409-3745
-   v => /^[0-9]{3}-[0-9]{3}-[0-9]{4}$/.test(v) || 'Phone number must be valid',
-];
-
-const addressRules = [
-   v => !!v || 'Address is required',
-];
-
-const zipRules = [
-   v => !!v || 'Zip is required',
-   v => /^[0-9]{5}(?:-[0-9]{4})?$/.test(v) || 'Zip code must be valid',
-];
-
 const validateForm = async () => { 
    const {valid} = await ElForm.value.validate()
    if (!valid) return;
@@ -83,11 +55,11 @@ onMounted(() => {
 <template>
    <v-form ref="ElForm" class="_flex _flex-col _gap-4" @submit.prevent="validateForm">
       <div class="_flex _flex-wrap _gap-4">
-         <v-text-field v-model="studentForm.first_name" :rules="nameRules"
+         <v-text-field v-model="studentForm.first_name" :rules="$rules('required', 'First Name')"
                        density="comfortable" label="First Name" class="!_flex-1"
          ></v-text-field>
          
-         <v-text-field v-model="studentForm.last_name" :rules="nameRules"
+         <v-text-field v-model="studentForm.last_name" :rules="$rules('required', 'Last Name')"
                        density="comfortable" label="Last Name" class="!_flex-1"
          ></v-text-field>
       </div>
@@ -100,31 +72,33 @@ onMounted(() => {
       
       <div class="_flex _flex-wrap _gap-4">
          
-         <v-text-field v-model="studentForm.email" :rules="emailRules" class="!_flex-1"
+         <v-text-field v-model="studentForm.email" :rules="$rules('required|email', 'Email')"
+                       class="!_flex-1"
                        density="comfortable" label="Email"></v-text-field>
          
-         <v-text-field v-model="studentForm.password" :rules="passwordRules" class="!_flex-1"
+         <v-text-field v-model="studentForm.password" :rules="$rules('required|min:6', 'Password')"
+                       class="!_flex-1"
                        density="comfortable"
                        label="Password" type="password"
          ></v-text-field>
       </div>
       <div class="_flex _flex-wrap _gap-4">
          
-         <v-text-field v-model="studentForm.infos.phone" :rules="phoneRules"
+         <v-text-field v-model="studentForm.infos.phone1" :rules="$rules('required|phone', 'Phone')"
                        class="!_flex-1" density="comfortable" label="Phone"></v-text-field>
          
-         <v-text-field v-model="studentForm.infos.address.street" :rules="addressRules"
+         <v-text-field v-model="studentForm.infos.address.street" :rules="$rules('required', 'Street')"
                        class="!_flex-1" density="comfortable" label="Street"
          ></v-text-field>
       </div>
       <div class="_flex _flex-wrap _gap-4">
          
-         <v-text-field v-model="studentForm.infos.address.city" :rules="addressRules"
+         <v-text-field v-model="studentForm.infos.address.city" :rules="$rules('required', 'City')"
                        class="!_flex-1" density="comfortable"
                        label="City"
                        required></v-text-field>
          
-         <v-text-field v-model="studentForm.infos.address.zip" :rules="zipRules"
+         <v-text-field v-model="studentForm.infos.address.zip" :rules="$rules('required', 'Zip')"
                        class="!_flex-1" density="comfortable" label="Zip"
          ></v-text-field>
       </div>

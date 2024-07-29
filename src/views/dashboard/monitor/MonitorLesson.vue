@@ -6,12 +6,12 @@
                <v-card
                  class="">
                   <v-card-title>
-                     <v-text-field v-model="searchLesson" density="comfortable" flat hide-details
-                                   label="Lessons" variant="outlined"></v-text-field>
+                     Lessons
+<!--                     <v-text-field v-model="searchLesson" density="comfortable" flat hide-details-->
+<!--                                   label="Lessons" variant="outlined"></v-text-field>-->
                   </v-card-title>
                   <v-card-text class="_bg-gray-100 overflow-y-auto _h-[calc(100vh-10.5rem)] !_pt-4">
                      <v-row>
-                        {{ LessonsSelected }}
                         <v-col v-for="lesson in LessonList" :key="lesson.id" cols="12">
                            <v-card>
                               <v-card-item
@@ -57,7 +57,7 @@
                                        </v-list-item-subtitle>
                                        <template v-slot:append>
                                           <v-icon>{{
-                                                !planningsContainers.includes((lesson.id) as string + '_planning') ?
+                                                !planningsContainers.includes(`${lesson.id}_planning` as never) ?
                                                   'fa-thin fa-caret-down' : 'fa-thin fa-caret-up'
                                              }}
                                           </v-icon>

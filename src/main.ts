@@ -18,6 +18,7 @@ import { VTreeview  } from 'vuetify/labs/VTreeview'
 import { VDateInput } from 'vuetify/labs/VDateInput'
 import 'vue3-toastify/dist/index.css';
 import validationRules from "@/plugins/validation/validationRules";
+import canGoToPlugin from './plugins/canGoTo';
 
 const VITE_APP_PUSHER_APP_KEY = import.meta.env.VITE_APP_PUSHER_APP_KEY
 const VITE_APP_PUSHER_APP_CLUSTER = import.meta.env.VITE_APP_PUSHER_APP_CLUSTER
@@ -49,12 +50,13 @@ window.Echo = new Echo({
 });
 
 
+app.use(validationRules)
+
 app.use(Vue3Toastify, {
     autoClose: 5000,
     position: 'bottom-right',
 } as ToastContainerOptions);
-
-app.use(validationRules)
+app.use(canGoToPlugin ,router)
 app.use(router)
 app.use(vuetify)
 app.mount('#app')

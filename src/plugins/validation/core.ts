@@ -16,12 +16,11 @@ export default function (rules: string, fieldName ?: string): validationRule[] {
             const maxLength = parseInt(maxRuleParts[1], 10);
 
             if (maxRuleParts.length === 2) {
-                // Handle max rule for objects
                 validationRules.push((v: any) => {
                     if (typeof v === 'object' && v !== null && !Array.isArray(v)) {
                         return Object.keys(v).length <= maxLength || `${fieldName} must have fewer than ${maxLength + 1} properties`;
                     } else {
-                        return v.length <= maxLength || `${fieldName} must be shorter than ${maxLength + 1} characters`;
+                        return (v as string).length <= maxLength || `${fieldName} must be shorter than ${maxLength + 1} characters`;
                     }
                 });
             } else {
@@ -37,6 +36,7 @@ export default function (rules: string, fieldName ?: string): validationRule[] {
                 if (typeof v === 'object' && v !== null && !Array.isArray(v)) {
                     return Object.keys(v).length >= minLength || `${fieldName} must have at least ${minLength} properties`;
                 } else {
+                    if (!v) return `${fieldName} is required`;
                     return v.length >= minLength || `${fieldName} must be at least ${minLength} characters`;
                 }
             });
@@ -69,7 +69,7 @@ export default function (rules: string, fieldName ?: string): validationRule[] {
             keyRules.forEach(keyRule => {
                 const [key, typeRule] = keyRule.split('='); // Split by equal sign to get key and type rule
                 if (typeRule) {
-                    const [type, subtype] = typeRule.split(':'); // Split type rule by colon if applicable
+                    const [type] = typeRule.split(':'); // Split type rule by colon if applicable
                     validationRules.push((v: any) => {
                         if (!(key.trim() in v)) {
                             return `${fieldName} must have the property '${key.trim()}'`;
@@ -98,9 +98,14 @@ export default function (rules: string, fieldName ?: string): validationRule[] {
                         return true;
                     });
                 } else {
-                    validationRules.push((v: any) => `${fieldName} must have the property '${key.trim()}'`);
+                    validationRules.push(() => `${fieldName} must have the property '${key.trim()}'`);
                 }
             });
+        }
+        // phone example +1 (555) 555-5555
+        if (rule === 'phone') {
+            const phonePattern = /^\+\d{1,3} \(\d{3}\) \d{3}-\d{4}$/;
+            validationRules.push((v: string) => phonePattern.test(v) || `${fieldName} must be a valid phone number (+1 (555) 555-5555)`);
         }
         // Add more rules as needed
     });

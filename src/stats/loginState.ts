@@ -1,18 +1,19 @@
-import { createGlobalState, useStorage ,StorageSerializers } from "@vueuse/core";
-import { ref } from "vue";
+import {createGlobalState, StorageSerializers, useStorage} from "@vueuse/core";
+import {type Ref, ref} from "vue";
 import router from "@/router";
-
+import axios from "axios";
 
 
 interface LoginData {
     email: string;
     password: string;
-    accountType: 'students' | 'web';
+    accountType: string;
 }
+
 export const loginState = createGlobalState(() => {
-    const isLogin = useStorage("isLogin", false);
+    const isLogin :Ref<boolean> =   useStorage("isLogin", false);
     // const userLogin = useStorage("userLogin", null);
-    const userLogin = useStorage('userLogin', null, undefined, { serializer: StorageSerializers.object })
+    const userLogin = useStorage('userLogin', null, undefined, {serializer: StorageSerializers.object})
     const loginToken = useStorage("loginToken", '');
     const loginError = ref(null);
 
@@ -23,30 +24,22 @@ export const loginState = createGlobalState(() => {
         loginError.value = null;
     };
 
-    const login = async (credentials:LoginData) => {
-        console.log(credentials)
-        try {
-            const response = await fetch(import.meta.env.VITE_API_URL+"/login", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ ...credentials }),
-            });
-            const data = await response.json();
-            if (data.error) {
-                loginError.value = data.error;
-            } else {
+    const login = async (credentials: LoginData) => {
+        axios.post(import.meta.env.VITE_API_URL + "/login", credentials)
+            .then((response) => {
+                console.log(response)
+
                 isLogin.value = true;
-                userLogin.value = data.user;
-                loginToken.value = data.token;
+                userLogin.value = response.data.user;
+                loginToken.value = response.data.token;
                 // go to dashboard
                 router.push("/dashboard");
-            }
-        } catch (e: any) {
-            loginError.value = e.message;
-        }
+
+            })
+            .catch((e) => {
+                loginError.value = e.response.data.message;
+            });
     };
 
-    return { isLogin, userLogin, loginToken, loginError, logout, login };
+    return {isLogin, userLogin, loginToken, loginError, logout, login};
 });
