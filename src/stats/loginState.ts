@@ -1,7 +1,8 @@
 import {createGlobalState, StorageSerializers, useStorage} from "@vueuse/core";
-import {type Ref, ref} from "vue";
+
 import router from "@/router";
 import axios from "axios";
+import {ref , type Ref} from "vue";
 
 
 interface LoginData {

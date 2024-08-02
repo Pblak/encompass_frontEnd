@@ -1,4 +1,4 @@
-import {computed, type Ref} from "vue";
+import {computed} from "vue";
 import axios, {type RawAxiosRequestConfig} from "axios";
 import {useAxios, type UseAxiosOptions} from "@vueuse/integrations/useAxios";
 import {createEventHook, whenever} from "@vueuse/core";
@@ -51,7 +51,7 @@ apiInstance.interceptors.response.use(
 );
 
 export function useApi<T>(
-    path: string = "",
+    path = "",
     config: RawAxiosRequestConfig<any> = {},
     options: UseAxiosOptions & { initialData?: any } = {
         immediate: true,
@@ -59,7 +59,6 @@ export function useApi<T>(
         initialData: undefined,
     }
 ) {
-    const accessToken = loginToken as Ref<string>
 
     const query = useAxios<ApiResult<T>>(path, config, apiInstance, options);
 

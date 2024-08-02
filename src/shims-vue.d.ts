@@ -1,4 +1,7 @@
 // src/shims-vue.d.ts
+
+import { ComponentCustomProperties } from '@vue/runtime-core';
+
 declare module '@vue/runtime-core' {
     /**
      * $rules('required', 'First Name')
