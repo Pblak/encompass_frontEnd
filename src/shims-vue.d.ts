@@ -12,3 +12,8 @@ declare module '@vue/runtime-core' {
         $rules: (rule: string, fieldName: string) => Array<(v: any) => boolean | string>;
     }
 }
+declare module '*.vue' {
+    import { DefineComponent } from 'vue';
+    const component: DefineComponent<{}, {}, any>;
+    export default component;
+}

@@ -5,8 +5,8 @@ import {
     type RouteLocationNormalized,
     type RouteRecordRaw
 } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
-import Login from '../views/LoginView.vue'
+import HomeView from '@/views/HomeView.vue'
+import Login from '@/views/LoginView.vue'
 import {teacherState} from "@/stats/teacherState";
 import {studentState} from "@/stats/studentState";
 import middlewareRegistry from '../../src/router/middleware/core/middlewareRegistry'
@@ -217,6 +217,18 @@ const routes: Array<RouteRecordRaw> = [
                 },
                 components: {
                     dashboard: () => import('../views/dashboard/InstrumentView.vue')
+                }
+            },
+            {
+                path: '/dashboard/transaction',
+                name: 'transaction',
+                meta: {
+                    __name: 'transaction',
+                    __auth: true,
+                    icon: 'fa-thin fa-money-bill-wave',
+                },
+                components: {
+                    dashboard: () => import('@/views/dashboard/TransactionView.vue')
                 }
             },
             {
