@@ -1,4 +1,4 @@
-import { headers, useApi} from "./useApi";
+import {headers, useApi} from "./useApi";
 
 export function useTransaction() {
 
@@ -13,9 +13,9 @@ export function useTransaction() {
             });
         const execute = ({data}: any) => {
             // headers['Content-Type'] = 'multipart/form-data';
-            return  q.execute({
+            return q.execute({
                 headers: headers,
-                data:data,
+                data: data,
             });
         };
         return {
@@ -25,25 +25,23 @@ export function useTransaction() {
     }
 
     const useGetTransactions = () => {
-        const q = useApi(
+        return useApi(
             "/getTransactions",
             {
                 method: "GET",
             }, {
                 immediate: true,
-            });
-        return q
+            })
     }
 
     const useGetTransaction = () => {
-        const q = useApi(
+        return useApi(
             "/getTransaction",
             {
                 method: "GET",
             }, {
                 immediate: false,
-            });
-        return q
+            })
     }
 
     const useUpdateTransaction = () => {
@@ -56,7 +54,7 @@ export function useTransaction() {
             });
         const execute = ({data}: any) => {
             headers['Content-Type'] = 'multipart/form-data';
-            return  q.execute({
+            return q.execute({
                 data,
                 headers: headers
             });
