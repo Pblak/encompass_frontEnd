@@ -74,3 +74,16 @@ export function useLesson() {
         useUpdateLesson,
     }
 }
+
+/**
+ * the use of the globalUseGetLessons
+ * is when the "execute" is triggered in the component
+ * you can listen to the "onResultSuccess" from another all component
+ * @constructor
+ */
+const {useGetLessons} = useLesson();
+export const {
+    execute: exeGlobalGetLessons,
+    onResultSuccess: onSucGlobalGetLessons,
+} = useGetLessons()
+

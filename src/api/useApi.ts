@@ -39,7 +39,17 @@ export const apiInstance = axios.create({
     baseURL: import.meta.env.VITE_API_URL,
     headers: headers
 });
-
+apiInstance.interceptors.request.use(
+    async (config) => {
+        // Fetch the CSRF token
+        // return await axios.get('/sanctum/csrf-cookie').then(() => {
+            return config;
+        // });
+    },
+    (error) => {
+        return Promise.reject(error);
+    }
+);
 apiInstance.interceptors.response.use(
     (response) => {
         toastFromResponse(response);

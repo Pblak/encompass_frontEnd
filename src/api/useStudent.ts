@@ -53,3 +53,15 @@ export function useStudent(){
         useUpdateStudent,
     }
 }
+
+/**
+ * the use of the globalUseGetStudents
+ * is when the "execute" is triggered in the component
+ * you can listen to the "onResultSuccess" from another all component
+ * @constructor
+ */
+const {useGetStudents} = useStudent();
+export const {
+    execute: exeGlobalGetStudents,
+    onResultSuccess: onSucGlobalGetStudents,
+} = useGetStudents()

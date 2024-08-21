@@ -1,4 +1,5 @@
 import {createGlobalState, StorageSerializers, useStorage} from "@vueuse/core";
+import {type Ref, ref} from "vue";
 
 export interface StudentType {
     id: number;
@@ -27,7 +28,8 @@ interface Infos {
 }
 
 export const studentState = createGlobalState(() => {
-    const StudentList = useStorage("studentList", [], undefined, {serializer: StorageSerializers.object})
+    const StudentList :Ref<StudentType[]> = ref([])
+    // const StudentList = useStorage("studentList", [], undefined, {serializer: StorageSerializers.object})
 
     return {
         StudentList,

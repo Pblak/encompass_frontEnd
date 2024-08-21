@@ -1,4 +1,3 @@
-// set an interface for gender type
 import {toast} from "vue3-toastify";
 import {attemptAccess} from "@/router/middleware/core/accessRouteChack";
 import router from '@/router';
@@ -17,6 +16,8 @@ export const toastFromResponse = (response: any) => {
         toast(response.data.message, {
             type: response.data._t,
             position: 'top-right',
+            transition: "flip",
+            dangerouslyHTMLString: true
         })
     } else {
         return "An error occurred"
@@ -39,7 +40,7 @@ export const  findRouteByName = (routes: _RouteRecordBase[]
 }
 export const  canGoTo = async (route: { name: string })=> {
     try {
-        let r = findRouteByName(router.getRoutes(), route.name) as RouteLocationNormalized;
+        const r = findRouteByName(router.getRoutes(), route.name) as RouteLocationNormalized;
         console.log(`Checking access for route: ${route.name}`);
         const result = await attemptAccess(r).then(r=>r).catch(e=>e)
         console.log('attemptAccess succeeded:', result);

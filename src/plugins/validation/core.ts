@@ -17,8 +17,11 @@ export default function (rules: string, fieldName ?: string): validationRule[] {
 
             if (maxRuleParts.length === 2) {
                 validationRules.push((v: any) => {
+
                     if (typeof v === 'object' && v !== null && !Array.isArray(v)) {
                         return Object.keys(v).length <= maxLength || `${fieldName} must have fewer than ${maxLength + 1} properties`;
+                    } else if ( rulesArray.includes('number') && !isNaN(Number(v))) {
+                        return v <= maxLength || `${fieldName} must be less than or equal to ${maxLength}`;
                     } else {
                         return (v as string).length <= maxLength || `${fieldName} must be shorter than ${maxLength + 1} characters`;
                     }
@@ -35,6 +38,8 @@ export default function (rules: string, fieldName ?: string): validationRule[] {
             validationRules.push((v: any) => {
                 if (typeof v === 'object' && v !== null && !Array.isArray(v)) {
                     return Object.keys(v).length >= minLength || `${fieldName} must have at least ${minLength} properties`;
+                }else if (typeof v === 'number') {
+                    return v >= minLength || `${fieldName} must be greater than or equal to ${minLength}`;
                 } else {
                     if (!v) return `${fieldName} is required`;
                     return v.length >= minLength || `${fieldName} must be at least ${minLength} characters`;

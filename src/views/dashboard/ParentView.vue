@@ -2,12 +2,7 @@
   <v-card flat>
     <v-card-title class="d-flex align-center pe-2">
       <div class="_flex _gap-2 _items-center">
-        <v-tooltip text="Create parent" location="bottom">
-          <template v-slot:activator="{ props }">
-            <v-btn v-bind="props" color="primary" icon="fa fa-plus" @click="toggleDialog = true"> </v-btn>
-          </template>
-        </v-tooltip>
-
+        <CreateParentDialog/>
         <p>
           Parent List
         </p>
@@ -16,69 +11,56 @@
       <v-text-field v-model="search" density="compact" label="Search" prepend-inner-icon="fa-thin fa-search"
                     variant="solo-filled" flat hide-details single-line>
       </v-text-field>
-      <v-dialog v-model="toggleDialog" width="auto">
-        <v-card width="600" prepend-icon="fa-duotone fa-user-plus">
-          <template v-slot:title>
-            Update in progress
-          </template>
-          <template v-slot:text>
-            <v-form>
-
-            </v-form>
-          </template>
-          <template v-slot:actions>
-            <v-btn class="ms-auto" text="Ok" @click="toggleDialog = false"></v-btn>
-          </template>
-        </v-card>
-      </v-dialog>
     </v-card-title>
     <v-divider></v-divider>
-    <v-data-table :headers="headers" item-value="name"  v-model:search="search" :items="ParentList">
-       <template v-slot:item.actions="{ item }">
-          <div class="_flex _gap-3 ">
-             <v-btn size="small" icon="fa-thin fa-edit _text-sm" elevation="0"> </v-btn>
-             <v-btn size="small" icon="fa-thin fa-calendar _text-sm" elevation="0"> </v-btn>
-          </div>
-       </template>
+
+    <v-data-table :headers="headers" :header-props="{dense: true}" v-model:search="search" :items="ParentList">
+
+      <template v-slot:item.infos="{value }">
+
+        <div class="_flex _flex-col _gap-1 _text-xs" v-if="value">
+          <div class="_whitespace-nowrap">{{ value.phone1 }}</div>
+          <div class="_whitespace-nowrap">{{ value.phone2 }}</div>
+        </div>
+      </template>
+      <template v-slot:item.infos.address="{ item }">
+        {{ item.infos.address.street }}, {{ item.infos.address.city }}, {{ item.infos.address.state }},
+        {{ item.infos.address.zip }}
+      </template>
+      <template v-slot:item.created_at="{ value }">
+        <p>
+          <v-tooltip activator="parent" location="top">{{ moment(value).format('MMMM Do YYYY, h:mm:ss a') }}</v-tooltip>
+          {{ moment(value).format('LLL') }}
+        </p>
+      </template>
+      <template v-slot:item.actions="{ item }">
+        <div class="_flex _gap-3 ">
+          <v-btn size="small" icon="fa-thin fa-edit _text-sm" elevation="0"></v-btn>
+          <v-btn size="small" icon="fa-thin fa-calendar _text-sm" elevation="0"></v-btn>
+        </div>
+      </template>
     </v-data-table>
   </v-card>
 </template>
 <script setup lang="ts">
-import {ref} from "vue";
-import {useParent} from "@/api/useParent";
+import {onMounted, ref} from "vue";
+import {useParent, exeGlobalGetParents} from "@/api/useParent";
+import CreateParentDialog from "@/views/dashboard/parent/createParent/CreateParentDialog.vue";
 import moment from "moment";
 import {parentState} from "@/stats/parentState";
 
-const {useGetParents} = useParent();
-
-const{
-   execute: exeGetParents,
-   onResultSuccess: onSuccessGetParents,
-   } = useGetParents();
-
-const {ParentList } = parentState();
-const toggleDialog = ref(false)
+const search = ref("")
+const {ParentList} = parentState();
 const headers = [
   {title: 'id', align: 'start', sortable: false, key: 'id',},
   {title: 'Name', key: 'name'},
   {title: 'Email', key: 'email'},
-  {title: 'Phone', key: 'phone'},
-  {title: 'Address', key: 'address'},
+  {title: 'Phones', key: 'infos'},
+  {title: 'Address', key: 'infos.address'},
   {title: 'Created At', key: 'created_at'},
   {title: 'Actions', key: 'actions', sortable: false},
 ]
-exeGetParents();
-onSuccessGetParents((res:any) => {
-  ParentList.value = res.data.map((item: any) => {
-    return {
-      id: item.id,
-      name: item.name ? item.name : item.first_name + " " + item.last_name,
-      email: item.email,
-      phone: item.phone,
-      address: item.address,
-      created_at: moment(item.created_at).format("YYYY-MM-DD"),
-    }
-  });
+onMounted(async () => {
+  await exeGlobalGetParents();
 })
-const search = ref("")
 </script>

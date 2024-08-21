@@ -11,11 +11,11 @@ import "@/assets/css/_icons.css"
 import {createVuetify} from 'vuetify'
 import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
-import { aliases, fa } from 'vuetify/iconsets/fa'
+import {aliases, fa} from 'vuetify/iconsets/fa'
 
-import Vue3Toastify, { type ToastContainerOptions } from 'vue3-toastify';
-import { VTreeview  } from 'vuetify/labs/VTreeview'
-import { VDateInput } from 'vuetify/labs/VDateInput'
+import Vue3Toastify, {type ToastContainerOptions} from 'vue3-toastify';
+import {VTreeview} from 'vuetify/labs/VTreeview'
+import {VDateInput} from 'vuetify/labs/VDateInput'
 import 'vue3-toastify/dist/index.css';
 import validationRules from "@/plugins/validation/validationRules";
 import canGoToPlugin from './plugins/canGoTo';
@@ -25,7 +25,7 @@ const VITE_APP_PUSHER_APP_CLUSTER = import.meta.env.VITE_APP_PUSHER_APP_CLUSTER
 
 
 const vuetify = createVuetify({
-    components:{
+    components: {
         VTreeview,
         VDateInput,
         ...components,
@@ -56,7 +56,7 @@ app.use(Vue3Toastify, {
     autoClose: 5000,
     position: 'bottom-right',
 } as ToastContainerOptions);
-app.use(canGoToPlugin ,router)
+app.use(canGoToPlugin)
 app.use(router)
 app.use(vuetify)
 app.mount('#app')

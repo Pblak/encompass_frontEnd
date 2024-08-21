@@ -53,3 +53,16 @@ export function useRoom(){
         useUpdateRoom,
     }
 }
+
+
+/**
+ * the use of the globalUseGetRooms
+ * is when the "execute" is triggered in the component
+ * you can listen to the "onResultSuccess" from another all component
+ * @constructor
+ */
+const {useGetRooms} = useRoom();
+export const {
+    execute: exeGlobalGetRooms,
+    onResultSuccess: onSucGlobalGetRooms,
+} = useGetRooms()

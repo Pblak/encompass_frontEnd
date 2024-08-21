@@ -1,4 +1,4 @@
-import { headers, useApi} from "./useApi";
+import {headers, useApi} from "./useApi";
 
 export function useInstrument() {
 
@@ -13,7 +13,7 @@ export function useInstrument() {
             });
         const execute = ({data}: any) => {
             headers['Content-Type'] = 'multipart/form-data';
-            return  q.execute({
+            return q.execute({
                 data,
                 headers: headers
             });
@@ -56,7 +56,7 @@ export function useInstrument() {
             });
         const execute = ({data}: any) => {
             headers['Content-Type'] = 'multipart/form-data';
-            return  q.execute({
+            return q.execute({
                 data,
                 headers: headers
             });
@@ -74,3 +74,16 @@ export function useInstrument() {
         useUpdateInstrument,
     }
 }
+
+/**
+ * the use of the globalUseGetInstruments
+ * is when the "execute" is triggered in the component
+ * you can listen to the "onResultSuccess" from another all component
+ * @constructor
+ */
+const {useGetInstruments} = useInstrument();
+export const {
+    execute: exeGlobalGetInstruments,
+    onResultSuccess: onSucGlobalGetInstruments,
+} = useGetInstruments()
+

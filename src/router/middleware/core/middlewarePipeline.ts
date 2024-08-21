@@ -20,17 +20,17 @@ export function middlewarePipeline(
 
     return new Promise((resolve, reject) => {
         // Define a function to call the next middleware
-        console.log(`Executing middleware at index ${index} for route: ${String(context.to.name)}`);
+        // console.log(`Executing middleware at index ${index} for route: ${String(context.to.name)}`);
 
         const nextPipeline = async () => {
             await middlewarePipeline(context, middleware, index + 1)
                 .then(()=>{
-                console.log(`Proceeding to next middleware at index ${index + 1}`);
+                // console.log(`Proceeding to next middleware at index ${index + 1}`);
 
                 return resolve();
                 })
                 .catch((error)=>{
-                    console.error(`Error in middleware at index ${index + 1}:`, error);
+                    // console.error(`Error in middleware at index ${index + 1}:`, error);
                     return reject(error);
                 });
 
@@ -40,7 +40,7 @@ export function middlewarePipeline(
             // Call the current middleware with the modified next function
             nextMiddleware({...context, next: nextPipeline}).catch(reject);
         } catch (error) {
-            console.error(`Exception in middleware at index ${index}:`, error);
+            // console.error(`Exception in middleware at index ${index}:`, error);
             return reject(error);
         }
     });

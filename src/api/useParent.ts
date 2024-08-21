@@ -53,3 +53,15 @@ export function useParent(){
         useUpdateParent,
     }
 }
+
+/**
+ * the use of the globalUseGetParents
+ * is when the "execute" is triggered in the component
+ * you can listen to the "onResultSuccess" from another all component
+ * @constructor
+ */
+const {useGetParents} = useParent();
+export const {
+    execute: exeGlobalGetParents,
+    onResultSuccess: onSucGlobalGetParents,
+} = useGetParents()

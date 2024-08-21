@@ -3,7 +3,7 @@ import {canGoTo} from "@/stats/Utils";
 
 
 const canGoToPlugin = {
-    install(app: App) {
+    install(app: App ) {
         // app.config.globalProperties.$canGoTo = async (route: { name: string }) => await canGoTo(route);
 
         app.directive('can-go-to', {

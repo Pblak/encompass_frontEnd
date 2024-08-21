@@ -72,3 +72,14 @@ export function useTransaction() {
         useUpdateTransaction,
     }
 }
+/**
+ * the use of the globalUseGetTransactions
+ * is when the "execute" is triggered in the component
+ * you can listen to the "onResultSuccess" from another all component
+ * @constructor
+ */
+const {useGetTransactions} = useTransaction();
+export const {
+    execute: exeGlobalGetTransactions,
+    onResultSuccess: onSucGlobalGetTransactions,
+} = useGetTransactions()

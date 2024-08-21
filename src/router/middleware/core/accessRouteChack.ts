@@ -6,10 +6,10 @@ import router from "@/router";
 
 export async function attemptAccess(route: RouteLocationNormalized): Promise<boolean> {
 
-    console.log('Attempting access for route:', route.name);
+    // console.log('Attempting access for route:', route.name);
 
     if (!route.meta || !route.meta.middleware) {
-        console.log('No middleware, access granted.');
+        // console.log('No middleware, access granted.');
         return true;
     }
 
@@ -29,13 +29,13 @@ export async function attemptAccess(route: RouteLocationNormalized): Promise<boo
         router
     };
 
-    console.log('Executing middleware pipeline');
+    // console.log('Executing middleware pipeline');
     return await middlewarePipeline(context, middleware, 0)
         .then(() => {
-            console.log('Middleware pipeline succeeded');
+            // console.log('Middleware pipeline succeeded');
             return true;
         }).catch((error) => {
-            console.error('Middleware pipeline failed:', error);
+            // console.error('Middleware pipeline failed:', error);
 
             return false;
         });
