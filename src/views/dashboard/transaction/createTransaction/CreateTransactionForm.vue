@@ -35,26 +35,29 @@
 </template>
 <script lang="ts" setup>
 import type {TransactionType} from "@/stats/transactionState";
-import {computed, onMounted, ref} from "vue";
+import {computed, onMounted, ref, watch} from "vue";
 import {useEventBus} from "@vueuse/core";
-import {exeGlobalGetLessons} from "@/api/useLesson";
+import {exeGlobalGetLessons , useLesson} from "@/api/useLesson";
 import {lessonState} from "@/stats/lessonState";
 import {toCurrency} from "@/stats/Utils";
 
 type PushDataType = (data: { validate: boolean, data: TransactionType }) => void;
 const {LessonList} = lessonState();
+const {getLessonsByParent} = useLesson();
+const {
+   execute: exeGetLessonsByParent,
+   onResultSuccess: onSuccessGetLessonsByParent
+} = getLessonsByParent();
 const props = defineProps<{
-  eventForValidate: {
-    type: string;
-    required: true;
-  },
+  eventForValidate: string,
+   lesson_id?: number,
   pushData: PushDataType;
 }>();
 const {on} = useEventBus(props.eventForValidate as unknown as string);
 const transactionForm = ref<TransactionType>({
-  id: 0,
+  id:  0,
   amount: 0,
-  lesson_id: 0,
+  lesson_id: props.lesson_id ? props.lesson_id :0,
   payment_method: "",
   notes: "",
 })
@@ -73,7 +76,8 @@ const validateForm = async () => {
 
 };
 const maxAmountRule = computed(() => {
-  return transactionForm.value.lesson_id ? `|max:${LessonList.value.find((item: any) => item.id === transactionForm.value.lesson_id).price}` : ''
+  return transactionForm.value.lesson_id ?
+    `|max:${LessonList.value.find((item: any) => item.id === transactionForm.value.lesson_id)!.price}` : ''
 })
 
 onMounted(() => {
@@ -81,5 +85,10 @@ onMounted(() => {
     validateForm();
   });
   exeGlobalGetLessons()
+})
+watch(()=>transactionForm.value.lesson_id, (val)=>{
+  if(val){
+  
+  }
 })
 </script>

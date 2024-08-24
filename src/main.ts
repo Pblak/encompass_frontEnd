@@ -19,6 +19,7 @@ import {VDateInput} from 'vuetify/labs/VDateInput'
 import 'vue3-toastify/dist/index.css';
 import validationRules from "@/plugins/validation/validationRules";
 import canGoToPlugin from './plugins/canGoTo';
+import isRole from '@/plugins/roles';
 
 const VITE_APP_PUSHER_APP_KEY = import.meta.env.VITE_APP_PUSHER_APP_KEY
 const VITE_APP_PUSHER_APP_CLUSTER = import.meta.env.VITE_APP_PUSHER_APP_CLUSTER
@@ -26,15 +27,9 @@ const VITE_APP_PUSHER_APP_CLUSTER = import.meta.env.VITE_APP_PUSHER_APP_CLUSTER
 
 const vuetify = createVuetify({
     components: {
-        VTreeview,
-        VDateInput,
-        ...components,
-    },
-    directives,
-    icons: {
-        defaultSet: 'fa',
-        aliases,
-        sets: {
+        VTreeview, VDateInput, ...components,
+    }, directives, icons: {
+        defaultSet: 'fa', aliases, sets: {
             fa,
         },
     },
@@ -43,20 +38,17 @@ const app = createApp(App)
 
 window.Pusher = Pusher;
 window.Echo = new Echo({
-    broadcaster: 'pusher',
-    key: VITE_APP_PUSHER_APP_KEY,
-    cluster: VITE_APP_PUSHER_APP_CLUSTER,
-    forceTLS: true,
+    broadcaster: 'pusher', key: VITE_APP_PUSHER_APP_KEY, cluster: VITE_APP_PUSHER_APP_CLUSTER, forceTLS: true,
 });
 
 
 app.use(validationRules)
 
 app.use(Vue3Toastify, {
-    autoClose: 5000,
-    position: 'bottom-right',
+    autoClose: 5000, position: 'bottom-right',
 } as ToastContainerOptions);
 app.use(canGoToPlugin)
+app.directive('isRole', isRole);
 app.use(router)
 app.use(vuetify)
 app.mount('#app')

@@ -22,6 +22,7 @@
                       <template v-slot:append>
                         <v-checkbox v-model="LessonsSelected" :value="lesson.id" hide-details></v-checkbox>
                       </template>
+                      
                     </v-card-item>
                     <v-divider class="_border-gray-800"></v-divider>
                     <v-card-text class="!_px-0 !_pb-1">
@@ -31,6 +32,12 @@
                           <v-list-item-subtitle class="!_capitalize">
                             {{ lesson.instrument.name }}
                           </v-list-item-subtitle>
+                           <template #append>
+                            <v-avatar rounded="sm">
+                              <v-img :src="APP_URL+lesson.instrument.image"></v-img>
+                            </v-avatar>
+                            
+                           </template>
                         </v-list-item>
                         <v-list-item>
                           <template v-slot:append>
@@ -203,7 +210,7 @@ import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import interactionPlugin from '@fullcalendar/interaction'
 // import {calendarState} from '@/stats/calendarState'
-import {lessonState, type Lesson} from '@/stats/lessonState'
+import {lessonState, type LessonType} from '@/stats/lessonState'
 import {computed, onMounted, reactive, ref, watch} from 'vue'
 import createEventForm from '@/components/_createEventForm.vue'
 import {useLesson, exeGlobalGetLessons} from "@/api/useLesson";
@@ -250,7 +257,7 @@ const renderEvent = () => {
   // get from lessons lessens Selected using lessons
   // then render the event
   const selectedLessons = LessonList.value.filter((lesson: any) => LessonsSelected.value.includes(lesson.id))
-  const events = selectedLessons.map((lesson: Lesson) => {
+  const events = selectedLessons.map((lesson: LessonType) => {
     let instances = lesson.instances.map((instance: any) => {
       return {
         title: lesson.student.name + ' | ' + lesson.instrument.name,

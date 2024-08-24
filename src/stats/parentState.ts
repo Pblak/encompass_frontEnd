@@ -1,7 +1,7 @@
 import {createGlobalState, useStorage, StorageSerializers} from "@vueuse/core";
 import type {StudentType} from "@/stats/studentState";
 import {type Ref, ref} from "vue";
-import type {Lesson} from "@/stats/lessonState";
+import type {LessonType} from "@/stats/lessonState";
 export interface ParentType {
     id: number;
     first_name: string;

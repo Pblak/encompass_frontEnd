@@ -188,19 +188,19 @@ dashboardChildren.value = dashboardRoute?.children?.filter((i: RouteRecordRaw) =
 }) || [];
 onSucGlobalGetInstruments((res: any) => {
   InstrumentList.value = res.data
-  console.log('exeGlobalGetInstruments')
+  console.info('exeGlobalGetInstruments')
 })
 onSucGlobalGetStudents((res: any) => {
   StudentList.value = res.data
-  console.log('exeGlobalGetStudents')
+  console.info('exeGlobalGetStudents')
 })
 onSucGlobalGetTeachers((res: any) => {
   TeacherList.value = res.data
-  console.log('exeGlobalGetTeachers')
+  console.info('exeGlobalGetTeachers')
 })
 onSucGlobalGetParents((res: any) => {
   ParentList.value = res.data
-  console.log('exeGlobalGetParents')
+  console.info('exeGlobalGetParents')
 })
 onSucGlobalGetLessons((res: any) => {
   LessonList.value = res.data.map((lesson: any) => {
@@ -211,14 +211,14 @@ onSucGlobalGetLessons((res: any) => {
     lesson.price = total * parseInt(lesson.instrument_plan?.price) * lesson.frequency
     return lesson
   })
-  console.log('exeGlobalGetLessons')
+  console.info('exeGlobalGetLessons')
 })
 onSucGlobalGetRooms((res: any) => {
   RoomList.value = res.data
-  console.log('exeGlobalGetRooms')
+  console.info('exeGlobalGetRooms')
 })
 onSucGlobalGetTransactions((res: any) => {
   TransactionList.value = res.data
-  console.log('exeGlobalGetTransactions')
+  console.info('exeGlobalGetTransactions')
 })
 </script>

@@ -1,6 +1,6 @@
 import {createGlobalState, useStorage, StorageSerializers} from "@vueuse/core";
 import {ref, type Ref} from "vue";
-import type {Lesson} from "@/stats/lessonState";
+import type {LessonType} from "@/stats/lessonState";
 
 export interface TransactionType {
     id: number,

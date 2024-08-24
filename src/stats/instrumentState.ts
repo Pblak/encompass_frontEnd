@@ -25,9 +25,13 @@ export interface InstrumentType {
 export const  instrumentState = createGlobalState(() => {
     // const InstrumentList:RemovableRef<InstrumentType[]> = useStorage("instrumentList", [], undefined, {serializer: StorageSerializers.object})
     const InstrumentList :Ref<InstrumentType[]> = ref([])
+    const selectedInstrument: Ref<InstrumentType | null> = ref(null)
+    const instrumentDialog: Ref<boolean> = ref(false)
 
     return {
         InstrumentList,
+        selectedInstrument,
+        instrumentDialog,
     };
 
 });

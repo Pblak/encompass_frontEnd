@@ -41,12 +41,12 @@ export const  findRouteByName = (routes: _RouteRecordBase[]
 export const  canGoTo = async (route: { name: string })=> {
     try {
         const r = findRouteByName(router.getRoutes(), route.name) as RouteLocationNormalized;
-        console.log(`Checking access for route: ${route.name}`);
+        // console.log(`Checking access for route: ${route.name}`);
         const result = await attemptAccess(r).then(r=>r).catch(e=>e)
-        console.log('attemptAccess succeeded:', result);
+        // console.log('attemptAccess succeeded:', result);
         return result;
     } catch (error) {
-        console.error('attemptAccess failed:', error);
+        // console.error('attemptAccess failed:', error);
         return false;
     }
 }
