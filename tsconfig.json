@@ -13,7 +13,11 @@
     "forceConsistentCasingInFileNames": true,
     "useDefineForClassFields": true,
     "lib": ["esnext", "dom"],
-    "types": ["node", "vue"]
+    "types": ["node", "vue"],
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    },
   },
   "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"],
   "exclude": ["node_modules"]
