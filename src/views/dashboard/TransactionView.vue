@@ -25,8 +25,6 @@
       </template>
       <template v-slot:item.actions="{ item }">
         <div class="_flex _gap-3 ">
-          <!--          <v-btn size="small" icon="fa-thin fa-edit _text-sm" elevation="0"></v-btn>-->
-          <!--          <v-btn size="small" icon="fa-thin fa-calendar _text-sm" elevation="0"></v-btn>-->
         </div>
       </template>
     </v-data-table>
@@ -52,16 +50,5 @@ const headers = [
 onMounted(() => {
   exeGlobalGetTransactions();
 })
-
-// exeGetTransactions();
-// onSuccessGetTransactions((res:any) => {
-//    TransactionList.value = res.data.map((item: any) => {
-//       return {
-//          id: item.id,
-//          amount: item.email,
-//          created_at: moment(item.created_at).format("YYYY-MM-DD"),
-//       }
-//    });
-// })
 const search = ref("")
 </script>

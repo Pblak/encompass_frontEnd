@@ -43,11 +43,6 @@ import {toCurrency} from "@/stats/Utils";
 
 type PushDataType = (data: { validate: boolean, data: TransactionType }) => void;
 const {LessonList} = lessonState();
-const {getLessonsByParent} = useLesson();
-const {
-   execute: exeGetLessonsByParent,
-   onResultSuccess: onSuccessGetLessonsByParent
-} = getLessonsByParent();
 const props = defineProps<{
   eventForValidate: string,
    lesson_id?: number,

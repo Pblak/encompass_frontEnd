@@ -61,7 +61,4 @@ onMounted(()=>{
       toggleDialog.value=!toggleDialog.value;
    });
 })
-// watch(()=>props.toggleTransactionDialog,()=>{
-//    toggleDialog.value = props.toggleTransactionDialog;
-// })
 </script>

@@ -179,7 +179,6 @@ const saveForm = () => {
    }
 }
 const headers = [
-   // {title: 'ID', key: 'id', filterable: false},
    {title: 'Full Name', key: 'name'},
    {title: 'Email', key: 'email'},
    {title: 'Phones', key: 'infos'},

@@ -32,7 +32,6 @@ interface Infos {
 
 export const studentState = createGlobalState(() => {
     const StudentList :Ref<StudentType[]> = ref([])
-    // const StudentList = useStorage("studentList", [], undefined, {serializer: StorageSerializers.object})
 
     return {
         StudentList,

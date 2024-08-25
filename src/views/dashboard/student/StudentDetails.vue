@@ -175,7 +175,6 @@ const showTransactionForm = (lesson: any) => {
    emit({
       lesson: {...lesson},
    })
-   
 }
 
 </script>
