@@ -12,12 +12,25 @@
                     variant="solo-filled" flat hide-details single-line>
       </v-text-field>
     </v-card-title>
-    <v-divider></v-divider>
+    <v-divider class="border-opacity-50"></v-divider>
 
     <v-data-table :headers="headers" :header-props="{dense: true}" v-model:search="search" :items="ParentList">
+      <template v-slot:headers="{ columns, isSorted, getSortIcon, toggleSort }">
+        <tr>
+          <template v-for="column in columns" :key="column.key">
+            <td class="_font-black">
+              <span class="mr-2 cursor-pointer" @click="() => toggleSort(column)">{{ column.text }}</span>
+              <template v-if="isSorted(column)">
+                <v-icon :icon="getSortIcon(column)"></v-icon>
+              </template>
+            </td>
+          </template>
+        </tr>
+      </template>
+
+      <!--   body   -->
 
       <template v-slot:item.infos="{value }">
-
         <div class="_flex _flex-col _gap-1 _text-xs" v-if="value">
           <div class="_whitespace-nowrap">{{ value.phone1 }}</div>
           <div class="_whitespace-nowrap">{{ value.phone2 }}</div>
@@ -52,13 +65,13 @@ import {parentState} from "@/stats/parentState";
 const search = ref("")
 const {ParentList} = parentState();
 const headers = [
-  {title: 'id', align: 'start', sortable: false, key: 'id',},
-  {title: 'Name', key: 'name'},
-  {title: 'Email', key: 'email'},
-  {title: 'Phones', key: 'infos'},
-  {title: 'Address', key: 'infos.address'},
-  {title: 'Created At', key: 'created_at'},
-  {title: 'Actions', key: 'actions', sortable: false},
+  {text: 'id', align: 'start', sortable: false, key: 'id',},
+  {text: 'Name', key: 'name'},
+  {text: 'Email', key: 'email'},
+  {text: 'Phones', key: 'infos'},
+  {text: 'Address', key: 'infos.address'},
+  {text: 'Created At', key: 'created_at'},
+  {text: 'Actions', key: 'actions', sortable: false},
 ]
 onMounted(async () => {
   await exeGlobalGetParents();

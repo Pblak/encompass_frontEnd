@@ -14,37 +14,52 @@ export default function (rules: string, fieldName ?: string): validationRule[] {
         if (rule.startsWith('max:')) {
             const maxRuleParts = rule.split(':');
             const maxLength = parseInt(maxRuleParts[1], 10);
-
-            if (maxRuleParts.length === 2) {
+            // console.log('maxRuleParts', maxRuleParts);
+            // console.log('maxLength', maxLength);
+            // if (maxRuleParts.length === 2) {
                 validationRules.push((v: any) => {
-
-                    if (typeof v === 'object' && v !== null && !Array.isArray(v)) {
-                        return Object.keys(v).length <= maxLength || `${fieldName} must have fewer than ${maxLength + 1} properties`;
-                    } else if ( rulesArray.includes('number') && !isNaN(Number(v))) {
-                        return v <= maxLength || `${fieldName} must be less than or equal to ${maxLength}`;
-                    } else {
-                        return (v as string).length <= maxLength || `${fieldName} must be shorter than ${maxLength + 1} characters`;
+                    console.log('v', v);
+                    if (v) {
+                        if (typeof v === 'object' && !Array.isArray(v)) {
+                            return Object.keys(v).length <= maxLength || `${fieldName} must have fewer than ${maxLength + 1} properties`;
+                        } else if (rulesArray.includes('number') && !isNaN(Number(v))) {
+                            return v <= maxLength || `${fieldName} must be less than or equal to ${maxLength}`;
+                        } else if (rulesArray.includes('array')) {
+                            return v.length <= maxLength || `${fieldName} must be less than or equal to ${maxLength} items`;
+                        }else{
+                            return (v as string).length <= maxLength || `${fieldName} must be shorter than ${maxLength} characters`;
+                        }
+                    }else{
+                        return true
                     }
                 });
-            } else {
-                validationRules.push((v: string) => (v && v.length <= maxLength) || `${fieldName} must be less than ${maxLength} characters`);
-            }
+            // } else {
+            //     validationRules.push((v: string) => (v && v.length <= maxLength) || `${fieldName} must be less than ${maxLength} characters`);
+            // }
         }
 
         if (rule.startsWith('min:')) {
             const minRuleParts = rule.split(':');
             const minLength = parseInt(minRuleParts[1], 10);
-
-            validationRules.push((v: any) => {
-                if (typeof v === 'object' && v !== null && !Array.isArray(v)) {
-                    return Object.keys(v).length >= minLength || `${fieldName} must have at least ${minLength} properties`;
-                }else if (typeof v === 'number') {
-                    return v >= minLength || `${fieldName} must be greater than or equal to ${minLength}`;
-                } else {
-                    if (!v) return `${fieldName} is required`;
-                    return v.length >= minLength || `${fieldName} must be at least ${minLength} characters`;
-                }
-            });
+            // if (minRuleParts.length === 2) {
+                validationRules.push((v: any) => {
+                    if (v) {
+                        if (typeof v === 'object' && !Array.isArray(v)) {
+                            return Object.keys(v).length >= minLength || `${fieldName} must have at least ${minLength} properties`;
+                        } else if (rulesArray.includes('number') && !isNaN(Number(v))) {
+                            return v >= minLength || `${fieldName} must be greater than or equal to ${minLength}`;
+                        } if (rulesArray.includes('array')) {
+                            return v.length >= minLength || `${fieldName} must be greater than or equal to ${minLength} items`;
+                        } else {
+                            return (v as string).length >= minLength || `${fieldName} must be at least ${minLength} characters`;
+                        }
+                    }else{
+                        return true
+                    }
+                });
+            // } else {
+            //     validationRules.push((v: string) => (v && v.length >= minLength) || `${fieldName} must be at least ${minLength} characters`);
+            // }
         }
 
         if (rule === 'number') {
@@ -67,7 +82,20 @@ export default function (rules: string, fieldName ?: string): validationRule[] {
             validationRules.push((v: string) => alphanumericPattern.test(v) || `${fieldName} must contain only alphanumeric characters`);
         }
         if (rule === 'object') {
-            validationRules.push((v: any) => typeof v === 'object' && !Array.isArray(v) || `${fieldName} is required`);
+            validationRules.push((v: any) => {
+                if (typeof v !== 'object' || Array.isArray(v)) {
+                    return `${fieldName} must be an object`;
+                }
+                return true;
+            });
+        }
+        if (rule === 'array') {
+            validationRules.push((v: any) => {
+                if (!Array.isArray(v) ) {
+                    return `${fieldName} must be an array`;
+                }
+                return true;
+            });
         }
         if (rule.includes(',')) {
             const keyRules = rule.split(','); // Split rules by comma
@@ -107,10 +135,10 @@ export default function (rules: string, fieldName ?: string): validationRule[] {
                 }
             });
         }
-        // phone example +1 (555) 555-5555
         if (rule === 'phone') {
-            const phonePattern = /^\+\d{1,3} \(\d{3}\) \d{3}-\d{4}$/;
-            validationRules.push((v: string) => phonePattern.test(v) || `${fieldName} must be a valid phone number (+1 (555) 555-5555)`);
+            // phone example  555 555 5555
+            const phonePattern = /^\d{3} \d{3} \d{4}$/;
+            validationRules.push((v: string) => phonePattern.test(v) || `${fieldName} must be a valid phone number 555 555 5555`);
         }
         // Add more rules as needed
     });

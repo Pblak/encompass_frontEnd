@@ -64,7 +64,7 @@
   <v-sheet v-else class="!_flex  _justify-center _items-center _h-screen">
     <v-card variant="flat">
       <v-card-text>
-        <v-progress-circular :model-value="loadingProgress" :size="120" :width="15" color="teal" >
+        <v-progress-circular :model-value="loadingProgress" :size="120" :width="15" color="teal">
           <template v-slot:default>
             {{ loadingProgress === 100 ? 'Ready ️‍🔥' : 'Loading...' }}
           </template>
@@ -78,14 +78,16 @@
 import {loginState} from '@/stats/loginState';
 import {onMounted, type Ref, ref, type UnwrapRef} from 'vue';
 import {type RouteRecordRaw, useRouter} from 'vue-router';
-import {canGoTo, toCurrency} from "@/stats/Utils";
+import {canGoTo} from "@/stats/Utils";
 import {exeGlobalGetInstruments, onSucGlobalGetInstruments} from "@/api/useInstrument";
 import {exeGlobalGetParents, onSucGlobalGetParents} from "@/api/useParent";
 import {exeGlobalGetTeachers, onSucGlobalGetTeachers} from "@/api/useTeacher";
 import {exeGlobalGetLessons, onSucGlobalGetLessons} from "@/api/useLesson";
 import {exeGlobalGetStudents, onSucGlobalGetStudents} from "@/api/useStudent";
 import {exeGlobalGetRooms, onSucGlobalGetRooms} from "@/api/useRoom";
-import {exeGlobalGetTransactions, onSucGlobalGetTransactions } from "@/api/useTransaction";
+import {exeGlobalGetTransactions, onSucGlobalGetTransactions} from "@/api/useTransaction";
+import {exeGlobalGetPackages, onSucGlobalGetPackages} from "@/api/usePackage";
+import {packageState} from "@/stats/packageState";
 import {instrumentState} from "@/stats/instrumentState";
 import {teacherState} from "@/stats/teacherState";
 import {parentState} from "@/stats/parentState";
@@ -93,10 +95,9 @@ import {studentState} from "@/stats/studentState";
 import {lessonState} from "@/stats/lessonState";
 import {roomState} from "@/stats/roomState";
 import {transactionState} from "@/stats/transactionState";
-import {useStudent} from "@/api/useStudent";
-import type {TeacherModel} from "@/composable/models/teacherModel";
 
 const {InstrumentList} = instrumentState();
+const {PackageList} = packageState();
 const {TeacherList} = teacherState();
 const {ParentList} = parentState();
 const {StudentList} = studentState();
@@ -104,7 +105,7 @@ const {LessonList} = lessonState();
 const {RoomList} = roomState();
 const {TransactionList} = transactionState();
 
-const {userLogin, isLogin ,logout} = loginState();
+const {userLogin, isLogin, logout} = loginState();
 const router = useRouter();
 const dashboardRoute: RouteRecordRaw =
     router.options.routes.find(route => route.name === 'dashboard') as RouteRecordRaw;
@@ -131,13 +132,14 @@ const loadData = async () => {
     exeGlobalGetStudents,
     exeGlobalGetParents,
     exeGlobalGetRooms,
-    exeGlobalGetTransactions
+    exeGlobalGetTransactions,
+    exeGlobalGetPackages,
   ];
   let completed = 0;
 
   const updateProgress = () => {
     completed++;
-      loadingProgress.value = ((completed / tasks.length) * 100);
+    loadingProgress.value = ((completed / tasks.length) * 100);
     console.log(`Progress: ${((completed / tasks.length) * 100).toFixed(2)}%`);
   };
 
@@ -159,19 +161,18 @@ const loadData = async () => {
 
 onMounted(async () => {
   await loadData()
-
   try {
     const filteredRoutes = await Promise.all(
-      dashboardChildren.value.map(async (route: any) => {
-        const canAccess = await canGoTo({name: route.name})
-            .then((res) => {
-              return res;
-            })
-            .catch((error) => {
-              return false;
-            });
-        return canAccess ? route : null;
-      })
+        dashboardChildren.value.map(async (route: any) => {
+          const canAccess = await canGoTo({name: route.name})
+              .then((res) => {
+                return res;
+              })
+              .catch((error) => {
+                return false;
+              });
+          return canAccess ? route : null;
+        })
     );
     dashboardChildren.value = filteredRoutes.filter((route: any) => route !== null);
   } catch (error) {
@@ -186,6 +187,10 @@ dashboardChildren.value = dashboardRoute?.children?.filter((i: RouteRecordRaw) =
     return false
   }
 }) || [];
+onSucGlobalGetPackages((res: any) => {
+  PackageList.value = res.data
+  console.info('onSucGlobalGetPackages')
+})
 onSucGlobalGetInstruments((res: any) => {
   InstrumentList.value = res.data
   console.info('exeGlobalGetInstruments')

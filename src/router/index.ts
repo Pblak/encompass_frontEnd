@@ -83,10 +83,7 @@ const routes: Array<RouteRecordRaw> = [
                     icon: 'fa-thin fa-book-open',
                     middleware: ['auth:web|parent']
                 },
-                redirect: {name: 'createLessons'},
-                components: {
-                    dashboard: () => import('@/views/dashboard/LessonView.vue')
-                },
+                redirect: {name: 'LessonsList'},
                 children: [
                     {
                         path: '/dashboard/lesson/createLessons',
@@ -95,7 +92,20 @@ const routes: Array<RouteRecordRaw> = [
                             __name: 'Create lesson',
                             __auth: true,
                         },
-                        component: () => import('../views/dashboard/lesson/createLessons.vue')
+                        components: {
+                            dashboard:() => import('../views/dashboard/lesson/createLessons.vue')
+                        },
+                    },
+                    {
+                        path: '/dashboard/lesson/LessonsList',
+                        name: 'LessonsList',
+                        meta: {
+                            __name: 'Lessons List',
+                            __auth: true,
+                        },
+                        components: {
+                            dashboard: () => import('@/views/dashboard/LessonView.vue')
+                        },
                     }
                 ]
             },
@@ -210,14 +220,37 @@ const routes: Array<RouteRecordRaw> = [
                 path: '/dashboard/instrument',
                 name: 'instrument',
                 meta: {
-                    __name: 'instrument',
+                    __name: 'instrument & Package',
                     __auth: true,
                     icon: 'fa-thin fa-guitar',
-                    middleware: ['auth:web|teacher|parent']
+                    middleware: ['auth:web']
                 },
-                components: {
-                    dashboard: () => import('../views/dashboard/InstrumentView.vue')
-                }
+                children: [
+                    {
+                        path: '/dashboard/instrument',
+                        name: 'instrumentList',
+                        meta: {
+                            __name: 'instrument',
+                            __auth: true,
+                            middleware: ['auth:web']
+                        },
+                        components: {
+                            dashboard: () => import('../views/dashboard/InstrumentView.vue')
+                        },
+                    },
+                    {
+                        path: '/dashboard/package',
+                        name: 'packageList',
+                        meta: {
+                            __name: 'Package',
+                            __auth: true,
+                            middleware: ['auth:web']
+                        },
+                        components: {
+                            dashboard: () => import('../views/dashboard/PackageView.vue')
+                        },
+                    }
+                ]
             },
             {
                 path: '/dashboard/transaction',
@@ -287,8 +320,9 @@ router.beforeEach((to: RouteLocationNormalized, from: RouteLocationNormalized, n
     const context = {
         to,
         next: () => Promise.resolve(), // Ensure next is a Promise-returning function
-        from ,
-        router};
+        from,
+        router
+    };
 
     // Execute middleware pipeline
     return middlewarePipeline(context, middleware, 0)

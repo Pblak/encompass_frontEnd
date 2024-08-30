@@ -11,10 +11,10 @@
                                     ></v-img>-->
                </v-avatar>
             </template>
-            
+
             <template v-slot:title>{{ Student.name }}</template>
             <template v-slot:subtitle>{{ Student.email }}</template>
-            
+
             <template v-slot:append>
                <p class="_font-black _text-gray-600"> Student</p>
             </template>
@@ -42,7 +42,6 @@
             Lessons
          </v-card-title>
          <v-card-text>
-            
             <v-data-table :headers="headers" :items="Lessons" item-value="name">
                <template #item.instrument="{item , value}">
                   <v-list>
@@ -61,23 +60,23 @@
                      </v-list-item>
                   </v-list>
                </template>
-               
+
                <template #item.teacher="{value}">
                   {{ value.name }}
                </template>
-               
+
                <template #item.planning="{value}">
-                  
+
                   <div class="overflow-x-auto _max-w-screen-sm">
                      <div class="_flex  _gap-3 _py-2">
-                        <template v-for="(schedule, day) in value">
+                        <template v-for="(schedule, day) in value" :key="day">
                            <div class="_flex _flex-col _gap-2">
                               <p class="_font-bold">
                                  {{ moment().day(day).format('dddd') }}
                               </p>
                               <div class="_flex _flex-col _gap-2">
-                                 <template v-for="(planning) in schedule">
-                                    <v-chip>
+                                 <template v-for="(planning) in schedule" :key="planning.id">
+                                    <v-chip >
                                        {{ planning.time }}
                                     </v-chip>
                                  </template>
@@ -87,8 +86,8 @@
                      </div>
                   </div>
                </template>
-               
-               
+
+
                <template v-slot:item.price="{ item,value }">
                   <div class="_flex _gap-1">
                      <v-chip class="!_rounded-r-none"
@@ -97,7 +96,7 @@
                      <v-chip class="!_rounded-l-none"
                              color="success">{{ toCurrency(item.payed_price) }}
                      </v-chip>
-                  
+
                   </div>
                </template>
                <template v-slot:item.created_at="{ value }">
@@ -116,7 +115,7 @@
                             size="small" @click="showTransactionForm(item)"></v-btn>
                   </div>
                </template>
-            
+
             </v-data-table>
             <v-dialog v-model="toggleDialogInstances" scrollable width="auto">
                <v-card prepend-icon="fa-duotone fa-guitar">
@@ -169,7 +168,6 @@ const headers = [
 const showLessonInstances = (instances: any) => {
    toggleDialogInstances.value = true;
    lessonInstances.value = instances;
-   console.log(instances)
 }
 const showTransactionForm = (lesson: any) => {
    emit({
