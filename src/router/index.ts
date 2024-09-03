@@ -48,6 +48,7 @@ const routes: Array<RouteRecordRaw> = [
             __name: 'dashboard',
             __auth: true
         },
+        redirect: {name: 'monitor'},
         component: () => import('@/views/DashboardView.vue'),
         children: [
             {
