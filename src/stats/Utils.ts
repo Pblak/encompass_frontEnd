@@ -50,3 +50,15 @@ export const  canGoTo = async (route: { name: string })=> {
         return false;
     }
 }
+export const isRole = (roles: string | string[]): boolean =>{
+    const allowedRoles = Array.isArray(roles) ? roles : [roles];
+    const user = JSON.parse(<string>localStorage.getItem('userLogin'));
+
+    // Return false if no user is logged in
+    if (!user || !user.accountType) {
+        return false;
+    }
+
+    // Check if the user's role is in the allowedRoles array
+    return allowedRoles.includes(user.accountType);
+}

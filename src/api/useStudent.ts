@@ -17,7 +17,7 @@ export function useStudent(){
         const q = useApi(
             "/getStudents",
             {
-                method: "GET",
+                method: "post",
             },{
                 immediate:true,
             });
@@ -45,12 +45,22 @@ export function useStudent(){
             });
         return q
     }
+    const useDeleteStudent=()=>{
+        return useApi(
+            "/deleteParent",
+            {
+                method: "POST",
+            }, {
+                immediate: false,
+            })
+    }
 
     return {
         useCreateStudent,
         useGetStudents,
         useGetStudent,
         useUpdateStudent,
+        useDeleteStudent,
     }
 }
 

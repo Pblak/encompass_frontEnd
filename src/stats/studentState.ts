@@ -1,17 +1,18 @@
 import {createGlobalState} from "@vueuse/core";
 import type {LessonType} from "@/stats/lessonState";
-import {type Ref, ref} from "vue";
+import {type Ref, ref, watch} from "vue";
 
 export interface StudentType {
     id: number;
     first_name: string;
     last_name: string;
-    name?:string,
+    username:string;
+    name?: string,
     email: string;
     password: string;
     parent_id: number;
     infos: Infos,
-    lessons?:LessonType[],
+    lessons?: LessonType[],
     created_at?: string;
     updated_at?: string;
 }
@@ -31,10 +32,13 @@ interface Infos {
 }
 
 export const studentState = createGlobalState(() => {
-    const StudentList :Ref<StudentType[]> = ref([])
+    const StudentList: Ref<StudentType[]> = ref([])
+    const withTrashStudent = ref(false)
+
 
     return {
         StudentList,
+        withTrashStudent,
     };
 
 });

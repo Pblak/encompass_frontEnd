@@ -1,4 +1,4 @@
-import {createGlobalState, useStorage, StorageSerializers, type RemovableRef} from "@vueuse/core";
+import {createGlobalState} from "@vueuse/core";
 import {type Ref, ref} from "vue";
 
 export interface LessonType {
@@ -7,11 +7,15 @@ export interface LessonType {
 }
 
 export const lessonState = createGlobalState(() => {
-    const LessonList :Ref<LessonType[]> = ref([])
-    const LessonsSelected :Ref<LessonType[]> = ref([])
+    const LessonList: Ref<LessonType[]> = ref([])
+    const withTrashLesson = ref(false)
+    const LessonsSelected: Ref<LessonType[]> = ref([])
+
+
     return {
         LessonList,
-        LessonsSelected
+        LessonsSelected,
+        withTrashLesson,
     };
 
 });

@@ -67,7 +67,12 @@ export default function (rules: string, fieldName ?: string): validationRule[] {
         }
         if (rule === 'email') {
             const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            validationRules.push((v: string) => emailPattern.test(v) || `${fieldName} must be a valid email`);
+            validationRules.push((v: string) =>{
+                if (!v.trim()){
+                    return true
+                }
+                return  emailPattern.test(v) || `${fieldName} must be a valid email`
+            });
         }
         if (rule === 'date') {
             const datePattern = /^\d{4}-\d{2}-\d{2}$/;
@@ -137,7 +142,7 @@ export default function (rules: string, fieldName ?: string): validationRule[] {
         }
         if (rule === 'phone') {
             // phone example  555 555 5555
-            const phonePattern = /^\d{3} \d{3} \d{4}$/;
+            const phonePattern = /^\d{3}[- ]\d{3}[- ]\d{4}$/;
             validationRules.push((v: string) => phonePattern.test(v) || `${fieldName} must be a valid phone number 555 555 5555`);
         }
         // Add more rules as needed

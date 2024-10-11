@@ -32,9 +32,10 @@ interface Infos {
 export const  parentState = createGlobalState(() => {
     // const ParentList= useStorage<ParentType[]>("parentList", [], undefined, {serializer: StorageSerializers.object})
     const ParentList:Ref<ParentType[]> = ref([])
-
+    const withTrashParent = ref(false)
     return {
         ParentList,
+        withTrashParent,
     };
 
 });

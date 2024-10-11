@@ -2,7 +2,10 @@
    <v-card flat>
       <v-card-title class="d-flex align-center pe-2">
          <div class="_flex _gap-2 _items-center">
-            <v-btn color="primary" icon="fa fa-plus" @click="()=>openDialog(null)"></v-btn>
+<!--            <v-btn color="primary" icon="fa fa-plus" @click="()=>openDialog(null)"></v-btn>-->
+
+           <create-teacher-dialog/>
+
             <p> Teacher List </p>
          </div>
          <v-spacer></v-spacer>
@@ -10,44 +13,43 @@
            v-model="search" density="compact"
            flat hide-details label="Search" prepend-inner-icon="fa-thin fa-search" single-line variant="solo-filled">
          </v-text-field>
-         <v-dialog v-model="toggleDialog" scrollable width="auto">
-            <v-card prepend-icon="fa-duotone fa-user-plus" width="600">
-               <template v-slot:title>
-                  Update in progress
-                  {{ dialogEdit ? 'Edit Teacher' : 'New Teacher' }}
-               </template>
-               <template v-slot:text>
-                  <v-form>
-                     <div class="_flex _gap-2">
-                        <v-text-field v-model="teacherForm.first_name" label="First Name" outlined></v-text-field>
-                        <v-text-field v-model="teacherForm.last_name" label="First Name" outlined></v-text-field>
-                     </div>
-                     <v-text-field v-if="dialogEdit" :value="teacherForm.email" active disabled
-                                   label="Email"></v-text-field>
-                     <v-text-field v-else v-model="teacherForm.email" label="Email" outlined></v-text-field>
-                     <div class="_flex _gap-2">
-                        <v-text-field v-model="teacherForm.infos.phone1" label="Phone 1" outlined></v-text-field>
-                        <v-text-field v-model="teacherForm.infos.phone2" label="Phone 2" outlined></v-text-field>
-                     </div>
-                     <div class="_flex _gap-2">
-                        <v-text-field v-model="teacherForm.infos.address.street" label="Street" outlined></v-text-field>
-                        <v-text-field v-model="teacherForm.infos.address.city" label="City" outlined></v-text-field>
-                     </div>
-                     <div class="_flex _gap-2">
-                        <v-text-field v-model="teacherForm.infos.address.state" label="State" outlined></v-text-field>
-                        <v-text-field v-model="teacherForm.infos.address.zip" label="Zip" outlined></v-text-field>
-                     </div>
-                  </v-form>
-               </template>
-               <template v-slot:actions>
-                  <v-btn class="ms-auto" text="Ok" @click="saveForm"></v-btn>
-               </template>
-            </v-card>
-         </v-dialog>
+<!--         <v-dialog v-model="toggleDialog" scrollable width="auto">-->
+<!--            <v-card prepend-icon="fa-duotone fa-user-plus" width="600">-->
+<!--               <template v-slot:title>-->
+<!--                  Update in progress-->
+<!--                  {{ dialogEdit ? 'Edit Teacher' : 'New Teacher' }}-->
+<!--               </template>-->
+<!--               <template v-slot:text>-->
+<!--                  <v-form>-->
+<!--                     <div class="_flex _gap-2">-->
+<!--                        <v-text-field v-model="teacherForm.first_name" label="First Name" outlined></v-text-field>-->
+<!--                        <v-text-field v-model="teacherForm.last_name" label="First Name" outlined></v-text-field>-->
+<!--                     </div>-->
+<!--                     <v-text-field v-if="dialogEdit" :value="teacherForm.email" active disabled-->
+<!--                                   label="Email"></v-text-field>-->
+<!--                     <v-text-field v-else v-model="teacherForm.email" label="Email" outlined></v-text-field>-->
+<!--                     <div class="_flex _gap-2">-->
+<!--                        <v-text-field v-model="teacherForm.infos.phone1" label="Phone 1" outlined></v-text-field>-->
+<!--                        <v-text-field v-model="teacherForm.infos.phone2" label="Phone 2" outlined></v-text-field>-->
+<!--                     </div>-->
+<!--                     <div class="_flex _gap-2">-->
+<!--                        <v-text-field v-model="teacherForm.infos.address.street" label="Street" outlined></v-text-field>-->
+<!--                        <v-text-field v-model="teacherForm.infos.address.city" label="City" outlined></v-text-field>-->
+<!--                     </div>-->
+<!--                     <div class="_flex _gap-2">-->
+<!--                        <v-text-field v-model="teacherForm.infos.address.state" label="State" outlined></v-text-field>-->
+<!--                        <v-text-field v-model="teacherForm.infos.address.zip" label="Zip" outlined></v-text-field>-->
+<!--                     </div>-->
+<!--                  </v-form>-->
+<!--               </template>-->
+<!--               <template v-slot:actions>-->
+<!--                  <v-btn class="ms-auto" text="Ok" @click="saveForm"></v-btn>-->
+<!--               </template>-->
+<!--            </v-card>-->
+<!--         </v-dialog>-->
       </v-card-title>
       <v-divider></v-divider>
       <v-data-table v-model:search="search" :headers="headers" :items="TeacherList">
-         
          <template v-slot:headers="{ columns, isSorted, getSortIcon, toggleSort }">
             <tr>
                <template v-for="column in columns" :key="column.key">
@@ -79,9 +81,9 @@
          <template v-slot:item.created_at="{ value }">
             <div class="_text-xs">
                <v-tooltip location="bottom" activator="parent" :text="moment(value).format('LLL')">
-               
+
                </v-tooltip>
-               
+
                {{ moment(value).format('MMMM Do YYYY') }}
             </div>
          </template>
@@ -94,14 +96,14 @@
                <v-btn color="error" density="compact" icon
                       variant="tonal">
                   <v-icon class="fa-duotone fa-trash" size=""></v-icon>
-               
+
                </v-btn>
                <v-btn color="primary" density="compact" icon :to='{name:"TeacherDetails",params:{teacher_id:item.id}}'
                       variant="tonal">
                   <v-icon class="fa-duotone fa-arrow-up-right-from-square" size=""></v-icon>
-               
+
                </v-btn>
-            
+
             </div>
          </template>
       </v-data-table>
@@ -112,6 +114,7 @@ import {ref} from "vue";
 import {useTeacher} from "@/api/useTeacher";
 import {teacherState} from "@/stats/teacherState";
 import moment from "moment";
+import CreateTeacherDialog from "@/views/dashboard/teacher/createTeacher/CreateTeacherDialog.vue";
 
 interface Teacher {
    first_name: string;
@@ -148,7 +151,7 @@ const {
 const dialogEdit = ref(false)
 const {TeacherList} = teacherState();
 const toggleDialog = ref(false)
-const selectedTeacher = ref<Teacher>({} as Teacher)
+
 const teacherForm = ref<Teacher>({} as Teacher)
 
 
@@ -158,8 +161,8 @@ const openDialog = (item: boolean | Teacher = false) => {
       // remove created_at and updated_at item
       const {created_at, updated_at, ...rest} = item as Teacher;
       teacherForm.value = rest;
-      
-      
+
+
    } else {
       emptyTeacherForm();
       dialogEdit.value = false;

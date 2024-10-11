@@ -14,7 +14,7 @@
                                    eventForValidate="create-transaction-event"/>
          </template>
          <template v-slot:actions>
-            <v-btn class="ms-auto" color="success" text="Create " variant="tonal" @click="sendEvent"></v-btn>
+<!--            <v-btn class="ms-auto" color="success" text="Create " variant="tonal" @click="sendEvent"></v-btn>-->
          </template>
       </v-card>
    </v-dialog>

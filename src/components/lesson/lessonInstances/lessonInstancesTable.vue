@@ -47,7 +47,7 @@
 </template>
 <script lang="ts" setup>
 import moment from "moment/moment";
-import LessonInstanceStatus from "@/components/lessonInstanceStatus.vue";
+import LessonInstanceStatus from "@/components/lesson/lessonInstances/lessonInstanceStatus.vue";
 
 const props = defineProps<{
   lessonInstances,

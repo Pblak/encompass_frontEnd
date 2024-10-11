@@ -42,11 +42,18 @@ export function useLesson() {
 
     const useGetLessons = () => {
         const q = useApi("/getLessons", {
-            method: "GET",
+            method: "POST",
         }, {
             immediate: true,
         });
-        return q
+        const execute = (data: any) => {
+            return q.execute({
+                data,
+            });
+        }
+        return {
+            ...q, execute,
+        }
     }
 
     const useGetLesson = () => {
@@ -74,9 +81,29 @@ export function useLesson() {
             ...q, execute,
         }
     }
+    const useDeleteLesson = () => {
+        const q = useApi("/deleteLesson", {
+            method: "POST",
+        }, {
+            immediate: false,
+        });
+        const execute = ({data}: any) => {
+            return q.execute({
+                 data
+            });
+        }
+        return {
+            ...q, execute,
+        }
+    }
 
     return {
-        useCreateLesson, useGetLessons, useGetLesson, useUpdateLesson, getLessonsByParent
+        useCreateLesson,
+        useGetLessons,
+        useGetLesson,
+        useUpdateLesson,
+        getLessonsByParent,
+        useDeleteLesson,
     }
 }
 

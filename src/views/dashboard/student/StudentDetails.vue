@@ -136,13 +136,13 @@
 <script lang="ts" setup>
 import {studentState, type StudentType} from "@/stats/studentState";
 import {lessonState, LessonType} from "@/stats/lessonState";
-import {useRoute} from "vue-router";
 import {computed, ref} from "vue";
+import {useRoute} from "vue-router";
 import {toCurrency} from "@/stats/Utils";
-import moment from "moment";
-import LessonInstancesTable from "@/components/lessonInstancesTable.vue";
-import CreateTransactionDialog from "@/views/dashboard/transaction/createTransaction/CreateTransactionDialog.vue";
 import {useEventBus} from "@vueuse/core";
+import moment from "moment";
+import LessonInstancesTable from "@/components/lesson/lessonInstances/lessonInstancesTable.vue";
+import CreateTransactionDialog from "@/views/dashboard/transaction/createTransaction/CreateTransactionDialog.vue";
 
 const route = useRoute();
 const student_id = route.params.student_id;

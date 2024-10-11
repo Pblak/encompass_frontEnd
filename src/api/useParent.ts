@@ -14,25 +14,23 @@ export function useParent(){
     }
 
     const useGetParents = ()=> {
-        const q = useApi(
+        return useApi(
             "/getParents",
             {
                 method: "GET",
-            },{
-                immediate:true,
-            });
-        return q
+            }, {
+                immediate: true,
+            })
     }
 
     const useGetParent = ()=> {
-        const q = useApi(
+        return useApi(
             "/getParent",
             {
                 method: "GET",
-            },{
-                immediate:false,
-            });
-        return q
+            }, {
+                immediate: false,
+            })
     }
 
     const useUpdateParent = ()=> {
@@ -46,11 +44,22 @@ export function useParent(){
         return q
     }
 
+    const useDeleteParent =()=>{
+        return useApi(
+            "/deleteParent",
+            {
+                method: "POST",
+            }, {
+                immediate: false,
+            })
+    }
+
     return {
         useCreateParent,
         useGetParents,
         useGetParent,
         useUpdateParent,
+        useDeleteParent,
     }
 }
 

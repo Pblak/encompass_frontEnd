@@ -1,7 +1,7 @@
 <template>
   <v-main>
     <div class="_flex _justify-center _items-center _h-screen">
-      <v-card class="_w-96">
+      <v-card class="_w-96" >
         <v-card-title class="_text-center">Login</v-card-title>
         <v-card-text>
           <div class="_flex justify-center _w-full">
@@ -11,6 +11,7 @@
               <v-chip label value="teacher">Teacher</v-chip>
             </v-chip-group>
           </div>
+
 
           <v-text-field label="Email" v-model="email"
                         density="comfortable" variant="solo"></v-text-field>
