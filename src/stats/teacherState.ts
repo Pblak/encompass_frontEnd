@@ -6,6 +6,7 @@ export interface TeacherType {
     id: number;
     first_name: string;
     last_name: string;
+    name: string;
     email: string;
     password: string;
     parent_id: number;
@@ -13,6 +14,7 @@ export interface TeacherType {
     students?: StudentType[];
     created_at?: string;
     updated_at?: string;
+    [key: string]: any;
 }
 
 interface Infos {

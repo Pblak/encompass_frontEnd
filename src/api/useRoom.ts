@@ -62,7 +62,12 @@ export function useRoom(){
  * @constructor
  */
 const {useGetRooms} = useRoom();
-export const {
+const {
     execute: exeGlobalGetRooms,
     onResultSuccess: onSucGlobalGetRooms,
 } = useGetRooms()
+
+export {
+    exeGlobalGetRooms,
+    onSucGlobalGetRooms,
+}

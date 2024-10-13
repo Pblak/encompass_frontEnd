@@ -139,39 +139,6 @@
         </v-col>
         <v-col cols="12" md="8">
             <v-row>
-                <!--        <v-col cols="12">-->
-                <!--          <v-card>-->
-                <!--            <v-card-item>-->
-                <!--              <v-card-title>Instrument</v-card-title>-->
-                <!--            </v-card-item>-->
-                <!--            <v-card-text class="!_p-2 _bg-gray-200">-->
-                <!--              <div class="_flex _gap-4">-->
-                <!--                <v-col v-for="item in lessonsInstrument" :key="item.id" class="!_p-0"-->
-                <!--                       md="3" sm="3">-->
-                <!--                  <v-card>-->
-                <!--                    <v-lazy>-->
-                <!--                      <v-img-->
-                <!--                          :src="APP_URL+item.image"-->
-                <!--                          class="align-end"-->
-                <!--                          contain-->
-                <!--                          gradient="to bottom, rgba(0,0,0,.1), rgba(0,0,0,.6)" height="130px">-->
-                <!--                        <v-card-title class="text-white !_capitalize">{{ item.name }}</v-card-title>-->
-                <!--                        <template v-slot:error>-->
-                <!--                          <v-img-->
-                <!--                              :src="APP_URL+item.image"-->
-                <!--                              class="mx-auto"-->
-                <!--                              height="130px"-->
-                <!--                              max-width="500"-->
-                <!--                          ></v-img>-->
-                <!--                        </template>-->
-                <!--                      </v-img>-->
-                <!--                    </v-lazy>-->
-                <!--                  </v-card>-->
-                <!--                </v-col>-->
-                <!--              </div>-->
-                <!--            </v-card-text>-->
-                <!--          </v-card>-->
-                <!--        </v-col>-->
                 <v-col cols="12">
                     <v-card class="">
                         <v-card-text>
@@ -185,24 +152,84 @@
         </v-col>
     </v-row>
     <v-dialog v-model="calDialog" width="auto">
-        <v-card density="compact" width="400">
-            <v-tabs v-model="calDialogTabs">
-                <v-tab value="one">create Event</v-tab>
-                <v-tab value="two">Item Two</v-tab>
-                <v-tab value="three">Item Three</v-tab>
-            </v-tabs>
+        <v-card density="compact" :loading="calDialogLoading">
+            <!--            <v-tabs v-model="calDialogTabs">-->
+            <!--                <v-tab :value="1">create Event</v-tab>-->
+            <!--                <v-tab :value="2">Item Two</v-tab>-->
+            <!--                <v-tab :value="3">Item Three</v-tab>-->
+            <!--            </v-tabs>-->
             <v-card-text class="!_p-0">
                 <v-tabs-window v-model="calDialogTabs" class="_p-4">
-                    <v-tabs-window-item valuCalendarOptionse="one">
+                    <v-tabs-window-item :value="1">
                         <!-- create event form-->
-                        <create-event-form></create-event-form>
+                        <!--                        <create-event-form></create-event-form>-->
                     </v-tabs-window-item>
 
-                    <v-tabs-window-item value="two">
-                        Two
+                    <v-tabs-window-item :value="2">
+                        <div class="_flex _flex-col _gap-2">
+                            <v-card flat>
+                                <v-card-title>
+                                    Lesson
+                                </v-card-title>
+                                <v-card-text>
+                                    <v-list class="!_flex">
+                                        <v-list-item>
+                                            <v-list-item-title>
+                                                Student
+                                            </v-list-item-title>
+                                            <v-list-item-subtitle>
+                                                {{ selectedLesson?.student.name }}
+                                            </v-list-item-subtitle>
+                                        </v-list-item>
+                                        <v-list-item>
+                                            <v-list-item-title>
+                                                Instrument
+                                            </v-list-item-title>
+                                            <v-list-item-subtitle>
+                                                {{ selectedLesson?.instrument.name }}
+                                            </v-list-item-subtitle>
+                                        </v-list-item>
+                                        <v-list-item>
+                                            <v-list-item-title>
+                                                Teacher
+                                            </v-list-item-title>
+                                            <v-list-item-subtitle>
+                                                {{ selectedLesson?.teacher.name }}
+                                            </v-list-item-subtitle>
+                                        </v-list-item>
+                                        <v-list-item>
+                                            <v-list-item-title>
+                                                Payed price
+                                            </v-list-item-title>
+                                            <v-list-item-subtitle>
+                                                {{ toCurrency(selectedLesson?.payed_price) }}
+                                            </v-list-item-subtitle>
+                                        </v-list-item>
+                                        <v-list-item>
+                                            <v-list-item-title>
+                                                Lesson price
+                                            </v-list-item-title>
+                                            <v-list-item-subtitle>
+                                                {{ toCurrency(selectedLesson?.price) }}
+                                            </v-list-item-subtitle>
+                                        </v-list-item>
+                                    </v-list>
+
+                                </v-card-text>
+                            </v-card>
+
+                        <v-divider class="_border-gray-400"></v-divider>
+                        <LessonInstancesTable hide-default-footer
+                                              :lessonInstances="[selectedInstance as LessonInstanceType]"
+                                              :lesson="selectedLesson"
+                                              :loading="calDialogLoading"
+                                              :setLoading="getCalDialogLoading"/>
+                        </div>
+
+
                     </v-tabs-window-item>
 
-                    <v-tabs-window-item value="three">
+                    <v-tabs-window-item :value="3">
                         Three
                     </v-tabs-window-item>
                 </v-tabs-window>
@@ -212,7 +239,7 @@
     </v-dialog>
 </template>
 <script lang="ts" setup>
-import {flatten, lowerFirst} from 'lodash'
+import {flatten} from 'lodash'
 import moment from "moment";
 import FullCalendar from '@fullcalendar/vue3'
 import dayGridPlugin from '@fullcalendar/daygrid'
@@ -220,33 +247,47 @@ import timeGridPlugin from '@fullcalendar/timegrid'
 import interactionPlugin from '@fullcalendar/interaction'
 // import {calendarState} from '@/stats/calendarState'
 import {lessonState, type LessonType} from '@/stats/lessonState'
+import {lessonInstanceStatus, type LessonInstanceType} from '@/stats/lessonInstanceState'
 import {computed, onMounted, reactive, ref, watch} from 'vue'
-import createEventForm from '@/components/_createEventForm.vue'
-import {useLesson, exeGlobalGetLessons} from "@/api/useLesson";
-import {toCurrency} from "../../../stats/Utils";
+import {exeGlobalGetLessons, useLesson} from "@/api/useLesson";
+import {toCurrency} from "@/stats/Utils";
 import {CalendarOptions} from "@fullcalendar/core";
+import LessonInstancesTable from "@/components/lesson/lessonInstances/lessonInstancesTable.vue";
 
 const APP_URL = import.meta.env.VITE_APP_URL;
 const cal = ref(null)
 const calDialog = ref(false)
-const calDialogTabs = ref('one')
+const calDialogTabs = ref<number>(1)
+const calDialogLoading = ref<boolean>(false)
+const getCalDialogLoading = (val) => {
+    calDialogLoading.value = val
+}
+const selectedInstance = ref<LessonInstanceType>()
+const selectedLesson = ref<LessonType>()
 // const searchLesson = ref('')
 // const {rangeSelected} = calendarState()
 const {LessonList, LessonsSelected} = lessonState()
 const {useGetLessons} = useLesson();
-const {
-    execute: exeGetLessons,
-    onResultSuccess: onGetLessonsSuccess,
-} = useGetLessons()
+// const {
+//     execute: exeGetLessons,
+//     onResultSuccess: onGetLessonsSuccess,
+// } = useGetLessons()
 
 const calendarOptions = reactive({
     plugins: [dayGridPlugin, interactionPlugin, timeGridPlugin],
     initialView: 'timeGridWeek',
     themeSystem: 'Lumen',
     events: [],
-    dateClick: (info: any) => {
-        // calDialog.value = true
-        // rangeSelected.value = info.dateStr
+    eventClick: (info: any) => {
+        calDialog.value = true
+        calDialogTabs.value = 2
+        selectedLesson.value = LessonList.value.find((lesson: any) => lesson.id === info.event.extendedProps.lessonId) as LessonType
+
+        selectedInstance.value = selectedLesson.value!.instances
+            .find((instance: LessonInstanceType) => {
+                return instance.id === info.event.extendedProps.instanceId
+            }) as LessonInstanceType
+
     },
 })
 const transformDataToDays = (planningData: any) => {
@@ -280,7 +321,8 @@ const renderEvent = () => {
                     status: instance.status,
                     start: instance.start
                 },
-                color: instance.status === 'scheduled' ? '#0b6ab9' : instance.status === 'in_progress' ? 'yellow' : instance.status === 'completed' ? 'green' : 'red',
+                // color: instance.status === 'scheduled' ? '#0b6ab9' : instance.status === 'in_progress' ? 'yellow' : instance.status === 'completed' ? 'green' : 'red',
+                color: lessonInstanceStatus[instance.status].color,
             }
         })
         return flatten(instances)
@@ -308,6 +350,23 @@ watch(() => LessonsSelected.value, () => {
 
 watch(() => LessonList.value, () => {
     renderEvent()
+
+    if (selectedLesson.value) {
+        selectedLesson.value = LessonList.value
+            .find((lesson: LessonType) => {
+                return lesson.id === selectedLesson.value!.id
+            }) as LessonType
+    }
+
+    if (selectedInstance.value) {
+        selectedInstance.value = LessonList.value
+            .find((lesson: LessonType) => {
+                return lesson.id === selectedLesson.value!.id
+            })!.instances
+            .find((instance: LessonInstanceType) => {
+                return instance.id === selectedInstance.value!.id
+            }) as LessonInstanceType
+    }
 }, {deep: true})
 
 const planningsContainers = ref([])

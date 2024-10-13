@@ -11,5 +11,9 @@ module.exports = {
   ],
   parserOptions: {
     ecmaVersion: 'latest'
+  },
+  rules: {
+    'vue/valid-v-slot': 'off',  // disable this rule globally
+    // add any other rules you want here
   }
 }

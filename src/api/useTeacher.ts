@@ -60,7 +60,12 @@ export function useTeacher(){
  * @constructor
  */
 const {useGetTeachers} = useTeacher();
-export const {
+const {
     execute: exeGlobalGetTeachers,
     onResultSuccess: onSucGlobalGetTeachers,
 } = useGetTeachers()
+
+export {
+    exeGlobalGetTeachers,
+    onSucGlobalGetTeachers,
+}

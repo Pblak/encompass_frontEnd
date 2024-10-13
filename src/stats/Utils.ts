@@ -52,6 +52,9 @@ export const  canGoTo = async (route: { name: string })=> {
 }
 export const isRole = (roles: string | string[]): boolean =>{
     const allowedRoles = Array.isArray(roles) ? roles : [roles];
+    // replace 'admin' with the 'web' in allowedRoles
+    allowedRoles[allowedRoles.indexOf('admin')] = 'web';
+
     const user = JSON.parse(<string>localStorage.getItem('userLogin'));
 
     // Return false if no user is logged in

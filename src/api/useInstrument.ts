@@ -82,8 +82,12 @@ export function useInstrument() {
  * @constructor
  */
 const {useGetInstruments} = useInstrument();
-export const {
+const {
     execute: exeGlobalGetInstruments,
     onResultSuccess: onSucGlobalGetInstruments,
 } = useGetInstruments()
 
+export {
+    exeGlobalGetInstruments,
+    onSucGlobalGetInstruments
+}

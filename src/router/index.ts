@@ -272,6 +272,7 @@ const routes: Array<RouteRecordRaw> = [
                     __name: 'event',
                     __auth: true,
                     icon: 'fa-thin fa-calendar',
+                    sidebar: false
                 },
                 components: {
                     dashboard: () => import('@/views/dashboard/EventView.vue')

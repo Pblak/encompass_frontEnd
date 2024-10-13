@@ -1,8 +1,13 @@
 import {createGlobalState} from "@vueuse/core";
 import {type Ref, ref} from "vue";
+import type {LessonInstanceType} from "@/stats/lessonInstanceState";
 
 export interface LessonType {
     id: number,
+    instances: LessonInstanceType[],
+    price: number,
+    payed_price: number,
+
     [key: string]: any
 }
 

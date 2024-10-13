@@ -114,7 +114,10 @@ export function useLesson() {
  * @constructor
  */
 const {useGetLessons} = useLesson();
-export const {
+const {
     execute: exeGlobalGetLessons, onResultSuccess: onSucGlobalGetLessons,
 } = useGetLessons()
 
+export {
+    exeGlobalGetLessons, onSucGlobalGetLessons,
+}

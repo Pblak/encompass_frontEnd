@@ -70,7 +70,12 @@ export function useParent(){
  * @constructor
  */
 const {useGetParents} = useParent();
-export const {
+ const {
     execute: exeGlobalGetParents,
     onResultSuccess: onSucGlobalGetParents,
 } = useGetParents()
+
+export {
+    exeGlobalGetParents,
+    onSucGlobalGetParents
+}

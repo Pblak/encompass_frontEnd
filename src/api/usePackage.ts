@@ -81,8 +81,12 @@ export function usePackage() {
  * @constructor
  */
 const {useGetPackages} = usePackage();
-export const {
+const {
     execute: exeGlobalGetPackages,
     onResultSuccess: onSucGlobalGetPackages,
 } = useGetPackages()
 
+export {
+    exeGlobalGetPackages,
+    onSucGlobalGetPackages,
+}

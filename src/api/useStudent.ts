@@ -71,7 +71,17 @@ export function useStudent(){
  * @constructor
  */
 const {useGetStudents} = useStudent();
-export const {
+const {
     execute: exeGlobalGetStudents,
     onResultSuccess: onSucGlobalGetStudents,
 } = useGetStudents()
+
+// onSucGlobalGetStudents((data: any) => {
+//     console.log("global get students", data)
+// })
+
+
+export {
+    exeGlobalGetStudents,
+    onSucGlobalGetStudents,
+}

@@ -2,7 +2,7 @@
     <v-form ref="ElForm" class="_flex _flex-col _gap-4" @submit.prevent="validateForm">
         <div class="_flex _flex-wrap _gap-4">
             <v-select v-model="transactionForm.lesson_id"
-                      :items="LessonList" item-value="id"
+                      :items="filterLesson" item-value="id"
                       :item-title="getItemTitle" label="Lessons" variant="solo" density="comfortable">
                 <template v-slot:item="{ props, item }">
                     <v-list-item v-bind="props">
@@ -39,12 +39,12 @@
     </v-form>
 </template>
 <script lang="ts" setup>
-import type {TransactionType} from "@/stats/transactionState";
-import {computed, onMounted, type Ref, ref, watch} from "vue";
-import {useEventBus} from "@vueuse/core";
+import {computed, onMounted, ref} from "vue";
 import {exeGlobalGetLessons} from "@/api/useLesson";
+import {lessonState, type LessonType} from "@/stats/lessonState";
+import type {TransactionType} from "@/stats/transactionState";
+import {useEventBus} from "@vueuse/core";
 import {usePaypal} from "@/api/usePaypal";
-import {lessonState} from "@/stats/lessonState";
 import {toCurrency} from "@/stats/Utils";
 import {loadScript, type PayPalButtonsComponentOptions, type PayPalScriptOptions} from "@paypal/paypal-js";
 import {toast} from "vue3-toastify";
@@ -74,7 +74,7 @@ const transactionForm = ref<TransactionType>({
     notes: "",
 })
 
-const getItemTitle = (item: any) => {
+const getItemTitle = (item: LessonType) => {
     return typeof item == 'object' ? `${item.student.name} - ${item.instrument.name}` : ''
 }
 const validateForm = async () => {
@@ -84,12 +84,26 @@ const validateForm = async () => {
         validate: valid,
         data: {...transactionForm.value}
     });
-
 };
 
+const filterLesson = computed(() => {
+    return LessonList.value.filter((item: LessonType) => {
+        return item.price - item.payed_price > 0
+    })
+})
+
 const maxAmountRule = computed(() => {
-    return transactionForm.value.lesson_id ?
-        `|max:${LessonList.value.find((item: any) => item.id === transactionForm.value.lesson_id)!.price}` : ''
+    if (transactionForm.value.lesson_id) {
+        let lessonSelected = LessonList.value.find((item: any) => item.id === transactionForm.value.lesson_id)
+        let max = lessonSelected!.price - lessonSelected!.payed_price
+        console.log('max ', max)
+        return `|max:${max}`
+    } else {
+        return ''
+    }
+
+    // return transactionForm.value.lesson_id ?
+    //     `|max:${LessonList.value.find((item: any) => item.id === transactionForm.value.lesson_id)!.price}` : ''
 })
 
 const initPaypalPayment = () => {
@@ -113,7 +127,7 @@ const initPaypalPayment = () => {
                         }).then((response) => {
                             console.log('response  ', response)
                             return response.data
-                        }).then((order ) => {
+                        }).then((order: any) => {
                             console.log('order  ', order.value)
                             return order.value.id
                         }).catch((err) => {
@@ -136,12 +150,12 @@ const initPaypalPayment = () => {
                         // paymentSource
 
                         exeCapturePaypalOrder({
-                            data: { ...data, ...transactionForm.value }
+                            data: {...data, ...transactionForm.value}
                         }).then((res) => {
                             console.log(res)
                         })
                     }
-                } as  PayPalButtonsComponentOptions).render('#paypal-button-container');
+                } as PayPalButtonsComponentOptions).render('#paypal-button-container');
             }
         }
     })
@@ -155,7 +169,7 @@ onMounted(() => {
     exeGlobalGetLessons()
     initPaypalPayment()
 })
-watch(() => transactionForm.value.lesson_id, (val) => {
-
-})
+// watch(() => transactionForm.value.lesson_id, (val) => {
+//
+// })
 </script>

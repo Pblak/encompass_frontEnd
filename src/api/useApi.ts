@@ -35,6 +35,7 @@ export const headers = {
     'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept',
     'Access-Control-Allow-Credentials': 'true',
 }
+
 export const apiInstance = axios.create({
     baseURL: import.meta.env.VITE_API_URL,
     headers: headers

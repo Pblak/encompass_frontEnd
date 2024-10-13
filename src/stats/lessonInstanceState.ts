@@ -2,6 +2,18 @@ import {createGlobalState} from "@vueuse/core";
 import {type Ref, ref} from "vue";
 import type {LessonType} from "@/stats/lessonState";
 
+export interface LessonInstanceType {
+    id: number,
+    deleted_at: Boolean | string,
+    duration:  number,
+    lesson_id: number,
+    room_id: number,
+    start:  string,
+    status: "in_progress" | "scheduled" | "completed" | "cancelled",
+    updated_at:  string,
+    created_at:  string,
+    [key: string]: any,
+}
 export const lessonInstanceStatus = {
     'scheduled': {
         'name': 'Scheduled',
@@ -11,19 +23,19 @@ export const lessonInstanceStatus = {
     },
     'in_progress': {
         'name': 'In Progress',
-        'color': 'blue',
+        'color': '#086cb6',
         'icon': 'fa-duotone fa-hourglass-start fa-beat-fade',
         'allowTransition': ['completed', 'cancelled']
     },
     'completed': {
         'name': 'Completed',
-        'color': 'green',
+        'color': '#06d34f',
         'icon': 'fa-duotone fa-check',
         'allowTransition': ['scheduled', 'in_progress']
     },
     'cancelled': {
         'name': 'Cancelled',
-        'color': 'red',
+        'color': '#d80000',
         'icon': 'fa-duotone fa-hexagon-xmark',
         'allowTransition': []
     }

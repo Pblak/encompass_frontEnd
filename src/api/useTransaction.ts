@@ -79,7 +79,12 @@ export function useTransaction() {
  * @constructor
  */
 const {useGetTransactions} = useTransaction();
-export const {
+const {
     execute: exeGlobalGetTransactions,
     onResultSuccess: onSucGlobalGetTransactions,
 } = useGetTransactions()
+
+export {
+    exeGlobalGetTransactions,
+    onSucGlobalGetTransactions,
+}

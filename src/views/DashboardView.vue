@@ -81,7 +81,6 @@
                         {{ loadingProgress === 100 ? 'Ready ️‍🔥' : 'Loading...' }}
                     </template>
                 </v-progress-circular>
-
             </v-card-text>
         </v-card>
     </v-sheet>
@@ -91,6 +90,7 @@ import {loginState} from '@/stats/loginState';
 import {onMounted, type Ref, ref, type UnwrapRef, watch} from 'vue';
 import {type RouteRecordRaw, useRouter} from 'vue-router';
 import {canGoTo} from "@/stats/Utils";
+
 import {exeGlobalGetInstruments, onSucGlobalGetInstruments} from "@/api/useInstrument";
 import {exeGlobalGetParents, onSucGlobalGetParents} from "@/api/useParent";
 import {exeGlobalGetTeachers, onSucGlobalGetTeachers} from "@/api/useTeacher";
@@ -99,6 +99,7 @@ import {exeGlobalGetStudents, onSucGlobalGetStudents} from "@/api/useStudent";
 import {exeGlobalGetRooms, onSucGlobalGetRooms} from "@/api/useRoom";
 import {exeGlobalGetTransactions, onSucGlobalGetTransactions} from "@/api/useTransaction";
 import {exeGlobalGetPackages, onSucGlobalGetPackages} from "@/api/usePackage";
+
 import {packageState} from "@/stats/packageState";
 import {instrumentState} from "@/stats/instrumentState";
 import {teacherState} from "@/stats/teacherState";
@@ -139,10 +140,10 @@ if (!isLogin.value) {
 const loadData = async () => {
     const tasks = [
         exeGlobalGetInstruments,
-        exeGlobalGetLessons,
-        exeGlobalGetTeachers,
-        exeGlobalGetStudents,
         exeGlobalGetParents,
+        exeGlobalGetTeachers,
+        exeGlobalGetLessons,
+        exeGlobalGetStudents,
         exeGlobalGetRooms,
         exeGlobalGetTransactions,
         exeGlobalGetPackages,
@@ -192,9 +193,9 @@ onMounted(async () => {
     }
 });
 
-dashboardChildren.value = dashboardRoute?.children?.filter((i: RouteRecordRaw) => {
+dashboardChildren.value = dashboardRoute?.children!.filter((i: RouteRecordRaw) => {
     if (i.meta) {
-        return i.meta.sidebar !== false
+        return i.meta["sidebar"] !== false
     } else {
         return false
     }
@@ -207,6 +208,7 @@ onSucGlobalGetInstruments((res: any) => {
 })
 onSucGlobalGetStudents((res: any) => {
     StudentList.value = res.data
+    console.log('StudentList', res.data)
 })
 onSucGlobalGetTeachers((res: any) => {
     TeacherList.value = res.data
@@ -216,19 +218,23 @@ onSucGlobalGetParents((res: any) => {
 })
 onSucGlobalGetRooms((res: any) => {
     RoomList.value = res.data
+    console.log('RoomList', RoomList.value)
 })
 onSucGlobalGetTransactions((res: any) => {
     TransactionList.value = res.data
+    console.log('TransactionList', TransactionList.value)
 })
 onSucGlobalGetLessons((res: any) => {
-    LessonList.value = res.data.map((lesson: any) => {
-        if (!lesson.instrument_plan) return 0;
-        let total = Object.values(lesson.planning).reduce((acc, val) => {
-            return acc + val.length
-        }, 0)
-        lesson.price = total * parseInt(lesson.instrument_plan?.price) * lesson.frequency
-        return lesson
-    })
+
+    LessonList.value = res.data
+        // .map((lesson: any) => {
+        //     if (!lesson.instrument_plan) return 0;
+        //     let total = Object.values(lesson.planning).reduce((acc, val) => {
+        //         return acc + val.length
+        //     }, 0)
+        //     lesson.price = total * parseInt(lesson.instrument_plan?.price) * lesson.frequency
+        //     return lesson
+        // })
     console.log('LessonList', LessonList.value)
 })
 

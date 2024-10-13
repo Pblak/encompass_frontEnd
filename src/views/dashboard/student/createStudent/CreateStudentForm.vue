@@ -74,7 +74,7 @@ onMounted(() => {
         <v-select v-model="studentForm.parent_id" v-if="isRole('admin')"
                   :items="ParentList.map((item: any) => {return {name:item.name, id:item.id}})"
                   :rules="$rules('required', 'Parent')"
-                  chips
+                  chips variant="solo"
                   clearable density="comfortable" class="!_flex-1" item-title="name" item-value="id"
                   label="Parent">
         </v-select>
