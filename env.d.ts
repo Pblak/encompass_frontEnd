@@ -6,6 +6,16 @@ declare global {
         Echo: Echo;
         Pusher: any;
     }
+    // Extend ImportMeta to include environment variables
+    interface ImportMetaEnv {
+        BASE_URL: string;
+        // Add any other environment variables you might have
+        VITE_SOME_VARIABLE: string; // example
+    }
+
+    interface ImportMeta {
+        readonly env: ImportMetaEnv;
+    }
 }
 
 export {};
