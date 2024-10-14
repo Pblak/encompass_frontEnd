@@ -29,22 +29,22 @@ export const loginState = createGlobalState(() => {
         loginError.value = null;
     };
 
-    const login = async (credentials: LoginData) => {
-        // @ts-ignore
-        axios.post(import.meta.env.VITE_API_URL + "/login", credentials)
+    const login = async (credentials: LoginData ) => {
+
+        return await axios.post(import.meta.env.VITE_API_URL + "/login", credentials)
             .then((response) => {
                 isLogin.value = true;
                 userLogin.value = response.data.user;
                 loginToken.value = response.data.token;
-                router.push("/dashboard");
-
+                window.location.href ="/dashboard"
             })
-            .catch((e) => {
-                loginError.value = e.response.data.message;
+            .catch((error) => {
+                loginError.value = error.response.data.message;
+                throw error;
             });
     };
     const logout = () => {
-        // @ts-ignore
+
         axios.post(import.meta.env.VITE_API_URL + "/logout", {}, {
             headers: {
                 Authorization: `Bearer ${loginToken.value}`,
