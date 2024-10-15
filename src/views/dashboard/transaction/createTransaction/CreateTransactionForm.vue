@@ -35,37 +35,37 @@
                 <div id="paypal-button-container"></div>
             </div>
         </div>
-
     </v-form>
 </template>
 <script lang="ts" setup>
 import {computed, onMounted, ref} from "vue";
 import {exeGlobalGetLessons} from "@/api/useLesson";
 import {lessonState, type LessonType} from "@/stats/lessonState";
+// import {exeGlobalGetTransactions, onSucGlobalGetTransactions} from "@/api/useTransaction";
 import type {TransactionType} from "@/stats/transactionState";
 import {useEventBus} from "@vueuse/core";
 import {usePaypal} from "@/api/usePaypal";
 import {toCurrency} from "@/stats/Utils";
 import {loadScript, type PayPalButtonsComponentOptions, type PayPalScriptOptions} from "@paypal/paypal-js";
-import {toast} from "vue3-toastify";
+// import {toast} from "vue3-toastify";
 
-type PushDataType = (data: { validate: boolean, data: TransactionType }) => void;
+type PushDataType = (data: any) => void;
 const props = defineProps<{
     eventForValidate: string,
     lesson_id?: number,
-    pushData: PushDataType;
+    createOrder: PushDataType;
+    approuveOrder: PushDataType;
+    // setLoader?: (val: boolean) => void;
 }>();
 
 const {LessonList} = lessonState();
 const {useCreatePaypalOrder, useCapturePaypalOrder} = usePaypal()
 const {on} = useEventBus(props.eventForValidate as unknown as string);
 const ElForm = ref<any>(null);
-const {
-    execute: exeCreatePaypalOrder,
-} = useCreatePaypalOrder()
-const {
-    execute: exeCapturePaypalOrder,
-} = useCapturePaypalOrder()
+// const {
+//     execute: exeCreatePaypalOrder,
+// } = useCreatePaypalOrder()
+// const {execute: exeCapturePaypalOrder} = useCapturePaypalOrder()
 const transactionForm = ref<TransactionType>({
     // id: 0,
     amount: 0,
@@ -80,10 +80,11 @@ const getItemTitle = (item: LessonType) => {
 const validateForm = async () => {
     const {valid} = await ElForm.value.validate()
     if (!valid) return;
-    props.pushData({
-        validate: valid,
-        data: {...transactionForm.value}
-    });
+
+    // props.pushData({
+    //     validate: valid,
+    //     data: {...transactionForm.value}
+    // });
 };
 
 const filterLesson = computed(() => {
@@ -96,14 +97,10 @@ const maxAmountRule = computed(() => {
     if (transactionForm.value.lesson_id) {
         let lessonSelected = LessonList.value.find((item: any) => item.id === transactionForm.value.lesson_id)
         let max = lessonSelected!.price - lessonSelected!.payed_price
-        console.log('max ', max)
         return `|max:${max}`
     } else {
         return ''
     }
-
-    // return transactionForm.value.lesson_id ?
-    //     `|max:${LessonList.value.find((item: any) => item.id === transactionForm.value.lesson_id)!.price}` : ''
 })
 
 const initPaypalPayment = () => {
@@ -122,38 +119,13 @@ const initPaypalPayment = () => {
                         height: 40
                     },
                     createOrder: () => {
-                        return exeCreatePaypalOrder({
-                            data: transactionForm.value
-                        }).then((response) => {
-                            console.log('response  ', response)
-                            return response.data
-                        }).then((order: any) => {
-                            console.log('order  ', order.value)
-                            return order.value.id
-                        }).catch((err) => {
-                            console.log('err  ', err)
-                            toast('Error while attempt ', {
-                                type: 'error',
-                                position: 'top-right',
-                                transition: "flip",
-                                dangerouslyHTMLString: true
-                            })
-                        });
+                        return validateForm().then(() => {
+                            return props.createOrder({...transactionForm.value})
+                        })
                     },
                     onApprove: (data) => {
-                        console.log('onApprove', data)
-                        // billingToken
-                        // facilitatorAccessToken
-                        // orderID
-                        // payerID
-                        // paymentID
-                        // paymentSource
+                      props.approuveOrder( {...data, ...transactionForm.value} )
 
-                        exeCapturePaypalOrder({
-                            data: {...data, ...transactionForm.value}
-                        }).then((res) => {
-                            console.log(res)
-                        })
                     }
                 } as PayPalButtonsComponentOptions).render('#paypal-button-container');
             }
@@ -163,12 +135,16 @@ const initPaypalPayment = () => {
 }
 
 onMounted(() => {
-    on(() => {
-        validateForm();
-    });
+    // on(() => {
+    //     validateForm();
+    // });
     exeGlobalGetLessons()
     initPaypalPayment()
 })
+// onSucGlobalGetTransactions(() => {
+//     props.setLoader && props.setLoader(false)
+//     exeGlobalGetLessons()
+// })
 // watch(() => transactionForm.value.lesson_id, (val) => {
 //
 // })
