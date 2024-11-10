@@ -1,5 +1,6 @@
 import {useApi} from "./useApi";
 
+
 export function useParent(){
 
     const  useCreateParent = ()=> {
@@ -34,14 +35,13 @@ export function useParent(){
     }
 
     const useUpdateParent = ()=> {
-        const q = useApi(
+        return useApi(
             "/updateParent",
             {
-                method: "PUT",
-            },{
-                immediate:false,
-            });
-        return q
+                method: "post",
+            }, {
+                immediate: false,
+            })
     }
 
     const useDeleteParent =()=>{

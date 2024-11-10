@@ -43,7 +43,7 @@
 <script lang="ts" setup>
 import {onMounted} from "vue";
 import {exeGlobalGetStudents} from "@/api/useStudent";
-import CreateStudentDialog from "@/views/dashboard/student/createStudent/CreateStudentDialog.vue";
+import CreateStudentDialog from "@/views/dashboard/student/StudentDialog/CreateStudentDialog.vue";
 import {studentState} from "@/stats/studentState";
 import StudentTable from "@/components/student/studentTable.vue";
 

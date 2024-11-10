@@ -14,25 +14,8 @@ const props = defineProps<{
 const {userLogin} = loginState
 const {on} = useEventBus(props.eventForValidate as unknown as string);
 const {ParentList} = parentState();
-const studentForm = ref<StudentType>({
-    id: 0,
-    first_name: "",
-    last_name: "",
-    username: "",
-    email: "",
-    password: "",
-    parent_id: 0,
-    infos: {
-        phone1: "",
-        address: {
-            street: "",
-            city: "",
-            zip: "",
-            state: "",
-        },
-        gender: "male",
-    }
-})
+const studentForm = ref<StudentType>(<StudentType>{})
+
 
 const ElForm = ref<any>(null);
 const validateForm = async () => {

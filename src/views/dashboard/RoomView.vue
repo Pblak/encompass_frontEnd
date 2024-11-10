@@ -16,8 +16,7 @@
       <v-data-table :headers="headers" item-value="name"  v-model:search="search" :items="RoomList">
          <template v-slot:item.actions="{ item }">
             <div class="_flex _gap-3 ">
-               <v-btn size="small" icon="fa-thin fa-edit _text-sm" elevation="0"> </v-btn>
-               <v-btn size="small" icon="fa-thin fa-calendar _text-sm" elevation="0"> </v-btn>
+               <UpdateRoomDialog :room-selected="item"/>
             </div>
          </template>
       </v-data-table>
@@ -28,7 +27,8 @@ import {onMounted, ref} from "vue";
 import {useRoom , exeGlobalGetRooms} from "@/api/useRoom";
 import moment from "moment";
 import {roomState} from "@/stats/roomState";
-import CreateRoomDialog from "@/views/dashboard/room/createRoom/CreateRoomDialog.vue";
+import CreateRoomDialog from "@/views/dashboard/room/RoomDialog/CreateRoomDialog.vue";
+import UpdateRoomDialog from "@/views/dashboard/room/RoomDialog/UpdateRoomDialog.vue";
 
 const {useGetRooms , useCreateRoom} = useRoom();
 

@@ -20,7 +20,7 @@
 </template>
 <script setup lang="ts">
 import {ref} from "vue";
-import CreateRoomForm from "@/views/dashboard/room/createRoom/CreateRoomForm.vue";
+import CreateRoomForm from "@/views/dashboard/room/RoomDialog/CreateRoomForm.vue";
 import {useRoom, exeGlobalGetRooms} from "@/api/useRoom";
 import {useEventBus} from "@vueuse/core";
 

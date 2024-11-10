@@ -1,5 +1,6 @@
 import {useApi} from "./useApi";
 
+
 export function useStudent(){
 
     const  useCreateStudent = ()=> {
@@ -36,14 +37,13 @@ export function useStudent(){
     }
 
     const useUpdateStudent = ()=> {
-        const q = useApi(
+        return useApi(
             "/updateStudent",
             {
-                method: "PUT",
-            },{
-                immediate:false,
-            });
-        return q
+                method: "POST",
+            }, {
+                immediate: false,
+            })
     }
     const useDeleteStudent=()=>{
         return useApi(

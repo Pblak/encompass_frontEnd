@@ -1,5 +1,6 @@
 import {useApi} from "./useApi";
 
+
 export function useRoom(){
 
     const  useCreateRoom = ()=> {
@@ -14,36 +15,33 @@ export function useRoom(){
     }
 
     const useGetRooms = ()=> {
-        const q = useApi(
+        return useApi(
             "/getRooms",
             {
                 method: "GET",
-            },{
-                immediate:true,
-            });
-        return q
+            }, {
+                immediate: true,
+            })
     }
 
     const useGetRoom = ()=> {
-        const q = useApi(
+        return useApi(
             "/getRoom",
             {
                 method: "GET",
-            },{
-                immediate:false,
-            });
-        return q
+            }, {
+                immediate: false,
+            })
     }
 
     const useUpdateRoom = ()=> {
-        const q = useApi(
+        return useApi(
             "/updateRoom",
             {
-                method: "PUT",
-            },{
-                immediate:false,
-            });
-        return q
+                method: "POST",
+            }, {
+                immediate: false,
+            })
     }
 
     return {

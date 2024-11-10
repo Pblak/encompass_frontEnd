@@ -138,7 +138,7 @@ if (!isLogin.value) {
 // }
 
 const loadData = async () => {
-    const tasks = [
+    const registeredTasks = [
         exeGlobalGetInstruments,
         exeGlobalGetParents,
         exeGlobalGetTeachers,
@@ -152,11 +152,11 @@ const loadData = async () => {
 
     const updateProgress = () => {
         completed++;
-        loadingProgress.value = ((completed / tasks.length) * 100);
-        // console.log(`Progress: ${((completed / tasks.length) * 100).toFixed(2)}%`);
+        loadingProgress.value = ((completed / registeredTasks.length) * 100);
+        // console.log(`Progress: ${((completed / registeredTasks.length) * 100).toFixed(2)}%`);
     };
 
-    const taskPromises = tasks.map(task => {
+    const taskPromises = registeredTasks.map(task => {
         return task().then(result => {
             updateProgress();
             return result;
@@ -225,7 +225,6 @@ onSucGlobalGetTransactions((res: any) => {
     console.log('TransactionList', TransactionList.value)
 })
 onSucGlobalGetLessons((res: any) => {
-
     LessonList.value = res.data
         // .map((lesson: any) => {
         //     if (!lesson.instrument_plan) return 0;
@@ -252,7 +251,7 @@ watch(withTrashStudent, () => {
 })
 watch(withTrashParent, () => {
     exeGlobalGetParents({
-        data: {
+        params: {
             withTrashed: withTrashParent.value
         }
     })

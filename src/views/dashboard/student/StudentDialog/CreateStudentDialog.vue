@@ -11,6 +11,7 @@
       </template>
       <template v-slot:text>
         <CreateStudentForm :push-data="attemptSave" eventForValidate="create-student-event"></CreateStudentForm>
+
       </template>
       <template v-slot:actions>
         <v-btn class="ms-auto" color="success" text="Create" variant="tonal" @click="sendEvent"></v-btn>
@@ -20,7 +21,7 @@
 </template>
 <script setup lang="ts">
 import {ref} from "vue";
-import CreateStudentForm from "@/views/dashboard/student/createStudent/CreateStudentForm.vue";
+import CreateStudentForm from "@/views/dashboard/student/StudentDialog/CreateStudentForm.vue";
 import {useStudent, exeGlobalGetStudents} from "@/api/useStudent";
 import {useEventBus} from "@vueuse/core";
 
@@ -28,8 +29,9 @@ const {useCreateStudent} = useStudent();
 const {onResultSuccess: onSuccessCreateStudent, execute: exeCreateStudent} = useCreateStudent();
 const toggleDialog = ref(false)
 const {emit} = useEventBus('create-student-event');
-const sendEvent = () => {
 
+
+const sendEvent = () => {
   emit();
 };
 

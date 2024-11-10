@@ -15,9 +15,11 @@ export interface StudentType {
     lessons?: LessonType[],
     created_at?: string;
     updated_at?: string;
+    [key: string]: any;
 }
 
 interface Infos {
+    username: string;
     phone1: string;
     phone2?: string;
     address: {
@@ -29,6 +31,7 @@ interface Infos {
     gender?: 'male' | 'female';
     allergies?: string;
     birthday?: string;
+    [key: string]: any;
 }
 
 export const studentState = createGlobalState(() => {

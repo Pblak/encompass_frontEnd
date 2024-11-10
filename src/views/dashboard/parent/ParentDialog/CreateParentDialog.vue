@@ -21,7 +21,7 @@
 </template>
 <script setup lang="ts">
 import {ref} from "vue";
-import CreateParentForm from "@/views/dashboard/parent/createParent/CreateParentForm.vue";
+import CreateParentForm from "@/views/dashboard/parent/ParentDialog/CreateParentForm.vue";
 import {useParent ,exeGlobalGetParents} from "@/api/useParent";
 import {useEventBus} from "@vueuse/core";
 

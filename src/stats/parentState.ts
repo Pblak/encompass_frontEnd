@@ -6,6 +6,7 @@ export interface ParentType {
     id: number;
     first_name: string;
     last_name: string;
+    name?: string,
     email: string;
     password: string;
     parent_id: number;

@@ -61,10 +61,7 @@ import {useEventBus} from "@vueuse/core";
 
 type PushDataType = (data: { validate: boolean, data: ParentType }) => void;
 const props = defineProps<{
-  eventForValidate: {
-    type: string;
-    required: true;
-  },
+  eventForValidate:string,
   pushData: PushDataType;
 }>();
 const {on} = useEventBus(props.eventForValidate as unknown as string);
