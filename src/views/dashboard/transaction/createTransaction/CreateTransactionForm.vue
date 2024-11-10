@@ -1,8 +1,7 @@
 <template>
     <v-form ref="ElForm" class="_flex _flex-col _gap-4" @submit.prevent="validateForm">
         <div class="_flex _flex-wrap _gap-4">
-            <v-select v-model="transactionForm.lesson_id"
-                      :items="filterLesson" item-value="id"
+            <v-select v-model="transactionForm.lesson_id" :items="filterLesson" item-value="id"
                       :item-title="getItemTitle" label="Lessons" variant="solo" density="comfortable">
                 <template v-slot:item="{ props, item }">
                     <v-list-item v-bind="props">
@@ -124,7 +123,7 @@ const initPaypalPayment = () => {
                         })
                     },
                     onApprove: (data) => {
-                      props.approuveOrder( {...data, ...transactionForm.value} )
+                        props.approuveOrder({...data, ...transactionForm.value})
 
                     }
                 } as PayPalButtonsComponentOptions).render('#paypal-button-container');

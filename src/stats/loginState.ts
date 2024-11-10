@@ -5,7 +5,8 @@ import axios from "axios";
 import {ref, type Ref} from "vue";
 import type {StudentType} from "@/stats/studentState";
 interface LoginData {
-    email: string;
+    email?: string;
+    username?: string;
     password: string;
     accountType: string;
 }
@@ -39,6 +40,7 @@ export const loginState = createGlobalState(() => {
                 window.location.href ="/dashboard"
             })
             .catch((error) => {
+                console.log(error)
                 loginError.value = error.response.data.message;
                 throw error;
             });

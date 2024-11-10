@@ -147,8 +147,6 @@
                     </v-card>
                 </v-col>
             </v-row>
-
-
         </v-col>
     </v-row>
     <v-dialog v-model="calDialog" width="auto">
@@ -233,7 +231,6 @@
                         Three
                     </v-tabs-window-item>
                 </v-tabs-window>
-
             </v-card-text>
         </v-card>
     </v-dialog>
@@ -321,7 +318,9 @@ const renderEvent = () => {
                     status: instance.status,
                     start: instance.start
                 },
-                // color: instance.status === 'scheduled' ? '#0b6ab9' : instance.status === 'in_progress' ? 'yellow' : instance.status === 'completed' ? 'green' : 'red',
+
+//              color: instance.status === 'scheduled' ? '#0b6ab9' : instance.status === 'in_progress' ? 'yellow' : instance.status === 'completed' ? 'green' : 'red',
+
                 color: lessonInstanceStatus[instance.status].color,
             }
         })

@@ -7,26 +7,25 @@
             Transaction List
         </template>
         <template #append>
-            <div class="_flex _items-center _gap-2" >
-                            <v-text-field v-model="search" density="compact" label="Search" prepend-inner-icon="fa-thin fa-search"
-                                          variant="solo-filled" flat hide-details single-line min-width="300">
-                            </v-text-field>
-
+            <div class="_flex _items-center _gap-2">
+                <v-text-field v-model="search" density="compact" label="Search" prepend-inner-icon="fa-thin fa-search"
+                              variant="solo-filled" flat hide-details single-line min-width="300">
+                </v-text-field>
             </div>
         </template>
 
-<!--        <v-card-title class="d-flex align-center pe-2">-->
-<!--            <div class="_flex _gap-2 _items-center">-->
-<!--                <CreateTransactionDialog/>-->
-<!--                <p>-->
-<!--                    Transaction List-->
-<!--                </p>-->
-<!--            </div>-->
-<!--            <v-spacer></v-spacer>-->
-<!--            <v-text-field v-model="search" density="compact" label="Search" prepend-inner-icon="fa-thin fa-search"-->
-<!--                          variant="solo-filled" flat hide-details single-line>-->
-<!--            </v-text-field>-->
-<!--        </v-card-title>-->
+        <!--        <v-card-title class="d-flex align-center pe-2">-->
+        <!--            <div class="_flex _gap-2 _items-center">-->
+        <!--                <CreateTransactionDialog/>-->
+        <!--                <p>-->
+        <!--                    Transaction List-->
+        <!--                </p>-->
+        <!--            </div>-->
+        <!--            <v-spacer></v-spacer>-->
+        <!--            <v-text-field v-model="search" density="compact" label="Search" prepend-inner-icon="fa-thin fa-search"-->
+        <!--                          variant="solo-filled" flat hide-details single-line>-->
+        <!--            </v-text-field>-->
+        <!--        </v-card-title>-->
 
         <v-divider class="border-opacity-75"></v-divider>
         <v-card-text class="_flex-1">

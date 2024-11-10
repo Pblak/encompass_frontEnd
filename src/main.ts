@@ -21,9 +21,8 @@ import validationRules from "@/plugins/validation/validationRules";
 import canGoToPlugin from './plugins/canGoTo';
 import isRole from '@/plugins/roles';
 
-// @ts-ignore
+
 const VITE_APP_PUSHER_APP_KEY = import.meta.env.VITE_APP_PUSHER_APP_KEY
-// @ts-ignore
 const VITE_APP_PUSHER_APP_CLUSTER = import.meta.env.VITE_APP_PUSHER_APP_CLUSTER
 
 

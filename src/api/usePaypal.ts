@@ -23,7 +23,6 @@ export function usePaypal(){
         return q
     }
 
-
     return {
         useCreatePaypalOrder,
         useCapturePaypalOrder,
