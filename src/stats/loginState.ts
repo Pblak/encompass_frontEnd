@@ -12,7 +12,9 @@ interface LoginData {
 }
 
 interface UserModel extends StudentType{
+
     [key: string]: any
+    accountType?: string;
 }
 
 export const loginState = createGlobalState(() => {
@@ -37,6 +39,7 @@ export const loginState = createGlobalState(() => {
                 isLogin.value = true;
                 userLogin.value = response.data.user;
                 loginToken.value = response.data.token;
+
                 window.location.href ="/dashboard"
             })
             .catch((error) => {

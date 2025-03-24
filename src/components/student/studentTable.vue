@@ -12,7 +12,11 @@
                 </template>
             </tr>
         </template>
-
+        <template v-slot:item.infos.avatar="{value }">
+            <v-avatar size="40">
+                <v-img :src="APP_URL+value" alt="avatar"></v-img>
+            </v-avatar>
+        </template>
         <template #item.created_at="{ value }">
             <p>
                 <v-tooltip activator="parent" location="top">{{
@@ -76,12 +80,14 @@ const toggleDeleteDialog = ref(false)
 const selectedDeleteStudent = ref<StudentType>()
 const {useDeleteStudent} = useStudent()
 const search = ref("")
+const APP_URL = import.meta.env.VITE_APP_URL;
 const {
     execute: exeDeleteStudent,
     onResultSuccess: onResultSuccessDeleteStudent
 } = useDeleteStudent()
 const headers = [
     // {text: 'ID', key: 'id'},
+    {text: '', key: 'infos.avatar'},
     {text: 'Full Name', key: 'name'},
     {text: 'Email', key: 'email'},
     {text: 'Phones', key: 'infos'},

@@ -7,6 +7,8 @@ import {useEventBus} from "@vueuse/core";
 // import {isRole} from "@/stats/Utils";
 
 type PushDataType = (data: { validate: boolean, data: StudentType }) => void;
+
+
 const props = defineProps<{
     selectedStudent: StudentType
     eventForValidate: string,
@@ -15,22 +17,24 @@ const props = defineProps<{
 
 const {on} = useEventBus(props.eventForValidate as unknown as string);
 // const {ParentList} = parentState();
-const studentForm =  props.selectedStudent;
-
+const APP_URL = import.meta.env.VITE_APP_URL;
+const studentForm = props.selectedStudent;
+const imageAvatar: string = APP_URL + studentForm.infos.avatar
 const ElForm = ref<any>(null);
 const validateForm = async () => {
     const {valid} = await ElForm.value.validate()
-    console.log('aeaze valid', valid)
-    if (!valid) return;
+    console.log(studentForm)
+    if(!valid) return;
     props.pushData({
         validate: valid,
-        data: {...studentForm}
+        data: {
+            ...studentForm,
+        }
     });
 
 };
 onMounted(() => {
     on(() => {
-        console.log('aeaze' )
         validateForm();
     });
 })
@@ -38,6 +42,28 @@ onMounted(() => {
 </script>
 <template>
     <v-form ref="ElForm" class="_flex _flex-col _gap-4" @submit.prevent="validateForm">
+        <div class="_flex _flex-col _gap-4">
+
+            <div class="_flex _justify-center">
+                <v-avatar size="170">
+                    <v-img alt="John" :src="imageAvatar"></v-img>
+                </v-avatar>
+            </div>
+            <v-file-input v-model="studentForm.infos.avatar as File"
+                          density="comfortable"
+                          label="Select your image"
+                          placeholder="Select your image"
+                          prepend-icon="" show-size
+                          variant="solo">
+                <template v-slot:selection="{ fileNames }">
+                    <template v-for="fileName in fileNames" :key="fileName">
+                        <v-chip class="me-2" color="primary" label size="small">
+                            {{ fileName }}
+                        </v-chip>
+                    </template>
+                </template>
+            </v-file-input>
+        </div>
         <div class="_flex _flex-wrap _gap-4">
             <v-text-field v-model="studentForm.first_name"
                           :rules="$rules('required', 'First Name')"
@@ -55,13 +81,13 @@ onMounted(() => {
                           :rules="$rules('required', 'username')"
                           density="comfortable" label="Username" variant="solo"></v-text-field>
         </div>
-<!--        <v-select v-model="studentForm.parent_id" v-if="isRole('admin')"-->
-<!--                  :items="ParentList.map((item: any) => {return {name:item.name, id:item.id}})"-->
-<!--                  :rules="$rules('required', 'Parent')"-->
-<!--                  chips variant="solo"-->
-<!--                  clearable density="comfortable" class="!_flex-1" item-title="name" item-value="id"-->
-<!--                  label="Parent">-->
-<!--        </v-select>-->
+        <!--        <v-select v-model="studentForm.parent_id" v-if="isRole('admin')"-->
+        <!--                  :items="ParentList.map((item: any) => {return {name:item.name, id:item.id}})"-->
+        <!--                  :rules="$rules('required', 'Parent')"-->
+        <!--                  chips variant="solo"-->
+        <!--                  clearable density="comfortable" class="!_flex-1" item-title="name" item-value="id"-->
+        <!--                  label="Parent">-->
+        <!--        </v-select>-->
 
         <div class="_flex _flex-wrap _gap-4">
 
@@ -70,12 +96,12 @@ onMounted(() => {
                           class="!_flex-1"
                           density="comfortable" label="Email" variant="solo"></v-text-field>
 
-<!--            <v-text-field v-model="studentForm.password"-->
-<!--                          :rules="$rules('required|min:6', 'Password')"-->
-<!--                          class="!_flex-1"-->
-<!--                          density="comfortable"-->
-<!--                          label="Password" type="password" variant="solo"-->
-<!--            ></v-text-field>-->
+            <!--            <v-text-field v-model="studentForm.password"-->
+            <!--                          :rules="$rules('required|min:6', 'Password')"-->
+            <!--                          class="!_flex-1"-->
+            <!--                          density="comfortable"-->
+            <!--                          label="Password" type="password" variant="solo"-->
+            <!--            ></v-text-field>-->
         </div>
         <div class="_flex _flex-wrap _gap-4">
 

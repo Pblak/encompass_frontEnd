@@ -1,20 +1,31 @@
-import {useApi} from "./useApi";
+import {headers, useApi} from "./useApi";
 
 
-export function useParent(){
-
-    const  useCreateParent = ()=> {
+export function useParent() {
+    
+    const useCreateParent = () => {
+        
         const q = useApi(
             "/createParent",
             {
                 method: "POST",
-            },{
-                immediate:false,
+            }, {
+                immediate: false,
             });
-        return q
+        const execute = ({data}: any) => {
+            headers['Content-Type'] = 'multipart/form-data';
+            return q.execute({
+                data,
+                headers: headers
+            });
+        }
+        return {
+            ...q,
+            execute,
+        }
     }
-
-    const useGetParents = ()=> {
+    
+    const useGetParents = () => {
         return useApi(
             "/getParents",
             {
@@ -23,28 +34,48 @@ export function useParent(){
                 immediate: true,
             })
     }
-
-    const useGetParent = ()=> {
-        return useApi(
-            "/getParent",
+    
+    const useGetParent = () => {
+        const q = useApi(
+            "/getParent/:id",
             {
                 method: "GET",
             }, {
                 immediate: false,
             })
+        const execute = ({params}: any) => {
+            return q.execute({
+                params,
+            });
+        }
+        return {
+            ...q,
+            execute,
+        }
     }
-
-    const useUpdateParent = ()=> {
-        return useApi(
+    
+    const useUpdateParent = () => {
+        const q = useApi(
             "/updateParent",
             {
                 method: "post",
             }, {
                 immediate: false,
             })
+        const execute = ({data}: any) => {
+            headers['Content-Type'] = 'multipart/form-data';
+            return q.execute({
+                data,
+                headers: headers
+            });
+        }
+        return {
+            ...q,
+            execute,
+        }
     }
-
-    const useDeleteParent =()=>{
+    
+    const useDeleteParent = () => {
         return useApi(
             "/deleteParent",
             {
@@ -53,7 +84,7 @@ export function useParent(){
                 immediate: false,
             })
     }
-
+    
     return {
         useCreateParent,
         useGetParents,
@@ -70,7 +101,7 @@ export function useParent(){
  * @constructor
  */
 const {useGetParents} = useParent();
- const {
+const {
     execute: exeGlobalGetParents,
     onResultSuccess: onSucGlobalGetParents,
 } = useGetParents()

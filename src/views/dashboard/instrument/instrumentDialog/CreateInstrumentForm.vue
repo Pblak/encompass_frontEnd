@@ -42,12 +42,13 @@
 </template>
 <script lang="ts" setup>
 import type {InstrumentType} from "@/stats/instrumentState";
-import {packageState} from "@/stats/packageState";
+import type {PackageType } from "@/stats/packageState";
+import {packageState } from "@/stats/packageState";
 import {onMounted, ref} from "vue";
 import {useEventBus} from "@vueuse/core";
 
 type PushDataType = (data: { validate: boolean, data: InstrumentType }) => void;
-const {PackageList} = packageState();
+const {PackageList } = packageState();
 
 const props = defineProps<{
   eventForValidate: string, pushData: PushDataType;
@@ -77,8 +78,9 @@ const addPlan = (val) => {
     }
   })
   val.forEach((item) => {
-    let packageItem = PackageList.value.find((i) => i.id === item)
-    if (!InstrumentForm.value.plans.find((i) => i.id === packageItem.id)) {
+    let packageItem = PackageList.value.find((i ) => i.id === item)
+
+    if (!InstrumentForm.value.plans.find((i) => i.id === packageItem!.id)  ) {
       InstrumentForm.value.plans.push({
         id: packageItem.id,
         name: packageItem.name,

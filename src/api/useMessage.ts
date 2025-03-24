@@ -1,55 +1,82 @@
 import {useApi} from "./useApi";
 
+
 export function useMessage(){
 
+    const  searchUserForChat = ()=> {
+        return useApi(
+            "/searchUserForChat",
+            {
+                method: "POST",
+            }, {
+                immediate: false,
+            })
+    }
     const  useCreateMessage = ()=> {
-        const q = useApi(
+        return useApi(
             "/createMessage",
             {
                 method: "POST",
-            },{
-                immediate:false,
-            });
-        return q
+            }, {
+                immediate: false,
+            })
+    }
+    const useGetChatUsers = ()=> {
+        return useApi(
+            "/getChatUsers",
+            {
+                method: "POST",
+            }, {
+                immediate: false,
+            })
+    }
+    const getConversation = ()=> {
+        return useApi(
+            "/getConversation",
+            {
+                method: "POST",
+            }, {
+                immediate: false,
+            })
     }
 
     const useGetMessages = ()=> {
-        const q = useApi(
+        return useApi(
             "/getMessages",
             {
                 method: "GET",
-            },{
-                immediate:true,
-            });
-        return q
+            }, {
+                immediate: true,
+            })
     }
 
     const useGetMessage = ()=> {
-        const q = useApi(
+        return useApi(
             "/getMessage",
             {
                 method: "GET",
-            },{
-                immediate:false,
-            });
-        return q
+            }, {
+                immediate: false,
+            })
     }
 
     const useUpdateMessage = ()=> {
-        const q = useApi(
+        return useApi(
             "/updateMessage",
             {
                 method: "PUT",
-            },{
-                immediate:false,
-            });
-        return q
+            }, {
+                immediate: false,
+            })
     }
 
     return {
+        getConversation,
+        searchUserForChat,
         useCreateMessage,
         useGetMessages,
         useGetMessage,
         useUpdateMessage,
+        useGetChatUsers
     }
 }

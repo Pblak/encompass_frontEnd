@@ -51,6 +51,11 @@
 
             <!--   body   -->
 
+            <template v-slot:item.infos.avatar="{value }">
+                <v-avatar size="40">
+                    <v-img :src="APP_URL+value" alt="avatar"></v-img>
+                </v-avatar>
+            </template>
             <template v-slot:item.infos="{value }">
                 <div class="_flex _flex-col _gap-1 _text-xs" v-if="value">
                     <div class="_whitespace-nowrap">{{ value.phone1 }}</div>
@@ -73,10 +78,12 @@
             <template v-slot:item.actions="{ item }">
                 <div class="_flex _gap-3 ">
                     <!--                    <v-btn size="small" icon="fa-thin fa-edit _text-sm" elevation="0"></v-btn>-->
-                    <UpdateParentDialog
-                        :parent-selected="item"/>
-                    <v-btn elevation="0" icon="fa-thin fa-trash _text-sm" v-if="item.deleted_at == null"
-                           @click="openDeleteDialog(item)" color="red" variant="tonal" size="small"></v-btn>
+<!--                    <UpdateParentDialog  :parent-selected="item"/>-->
+                    <v-btn color="primary" size="small" icon="fa-thin fa-arrow-up-right-from-square"
+                           :to='{name:"ParentDetails",params:{parent_id:item.id}}' variant="tonal">
+                    </v-btn>
+<!--                    <v-btn elevation="0" icon="fa-thin fa-trash _text-sm" v-if="item.deleted_at == null"-->
+<!--                           @click="openDeleteDialog(item)" color="red" variant="tonal" size="small"></v-btn>-->
                 </div>
             </template>
         </v-data-table>
@@ -116,7 +123,9 @@ const search = ref("")
 const {ParentList, withTrashParent} = parentState();
 const toggleDeleteDialog = ref(false)
 const selectedDeleteParent = ref<ParentType>()
+const APP_URL = import.meta.env.VITE_APP_URL;
 const headers = [
+    {text: '', key: 'infos.avatar'},
     {text: 'Name', key: 'name'},
     {text: 'Email', key: 'email'},
     {text: 'Phones', key: 'infos'},

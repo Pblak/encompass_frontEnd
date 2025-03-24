@@ -6,6 +6,7 @@ import {useEventBus} from "@vueuse/core";
 import {loginState} from "@/stats/loginState";
 import {isRole} from "@/stats/Utils";
 
+
 type PushDataType = (data: { validate: boolean, data: StudentType }) => void;
 const props = defineProps<{
     eventForValidate: string,
@@ -14,14 +15,32 @@ const props = defineProps<{
 const {userLogin} = loginState
 const {on} = useEventBus(props.eventForValidate as unknown as string);
 const {ParentList} = parentState();
-const studentForm = ref<StudentType>(<StudentType>{})
+const studentForm = ref({
+    id: null,
+    first_name: "",
+    last_name: "",
+    username: "",
+    email: "",
+    parent_id: "",
+    password: "",
+    infos: {
+        phone1: "",
+        address: {
+            street: "",
+            city: "",
+            zip: "",
+            state: "",
+        },
+        gender: "male",
+    },
+} as StudentType)
 
 
 const ElForm = ref<any>(null);
 const validateForm = async () => {
     const {valid} = await ElForm.value.validate()
     console.log('aeaze', valid)
-    if (!valid) return;
+    if(!valid) return;
     props.pushData({
         validate: valid,
         data: {...studentForm.value}
@@ -30,7 +49,7 @@ const validateForm = async () => {
 };
 onMounted(() => {
     on(() => {
-        console.log('aeaze' )
+        console.log('aeaze')
         validateForm();
     });
 })

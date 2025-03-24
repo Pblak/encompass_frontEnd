@@ -1,4 +1,4 @@
-import {useApi} from "./useApi";
+import {headers, useApi} from "./useApi";
 
 
 export function useStudent(){
@@ -37,13 +37,24 @@ export function useStudent(){
     }
 
     const useUpdateStudent = ()=> {
-        return useApi(
+        const q= useApi(
             "/updateStudent",
             {
                 method: "POST",
             }, {
                 immediate: false,
             })
+        const execute = ({data}: any) => {
+            headers['Content-Type'] = 'multipart/form-data';
+            return q.execute({
+                data,
+                headers: headers
+            });
+        }
+        return {
+            ...q,
+            execute,
+        }
     }
     const useDeleteStudent=()=>{
         return useApi(

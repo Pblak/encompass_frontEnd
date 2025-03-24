@@ -1,5 +1,26 @@
 <template>
     <v-form ref="ElForm" class="_flex _flex-col _gap-4" @submit.prevent="validateForm">
+        <div class="_flex _flex-col _gap-4">
+            <div class="_flex _justify-center">
+                <v-avatar size="170">
+                    <v-img alt="John" :src="imageAvatar" ></v-img>
+                </v-avatar>
+            </div>
+            <v-file-input v-model="parentForm.infos.avatar as File"
+                          density="comfortable"
+                          label="Select your image"
+                          placeholder="Select your image"
+                          prepend-icon="" show-size
+                          variant="solo" >
+                <template v-slot:selection="{ fileNames }">
+                    <template v-for="fileName in fileNames" :key="fileName">
+                        <v-chip class="me-2" color="primary" label size="small">
+                            {{ fileName }}
+                        </v-chip>
+                    </template>
+                </template>
+            </v-file-input>
+        </div>
         <div class="_flex _flex-wrap _gap-4">
             <v-text-field v-model="parentForm.first_name" :rules="$rules('required', 'First Name')"
                           density="comfortable" label="First Name" class="!_flex-1" variant="solo"
@@ -66,16 +87,26 @@ const props = defineProps<{
     parentSelected: ParentType,
     pushData: PushDataType;
 }>();
+
 const {on} = useEventBus(props.eventForValidate as unknown as string);
 const parentForm = props.parentSelected
-
+const APP_URL = import.meta.env.VITE_APP_URL;
 const ElForm = ref<any>(null);
+const imageAvatar:string = APP_URL+parentForm.infos.avatar
 const validateForm = async () => {
     const {valid} = await ElForm.value.validate()
+    console.log(parentForm)
     if(!valid) return;
     props.pushData({
         validate: valid,
-        data: {...parentForm}
+        data: {
+            id: parentForm.id,
+            first_name: parentForm.first_name,
+            last_name: parentForm.last_name,
+            email: parentForm.email,
+            infos: parentForm.infos,
+            // avatar: parentForm.infos.avatar
+        }
     });
 
 };

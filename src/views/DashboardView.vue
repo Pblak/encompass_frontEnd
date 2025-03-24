@@ -1,7 +1,9 @@
 <template>
     <v-app v-if="dataLoaded">
-        <v-navigation-drawer :rail="rail" color="grey-lighten-3" expand-on-hover v-if="userLogin"
-                             permanent update:rail="()=>drawer" @click="rail = false">
+        <v-navigation-drawer :rail="rail" color="grey-lighten-3"
+                             expand-on-hover v-if="userLogin"
+                             permanent update:rail="()=>drawer"
+                             @click="rail = false">
             <v-list color="blue">
                 <v-list-item prepend-avatar="https://randomuser.me/api/portraits/women/85.jpg">
                     <template v-slot:append>
@@ -10,18 +12,19 @@
                         </v-btn>
                     </template>
                     <v-list-item-title>
-                        <div class="_flex _gap-2">
-                            <b>
-                                {{ userLogin.name }}
-                            </b>
-                            <p class="_text-gray-500">
-                                {{ userLogin.accountType }}
-                            </p>
-                        </div>
+
+                        {{ userLogin.name }}
+
                     </v-list-item-title>
                     <v-list-item-subtitle>
-                        <!--                        {{userLogin.accountType}}-->
-                        {{ userLogin.email }}
+
+                            <span>
+                                 {{ userLogin.email }}
+                            </span>
+                        <span class="_text-gray-500">
+                                {{ userLogin.accountType === "web" ? "Admin" : userLogin.accountType }}
+                            </span>
+
                     </v-list-item-subtitle>
                 </v-list-item>
             </v-list>
@@ -109,6 +112,7 @@ import {lessonState} from "@/stats/lessonState";
 import {roomState} from "@/stats/roomState";
 import {transactionState} from "@/stats/transactionState";
 
+
 const {InstrumentList} = instrumentState();
 const {PackageList} = packageState();
 const {TeacherList} = teacherState();
@@ -127,7 +131,7 @@ const dataLoaded = ref(false);
 const loadingProgress = ref(0);
 const rail = ref(false);
 
-if (!isLogin.value) {
+if(!isLogin.value) {
     window.location.href = '/login';
 }
 
@@ -188,13 +192,13 @@ onMounted(async () => {
             })
         );
         dashboardChildren.value = filteredRoutes.filter((route: any) => route !== null);
-    } catch (error) {
+    } catch(error) {
         // throw new Error(error);
     }
 });
 
 dashboardChildren.value = dashboardRoute?.children!.filter((i: RouteRecordRaw) => {
-    if (i.meta) {
+    if(i.meta) {
         return i.meta["sidebar"] !== false
     } else {
         return false
@@ -226,14 +230,14 @@ onSucGlobalGetTransactions((res: any) => {
 })
 onSucGlobalGetLessons((res: any) => {
     LessonList.value = res.data
-        // .map((lesson: any) => {
-        //     if (!lesson.instrument_plan) return 0;
-        //     let total = Object.values(lesson.planning).reduce((acc, val) => {
-        //         return acc + val.length
-        //     }, 0)
-        //     lesson.price = total * parseInt(lesson.instrument_plan?.price) * lesson.frequency
-        //     return lesson
-        // })
+    // .map((lesson: any) => {
+    //     if (!lesson.instrument_plan) return 0;
+    //     let total = Object.values(lesson.planning).reduce((acc, val) => {
+    //         return acc + val.length
+    //     }, 0)
+    //     lesson.price = total * parseInt(lesson.instrument_plan?.price) * lesson.frequency
+    //     return lesson
+    // })
     console.log('LessonList', LessonList.value)
 })
 

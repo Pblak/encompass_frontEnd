@@ -3,7 +3,7 @@ import type {LessonType} from "@/stats/lessonState";
 import {type Ref, ref, watch} from "vue";
 
 export interface StudentType {
-    id: number;
+    id: number | null;
     first_name: string;
     last_name: string;
     username:string;
@@ -19,6 +19,7 @@ export interface StudentType {
 }
 
 interface Infos {
+    avatar?: File | string
     username: string;
     phone1: string;
     phone2?: string;

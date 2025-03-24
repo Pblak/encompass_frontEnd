@@ -2,6 +2,7 @@ import {toast} from "vue3-toastify";
 import {attemptAccess} from "@/router/middleware/core/accessRouteChack";
 import router from '@/router';
 import type {_RouteRecordBase, RouteLocationNormalized} from "vue-router";
+import {watch, WatchSource} from "vue";
 export interface GenderType {
     male: "male";
     female: "female";
@@ -65,3 +66,16 @@ export const isRole = (roles: string | string[]): boolean =>{
     // Check if the user's role is in the allowedRoles array
     return allowedRoles.includes(user.accountType);
 }
+export const  watchDebounced = (
+    sources: WatchSource | WatchSource[],
+    callback: (...args: any[]) => void,
+    delay: number
+)=>{
+    let timeout: ReturnType<typeof setTimeout>;
+    
+    watch(sources, (...args) => {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => callback(...args), delay);
+    });
+}
+

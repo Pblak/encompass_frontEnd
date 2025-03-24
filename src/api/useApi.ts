@@ -21,6 +21,7 @@ export interface APIError {
 
 type ApiResult<T> = { response: T } | { error: APIError };
 
+// this can be deleted
 export interface ACKResponse {
     done: boolean;
 }
@@ -70,7 +71,7 @@ export function useApi<T>(
         initialData: undefined,
     }
 ) {
-
+  
     const query = useAxios<ApiResult<T>>(path, config, apiInstance, options);
 
     const onResultSuccess = createEventHook<T>();

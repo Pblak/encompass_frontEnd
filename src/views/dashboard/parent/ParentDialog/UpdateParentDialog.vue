@@ -1,7 +1,10 @@
 <template>
   <v-tooltip text="Update parent" location="bottom">
     <template v-slot:activator="{ props }">
-      <v-btn v-bind="props" color="primary"  density="comfortable" icon="fa fa-edit !_text-sm" @click="toggleDialog = true"> </v-btn>
+      <v-btn v-bind="props" color="primary"
+             density="comfortable"
+             icon="fa fa-edit !_text-sm"
+             @click="toggleDialog = true"> </v-btn>
     </template>
   </v-tooltip>
   <v-dialog v-model="toggleDialog" scrollable width="auto">

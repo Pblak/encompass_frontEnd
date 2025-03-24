@@ -48,7 +48,7 @@ const attemptSave = (res) => {
     data: res.data
   });
 }
-onSuccessUpdateStudent(() => {
+onSuccessUpdateStudent((res) => {
   toggleDialog.value = false;
   exeGlobalGetStudents();
 })

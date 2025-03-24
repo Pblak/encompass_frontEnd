@@ -6,9 +6,9 @@
                 <v-card-text>
                     <div class="_flex justify-center _w-full">
                         <v-chip-group class="" v-model="accountType" selected-class="text-green">
-                            <v-chip label value="student">Student</v-chip>
-                            <v-chip label value="parent">Parent</v-chip>
-                            <v-chip label value="teacher">Teacher</v-chip>
+                            <v-chip label value="students">Student</v-chip>
+                            <v-chip label value="parents">Parent</v-chip>
+                            <v-chip label value="teachers">Teacher</v-chip>
                         </v-chip-group>
                     </div>
                     <div class="_py-2">

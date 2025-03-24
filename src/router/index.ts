@@ -1,26 +1,32 @@
 import {
     createRouter,
     createWebHistory,
-    // type  NavigationGuardNext,
     type RouteLocationNormalized,
     type RouteRecordRaw
 } from 'vue-router'
 import HomeView from '@/views/HomeView.vue'
 import Login from '@/views/LoginView.vue'
-import {teacherState} from "@/stats/teacherState";
-import {studentState} from "@/stats/studentState";
 import middlewareRegistry from '../../src/router/middleware/core/middlewareRegistry'
 import {middlewarePipeline, parseMiddleware} from '@/router/middleware/core/middlewarePipeline';
+import {apiInstance} from "@/api/useApi";
 
-const {StudentList} = studentState()
-const {TeacherList} = teacherState()
 
 const routes: Array<RouteRecordRaw> = [
     {
         path: '/',
         name: 'home',
         component: HomeView,
+        redirect: {name: 'landing'},
         children: [
+            {
+                path: '/',
+                name: 'landing',
+                meta: {
+                    __name: 'landing',
+                    __auth: false
+                },
+                component: () => import('@/views/LandingPage.vue'),
+            },
             {
                 path: '/login',
                 name: 'login',
@@ -82,7 +88,7 @@ const routes: Array<RouteRecordRaw> = [
                     __name: 'Lesson',
                     __auth: true,
                     icon: 'fa-thin fa-book-open',
-                    middleware: ['auth:web|parent']
+                    middleware: ['auth:users|parent']
                 },
                 redirect: {name: 'LessonsList'},
                 children: [
@@ -94,7 +100,7 @@ const routes: Array<RouteRecordRaw> = [
                             __auth: true,
                         },
                         components: {
-                            dashboard:() => import('../views/dashboard/lesson/createLessons.vue')
+                            dashboard: () => import('../views/dashboard/lesson/createLessons.vue')
                         },
                     },
                     {
@@ -131,7 +137,7 @@ const routes: Array<RouteRecordRaw> = [
                     __name: 'teacher',
                     __auth: true,
                     icon: 'fa-thin fa-chalkboard-user',
-                    middleware: ['auth:web']
+                    middleware: ['auth:users']
                 },
                 components: {
                     dashboard: () => import('@/views/dashboard/TeacherView.vue')
@@ -151,16 +157,16 @@ const routes: Array<RouteRecordRaw> = [
                 },
                 beforeEnter: (to, from, next) => {
                     const teacher_id = to.params.teacher_id
-                    if (TeacherList.value.length === 0) {
-                        next('/dashboard/teacher')
-                    } else {
-                        const teacher = TeacherList.value.find((teacher: any) => teacher.id === parseInt(teacher_id as string))
-                        if (teacher === undefined) {
-                            next('/dashboard/teacher')
-                        } else {
+                    apiInstance.get(`/getTeacher/${teacher_id}`).then((response) => {
+                        if (response.data.id === parseInt(teacher_id as string)) {
                             next()
+                        } else {
+                            next('/dashboard/teacher')
                         }
-                    }
+                    }).catch((error) => {
+                        console.error('/dashboard/teacher', error)
+                        next('/dashboard/teacher')
+                    })
                 }
             },
             {
@@ -170,7 +176,7 @@ const routes: Array<RouteRecordRaw> = [
                     __name: 'student',
                     __auth: true,
                     icon: 'fa-thin fa-children',
-                    middleware: ['auth:web|parent']
+                    middleware: ['auth:users|parent']
                 },
                 components: {
                     dashboard: () => import('@/views/dashboard/StudentView.vue')
@@ -190,16 +196,16 @@ const routes: Array<RouteRecordRaw> = [
                 },
                 beforeEnter: (to, from, next) => {
                     const student_id = to.params.student_id
-                    if (StudentList.value.length === 0) {
-                        next('/dashboard/student')
-                    } else {
-                        const student = StudentList.value.find((student: any) => student.id === parseInt(student_id as string))
-                        if (student === undefined) {
-                            next('/dashboard/student')
-                        } else {
+                    apiInstance.get(`/getStudent/${student_id}`).then((response) => {
+                        if (response.data.id === parseInt(student_id as string)) {
                             next()
+                        } else {
+                            next('/dashboard/student')
                         }
-                    }
+                    }).catch((error) => {
+                        console.error('/dashboard/student', error)
+                        next('/dashboard/student')
+                    })
 
                 }
             },
@@ -210,13 +216,41 @@ const routes: Array<RouteRecordRaw> = [
                     __name: 'parent',
                     __auth: true,
                     icon: 'fa-thin fa-person-breastfeeding',
-                    middleware: ['auth:web']
+                    middleware: ['auth:users']
                 },
                 components: {
                     dashboard: () => import('@/views/dashboard/ParentView.vue')
                 }
             },
-
+            // ParentDetails
+            {
+                path: '/dashboard/parent/:parent_id',
+                name: 'ParentDetails',
+                meta: {
+                    __name: 'parent',
+                    __auth: true,
+                    sidebar: false,
+                    icon: 'fa-thin fa-children',
+                },
+                components: {
+                    dashboard: () => import('@/views/dashboard/parent/ParentDetails.vue')
+                },
+                beforeEnter: (to
+                    , from
+                    , next) => {
+                    const parent_id = to.params.parent_id
+                    apiInstance.get(`/getParent/${parent_id}`).then((response) => {
+                        if (response.data.id === parseInt(parent_id as string)) {
+                            next()
+                        } else {
+                            next('/dashboard/parent')
+                        }
+                    }).catch((error) => {
+                        console.error('/dashboard/parent', error)
+                        next('/dashboard/parent')
+                    })
+                }
+            },
             {
                 path: '/dashboard/instrument',
                 name: 'instrument',
@@ -224,7 +258,7 @@ const routes: Array<RouteRecordRaw> = [
                     __name: 'instrument & Package',
                     __auth: true,
                     icon: 'fa-thin fa-guitar',
-                    middleware: ['auth:web']
+                    middleware: ['auth:users']
                 },
                 children: [
                     {
@@ -233,7 +267,7 @@ const routes: Array<RouteRecordRaw> = [
                         meta: {
                             __name: 'instrument',
                             __auth: true,
-                            middleware: ['auth:web']
+                            middleware: ['auth:users']
                         },
                         components: {
                             dashboard: () => import('../views/dashboard/InstrumentView.vue')
@@ -245,7 +279,7 @@ const routes: Array<RouteRecordRaw> = [
                         meta: {
                             __name: 'Package',
                             __auth: true,
-                            middleware: ['auth:web']
+                            middleware: ['auth:users']
                         },
                         components: {
                             dashboard: () => import('../views/dashboard/PackageView.vue')

@@ -71,7 +71,6 @@ const parentForm = ref<ParentType>({
   last_name: "",
   email: "",
   password: "",
-  parent_id: 0,
   infos: {
     phone1: "",
     address: {

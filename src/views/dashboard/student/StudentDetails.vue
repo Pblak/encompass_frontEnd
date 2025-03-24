@@ -15,13 +15,10 @@
                 </div>
             </template>
             <v-list-item>
+
                 <template v-slot:prepend>
                     <v-avatar color="primary" size="55">
-                        <span class="_text-3xl">{{ Student.name[0] + Student.name[1] }}</span>
-                        <!--                  <v-img
-                                            alt="John"
-                                            src="https://cdn.vuetifyjs.com/images/john.jpg"
-                                          ></v-img>-->
+                        <v-img alt="John" :src="APP_URL+Student.infos.avatar" ></v-img>
                     </v-avatar>
                 </template>
 
