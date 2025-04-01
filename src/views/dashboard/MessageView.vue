@@ -95,23 +95,23 @@
                 <div class="_flex _flex-col _gap-0.5 _items-end justify-center">
                   <template v-for="(message , j) in userBlockMessages" :key="j">
                     <div class="_bg-blue-500 _text-white _relative
-                                                  _rounded-[5px]
-                                                  first:!_rounded-t-[20px]
-                                                  last:!_rounded-b-[20px]
-                                                  _rounded-l-[20px]
-                                                  _p-2 _px-4 _w-max">
+                        _rounded-[5px]
+                        first:!_rounded-t-[20px]
+                        last:!_rounded-b-[20px]
+                        _rounded-l-[20px]
+                        _p-2 _px-4 _w-max">
                       {{ message.content }}
                       <template v-if="lastMessageRead === message.id">
-                       <div class="_absolute _top-[calc(50%-10px)] _-right-6">
-                         <v-avatar class="_opacity-80" :image="APP_URL+chattingWith?.avatar"
-                                   size="20" v-if="chattingWith?.avatar">
-                         </v-avatar>
-                         <v-avatar v-else class="_opacity-80 _text-xs" size="20" color="secondary">
+                        <div class="_absolute _top-[calc(50%-10px)] _-right-6">
+                          <v-avatar class="_opacity-80" :image="APP_URL+chattingWith?.avatar"
+                                    size="20" v-if="chattingWith?.avatar">
+                          </v-avatar>
+                          <v-avatar v-else class="_opacity-80 _text-xs" size="20" color="secondary">
                             <span>
                                 {{ (chattingWith?.name[0] + chattingWith?.name[1]).toUpperCase() }}
                             </span>
-                         </v-avatar>
-                       </div>
+                          </v-avatar>
+                        </div>
                       </template>
                     </div>
                   </template>

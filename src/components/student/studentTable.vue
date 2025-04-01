@@ -103,7 +103,7 @@ const openDeleteDialog = (student: StudentType) => {
 const deleteStudent = async () => {
     await exeDeleteStudent({
             data: {
-                id: selectedDeleteStudent.value.id
+                id: selectedDeleteStudent.value?.id
             }
         }
     );

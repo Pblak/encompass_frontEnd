@@ -1,49 +1,77 @@
-import {useApi} from "./useApi";
+import {headers, useApi} from "./useApi";
 
-export function useTeacher(){
+export function useTeacher() {
 
-    const  useCreateTeacher = ()=> {
+    const useCreateTeacher = () => {
         const q = useApi(
             "/createTeacher",
             {
                 method: "POST",
-            },{
-                immediate:false,
+            }, {
+                immediate: false,
+            })
+        const execute = ({data}: any) => {
+            headers['Content-Type'] = 'multipart/form-data';
+            return q.execute({
+                data,
+                headers: headers
             });
-        return q
+        }
+        return {
+            ...q,
+            execute,
+        }
     }
 
-    const useGetTeachers = ()=> {
-        const q = useApi(
+    const useGetTeachers = () => {
+        return useApi(
             "/getTeachers",
             {
                 method: "GET",
-            },{
-                immediate:true,
-            });
-        return q
+            }, {
+                immediate: true,
+            })
     }
 
-    const useGetTeacher = ()=> {
-        const q = useApi(
+    const useGetTeacher = () => {
+        return useApi(
             "/getTeacher",
             {
                 method: "GET",
-            },{
-                immediate:false,
-            });
-        return q
+            }, {
+                immediate: false,
+            })
     }
 
-    const useUpdateTeacher = ()=> {
+    const useUpdateTeacher = () => {
         const q = useApi(
             "/updateTeacher",
             {
                 method: "POST",
-            },{
-                immediate:false,
+            }, {
+                immediate: false,
+            })
+        const execute = ({data}: any) => {
+            headers['Content-Type'] = 'multipart/form-data';
+            return q.execute({
+                data,
+                headers: headers
             });
-        return q
+        }
+        return {
+            ...q,
+            execute,
+        }
+
+    }
+    const useDeleteTeacher = () => {
+        return useApi(
+            "/deleteTeacher",
+            {
+                method: "POST",
+            }, {
+                immediate: false,
+            });
     }
 
     return {
@@ -51,8 +79,10 @@ export function useTeacher(){
         useGetTeachers,
         useGetTeacher,
         useUpdateTeacher,
+        useDeleteTeacher
     }
 }
+
 /**
  * the use of the globalUseGetTeachers
  * is when the "execute" is triggered in the component

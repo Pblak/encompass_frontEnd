@@ -6,7 +6,7 @@ export interface TeacherType {
     id: number;
     first_name: string;
     last_name: string;
-    name: string;
+    name?: string;
     email: string;
     password: string;
     parent_id: number;
@@ -29,6 +29,7 @@ interface Infos {
     gender?: 'male' | 'female';
     allergies?: string;
     birthday?: string;
+    avatar?: string;
 }
 export const  teacherState = createGlobalState(() => {
     // const TeacherList = useStorage("TeacherList", [], undefined, {serializer: StorageSerializers.object})

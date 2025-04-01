@@ -143,7 +143,7 @@
 <script lang="ts" setup>
 import {studentState, type StudentType} from "@/stats/studentState";
 import {lessonState, LessonType} from "@/stats/lessonState";
-import {computed, ref} from "vue";
+import {computed, ComputedRef, ref} from "vue";
 import {useRoute} from "vue-router";
 import {toCurrency} from "@/stats/Utils";
 import {useEventBus} from "@vueuse/core";
@@ -151,7 +151,6 @@ import moment from "moment";
 import LessonInstancesTable from "@/components/lesson/lessonInstances/lessonInstancesTable.vue";
 import CreateTransactionDialog from "@/views/dashboard/transaction/createTransaction/CreateTransactionDialog.vue";
 import UpdateStudentDialog from "@/views/dashboard/student/StudentDialog/UpdateStudentDialog.vue";
-
 
 const {emit} = useEventBus('toggle-transaction-dialog-event');
 const route = useRoute();
@@ -162,7 +161,10 @@ const {LessonList} = lessonState();
 const toggleTransactionDialog = ref(false);
 const toggleDialogInstances = ref(false);
 const lessonInstances = ref([]);
-const Student: StudentType | undefined = StudentList.value.find((student: StudentType) => student.id === parseInt(student_id as string))
+
+const Student:ComputedRef<StudentType | undefined> = computed(() => {
+  return StudentList.value.find((student:StudentType) => student.id === parseInt(student_id as string))
+})
 const Lessons = computed<LessonType[]>(() => {
     return LessonList.value.filter((lesson: LessonType) => lesson.student_id === parseInt(student_id as string))
 })

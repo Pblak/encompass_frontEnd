@@ -1,43 +1,43 @@
 import {headers, useApi} from "./useApi";
 
 
-export function useStudent(){
+export function useStudent() {
 
-    const  useCreateStudent = ()=> {
+    const useCreateStudent = () => {
         const q = useApi(
             "/createStudent",
             {
                 method: "POST",
-            },{
-                immediate:false,
+            }, {
+                immediate: false,
             });
         return q
     }
 
-    const useGetStudents = ()=> {
+    const useGetStudents = () => {
         const q = useApi(
             "/getStudents",
             {
                 method: "post",
-            },{
-                immediate:true,
+            }, {
+                immediate: true,
             });
         return q
     }
 
-    const useGetStudent = ()=> {
+    const useGetStudent = () => {
         const q = useApi(
             "/getStudent",
             {
                 method: "GET",
-            },{
-                immediate:false,
+            }, {
+                immediate: false,
             });
         return q
     }
 
-    const useUpdateStudent = ()=> {
-        const q= useApi(
+    const useUpdateStudent = () => {
+        const q = useApi(
             "/updateStudent",
             {
                 method: "POST",
@@ -56,7 +56,7 @@ export function useStudent(){
             execute,
         }
     }
-    const useDeleteStudent=()=>{
+    const useDeleteStudent = () => {
         return useApi(
             "/deleteParent",
             {

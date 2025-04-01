@@ -1,193 +1,215 @@
-<script lang="ts" setup>
-import {teacherState} from "@/stats/teacherState";
-import {instrumentState} from "@/stats/instrumentState";
-import {useTeacher} from "@/api/useTeacher";
-import {useInstrument} from "@/api/useInstrument";
-import {useRoute} from "vue-router";
-import {computed, ref} from "vue";
+<template>
+  <div v-if="Teacher" class="_flex _flex-col _gap-4">
+    <v-card>
+      <template v-slot:title>
+        <template v-if="Teacher">
+          <v-chip color="primary" class="text-capitalize">Teacher</v-chip>
+        </template>
 
+      </template>
+      <template v-slot:append>
+        <div class="_flex _gap-2 _items-center">
+          <UpdateTeacherDialog
+              :selected-teacher="Teacher"/>
+        </div>
+      </template>
+      <v-list-item>
+
+        <template v-slot:prepend>
+          <v-avatar color="primary" size="55">
+            <v-img v-if="Teacher.infos.avatar" alt="John"
+                   :src="APP_URL+Teacher.infos.avatar"></v-img>
+            <span v-else class="_text-2xl">
+                {{ Teacher.name.slice(0, 2) }}
+            </span>
+          </v-avatar>
+        </template>
+
+        <template v-slot:title>{{ Teacher.name }}</template>
+        <template v-slot:subtitle>{{ Teacher.email }}</template>
+      </v-list-item>
+
+      <v-divider></v-divider>
+      <v-card-text>
+
+        <v-row>
+          <v-col cols="6">
+            <p class="text-h6">Phone Numbers</p>
+            <p>{{ Teacher.infos.phone1 }}</p>
+            <p>{{ Teacher.infos.phone2 }}</p>
+          </v-col>
+          <v-col cols="6">
+            <p class="text-h6">Address</p>
+            <p>{{ Teacher.infos.address.street }}</p>
+            <p>{{ Teacher.infos.address.city }}, {{ Teacher.infos.address.state }} {{
+                Teacher.infos.address.zip
+              }}</p>
+          </v-col>
+        </v-row>
+      </v-card-text>
+    </v-card>
+    <v-card>
+      <v-card-title>
+        Lessons
+      </v-card-title>
+      <v-card-text>
+        <v-data-table :headers="headers" :items="Lessons" item-value="name">
+          <template #item.instrument="{item , value}">
+            <v-list>
+              <v-list-item class="!_px-1">
+                <template #prepend>
+                  <v-avatar rounded="sm" size="30">
+                    <v-img :src="APP_URL+value.image" class="_p-2"></v-img>
+                  </v-avatar>
+                </template>
+                <v-list-item-title>
+                  {{ value.name }}
+                </v-list-item-title>
+                <v-list-item-subtitle>
+                  {{ item.instrument_plan.name }}
+                </v-list-item-subtitle>
+              </v-list-item>
+            </v-list>
+          </template>
+
+          <template #item.teacher="{value}">
+            {{ value.name }}
+          </template>
+
+          <template #item.planning="{value}">
+            <div class="overflow-x-auto _max-w-screen-sm">
+              <div class="_flex  _gap-3 _py-2">
+                <template v-for="(schedule, day) in value" :key="day">
+                  <div class="_flex _flex-col _gap-2">
+                    <p class="_font-bold">
+                      {{ moment().day(day).format('dddd') }}
+                    </p>
+                    <div class="_flex _flex-col _gap-2">
+                      <template v-for="(planning) in schedule" :key="planning.id">
+                        <v-chip>
+                          {{ planning.time }}
+                        </v-chip>
+                      </template>
+                    </div>
+                  </div>
+                </template>
+              </div>
+            </div>
+          </template>
+
+
+          <template v-slot:item.price="{ item,value }">
+            <div class="_flex _gap-1">
+              <v-chip class="!_rounded-r-none"
+                      color="primary">{{ toCurrency(value) }}
+              </v-chip>
+              <v-chip class="!_rounded-l-none"
+                      color="success">{{ toCurrency(item.payed_price) }}
+              </v-chip>
+
+            </div>
+          </template>
+          <template v-slot:item.created_at="{ value }">
+            <p>
+              <v-tooltip activator="parent" location="top">
+                {{ moment(value).format('LLLL') }}
+              </v-tooltip>
+              {{ moment(value).format('LLL') }}
+            </p>
+          </template>
+          <template v-slot:item.actions="{ item }">
+            <div class="_flex _gap-3 ">
+              <v-btn elevation="0" icon="fa-thin fa-calendar _text-sm"
+                     size="small" @click="showLessonInstances(item.instances)"></v-btn>
+              <!--              <v-btn elevation="0" icon="fa-brands fa-apple-pay _text-sm"-->
+              <!--                     size="small" @click="showTransactionForm(item)"></v-btn>-->
+            </div>
+          </template>
+
+        </v-data-table>
+
+        <v-dialog v-model="toggleDialogInstances" scrollable width="auto">
+          <v-card prepend-icon="fa-duotone fa-guitar">
+            <template v-slot:title>
+              Lesson Instances
+            </template>
+            <template v-slot:text>
+              <LessonInstancesTable :lesson-instances="lessonInstances"/>
+            </template>
+          </v-card>
+        </v-dialog>
+        <CreateTransactionDialog :disable-toggle-btn="true"
+                                 :toggle-transaction-dialog="toggleTransactionDialog"/>
+      </v-card-text>
+    </v-card>
+  </div>
+</template>
+<script lang="ts" setup>
+import {teacherState, type TeacherType} from "@/stats/teacherState";
+import {lessonState, LessonType} from "@/stats/lessonState";
+import {useLesson} from "@/api/useLesson";
+import {computed, ComputedRef, onMounted, ref} from "vue";
+import {useRoute} from "vue-router";
+import {toCurrency} from "@/stats/Utils";
+import {useEventBus} from "@vueuse/core";
+import moment from "moment";
+import LessonInstancesTable from "@/components/lesson/lessonInstances/lessonInstancesTable.vue";
+import CreateTransactionDialog from "@/views/dashboard/transaction/createTransaction/CreateTransactionDialog.vue";
+import UpdateTeacherDialog from "@/views/dashboard/teacher/TeacherDialog/UpdateTeacherDialog.vue";
+
+
+const {emit} = useEventBus('toggle-transaction-dialog-event');
 const route = useRoute();
 const teacher_id = route.params.teacher_id;
 const APP_URL = import.meta.env.VITE_APP_URL;
-
 const {TeacherList} = teacherState();
-const {InstrumentList} = instrumentState();
-const {useGetTeachers, useUpdateTeacher, useCreateTeacher} = useTeacher();
-const {useGetInstruments, useUpdateInstrument, useCreateInstrument} = useInstrument();
+const {useGetLessons} = useLesson();
 
-const Teacher = TeacherList.value.find((teacher: any) => teacher.id === parseInt(teacher_id as string))
-const searchInstrument = ref("")
+const {
+  execute: exeGetLessons,
+  onResultSuccess: onGetLessonsSuccess
+} = useGetLessons();
+const toggleTransactionDialog = ref(false);
+const toggleDialogInstances = ref(false);
+const lessonInstances = ref([]);
 
-const filterInstruments = computed(() => {
-   return InstrumentList.value.filter((res: any) => {
-      // find the instrument that matches this instrument in teacher's instrument
-      return res.name.includes(searchInstrument.value) && !Teacher.instruments.find((ins: any) => ins.id === res.id)
-   })
+const Teacher: ComputedRef<TeacherType | undefined> = computed(() => {
+  return TeacherList.value.find((teacher: TeacherType) => teacher.id === parseInt(teacher_id as string))
 })
 
-const addInstrumentToTeacher =(item :any)=>{
-   
-   Teacher.instruments.push(item)
-   console.log(Teacher.instruments)
-}
-const canRemoveInstrument = computed(() => {
-   /**
-    * problem for future me
-    */
-   return Teacher.instruments.length > 0
+const LessonList = ref<LessonType[]>([])
+const Lessons = computed<LessonType[]>(() => {
+  return LessonList.value.filter((lesson: LessonType) => lesson.teacher_id === parseInt(teacher_id as string))
 })
-
-const RemoveInstrumentFromTeacher = (item: any) => {
-   console.log(item)
-   Teacher.instruments = Teacher.instruments.filter((res: any) => res.id !== item.id)
+const headers = [
+  {title: 'Instrument', key: 'instrument'},
+  {title: 'Teacher', key: 'teacher'},
+  {title: 'Planning', key: 'planning'},
+  {title: 'Price/Payed price', key: 'price'},
+  {title: 'Created', key: 'created_at'},
+  {title: 'Actions', key: 'actions', sortable: false},
+]
+const showLessonInstances = (instances: any) => {
+  toggleDialogInstances.value = true;
+  lessonInstances.value = instances;
+}
+const showTransactionForm = (lesson: any) => {
+  emit({
+    lesson: {...lesson},
+  })
 }
 
+const editTeacher = () => {
+  console.log('edit teacher')
+}
 
+onMounted(() => {
+  exeGetLessons({
+    subject: "teachers",
+    id: teacher_id
+  })
+})
+onGetLessonsSuccess((res) => {
+  LessonList.value = res.data;
+})
 </script>
-
-<template>
-   <div class="_flex _flex-col _gap-4">
-      <v-card>
-         <v-list-item>
-            <template v-slot:prepend>
-               <v-avatar color="surface-light" size="60">
-                  <v-img
-                    alt="John"
-                    src="https://cdn.vuetifyjs.com/images/john.jpg"
-                  ></v-img>
-               </v-avatar>
-            </template>
-            
-            <template v-slot:title>{{ Teacher.name }}</template>
-            <template v-slot:subtitle>{{ Teacher.email }}</template>
-            
-            <template v-slot:append>
-               <v-btn
-                 class="text-none"
-                 color="primary"
-                 slim
-                 text="Create goal"
-                 variant="text"
-               ></v-btn>
-            </template>
-         </v-list-item>
-         
-         <v-divider></v-divider>
-         
-         <v-card-text>
-            <v-row>
-               <v-col cols="6">
-                  <p class="text-h6">Phone Numbers</p>
-                  <p>{{ Teacher.infos.phone1 }}</p>
-                  <p>{{ Teacher.infos.phone2 }}</p>
-               </v-col>
-               
-               <v-col cols="6">
-                  
-                  <p class="text-h6">Address</p>
-                  <p>{{ Teacher.infos.address.street }}</p>
-                  <p>{{ Teacher.infos.address.city }}, {{ Teacher.infos.address.state }} {{
-                        Teacher.infos.address.zip
-                     }}</p>
-               </v-col>
-            </v-row>
-         
-         
-         </v-card-text>
-         <v-card-actions>
-            <v-card-subtitle>Timestamps</v-card-subtitle>
-         </v-card-actions>
-      </v-card>
-      <v-row>
-         <v-col cols="5">
-            <v-card>
-               <v-card-item class="">
-                  <v-text-field v-model="searchInstrument" hide-details
-                                label="Search from your Instrument" show-size variant="underlined"></v-text-field>
-               </v-card-item>
-               <v-card-text style="overflow-y: auto">
-                  <div v-if="Teacher.instruments.length===0">
-                     <v-alert
-                       color="warning"
-                       variant="outlined">
-                        <template v-slot:title>
-                           This teacher teaches no instrument
-                        </template>
-                     </v-alert>
-                  </div>
-                  <v-row class="_py-4 _px-2">
-                     <v-col
-                       v-for="item in Teacher.instruments.filter((res:any)  => res.name.includes(searchInstrument))"
-                       :key="item.id" cols="12" lg="6" md="5" sm="4">
-                        <v-card>
-                           <v-lazy>
-                              <v-img
-                                :src="APP_URL+item.image"
-                                class="align-end"
-                                contain
-                                gradient="to bottom, rgba(0,0,0,.1), rgba(0,0,0,.6)" height="130px">
-                                 <v-card-title class="text-white !_capitalize">
-                                    <v-btn color="error" density="compact" icon
-                                           @click="RemoveInstrumentFromTeacher(item)"
-                                           v-if="canRemoveInstrument">
-                                       <v-icon class="fa fa-minus" size="14"></v-icon>
-                                    </v-btn>
-                                 </v-card-title>
-                                 <template v-slot:error>
-                                    <v-img
-                                      :src="APP_URL+item.image"
-                                      class="mx-auto"
-                                      height="130px"
-                                      max-width="500"
-                                    ></v-img>
-                                 </template>
-                              </v-img>
-                           </v-lazy>
-                        </v-card>
-                     </v-col>
-                  </v-row>
-               </v-card-text>
-            </v-card>
-         </v-col>
-         
-         <v-col cols="7">
-            <v-card>
-               <v-card-item class=" ">
-                  <v-text-field v-model="searchInstrument" hide-details
-                                label="Search in global Instrument" show-size variant="underlined"></v-text-field>
-               </v-card-item>
-               <v-card-text>
-                  <v-row class="_py-4 _px-2">
-                     <v-col v-for="item in filterInstruments" :key="item.id" cols="12" lg="3" md="4" sm="6">
-                        <v-card>
-                           <v-lazy>
-                              <v-img :src="APP_URL+item.image"
-                                class="align-end" contain gradient="to bottom, rgba(0,0,0,.1), rgba(0,0,0,.6)"
-                                height="130px">
-                                 <v-card-title class="text-white !_capitalize">
-                                    <v-btn color="primary" density="compact" icon @click="addInstrumentToTeacher(item)">
-                                       <v-tooltip activator="parent" location="bottom" >
-                                          {{ item.name }}
-                                       </v-tooltip>
-                                       <v-icon class="fa fa-plus" size="14"></v-icon>
-                                    </v-btn>
-                                 </v-card-title>
-                                 <template v-slot:error>
-                                    <v-img
-                                      :src="APP_URL+item.image"
-                                      class="mx-auto"
-                                      height="130px"
-                                      max-width="500"
-                                    ></v-img>
-                                 </template>
-                              </v-img>
-                           </v-lazy>
-                        </v-card>
-                     </v-col>
-                  </v-row>
-               </v-card-text>
-            </v-card>
-         </v-col>
-      </v-row>
-   </div>
-</template>

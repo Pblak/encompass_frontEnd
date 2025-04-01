@@ -8,11 +8,6 @@
         </p>
       </div>
       <v-spacer></v-spacer>
-      <!--      <v-text-field v-model="search" density="compact" flat hide-details-->
-      <!--                    label="Search" prepend-inner-icon="fa-thin fa-search"-->
-      <!--                    single-line variant="solo-filled">-->
-      <!--      </v-text-field>-->
-      <v-spacer></v-spacer>
 
       <v-menu>
         <template v-slot:activator="{ props }">
@@ -20,7 +15,7 @@
             <v-icon size="20">fa fa-grip-dots-vertical</v-icon>
           </v-btn>
         </template>
-        <v-list>
+         <v-list>
           <v-list-item link @click="toggleWithTrash">
             <template v-slot:prepend>
               <div class="_pr-2">

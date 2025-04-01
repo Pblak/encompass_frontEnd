@@ -18,7 +18,7 @@
 </template>
 <script setup lang="ts">
 import {ref} from "vue";
-import CreateTeacherForm from "@/views/dashboard/teacher/createTeacher/CreateTeacherForm.vue";
+import CreateTeacherForm from "@/views/dashboard/teacher/TeacherDialog/CreateTeacherForm.vue";
 import {useTeacher, exeGlobalGetTeachers} from "@/api/useTeacher";
 import {useEventBus} from "@vueuse/core";
 

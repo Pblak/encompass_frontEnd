@@ -24,7 +24,6 @@
             </v-list-item>
             <v-divider></v-divider>
             <v-card-text>
-
                 <v-row>
                     <v-col cols="6">
                         <p class="text-h6">Phone Numbers</p>
@@ -48,10 +47,11 @@
 <script lang="ts" setup>
 import {parentState, type ParentType} from "@/stats/parentState";
 import {lessonState, LessonType} from "@/stats/lessonState";
-import {computed, ref} from "vue";
+import {computed, ComputedRef, ref} from "vue";
 import {useRoute} from "vue-router";
 import {useEventBus} from "@vueuse/core";
 import UpdateParentDialog from "@/views/dashboard/parent/ParentDialog/UpdateParentDialog.vue";
+import type {StudentType} from "@/stats/studentState";
 
 
 const {emit} = useEventBus('toggle-transaction-dialog-event');
@@ -59,10 +59,12 @@ const route = useRoute();
 const parent_id = route.params.parent_id;
 const APP_URL = import.meta.env.VITE_APP_URL;
 const {ParentList} = parentState();
-const {LessonList} = lessonState();
-const toggleDialogInstances = ref(false);
-const lessonInstances = ref([]);
-const Parent: ParentType | undefined = ParentList.value.find((parent: ParentType) => parent.id === parseInt(parent_id as string))
+// const {LessonList} = lessonState();
+// const toggleDialogInstances = ref(false);
+// const lessonInstances = ref([]);
+const Parent:ComputedRef<ParentType | undefined> = computed(() => {
+  return ParentList.value.find((parent: ParentType) => parent.id === parseInt(parent_id as string))
+})
 
 const headers = [
     {title: 'Instrument', key: 'instrument'},
@@ -72,8 +74,8 @@ const headers = [
     {title: 'Created', key: 'created_at'},
     {title: 'Actions', key: 'actions', sortable: false},
 ]
-const editParent = () => {
-    console.log('edit parent')
-}
+// const editParent = () => {
+//     console.log('edit parent')
+// }
 
 </script>

@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-
 import {onMounted, ref} from "vue";
 import { type TeacherType} from "@/stats/teacherState";
 import {useEventBus} from "@vueuse/core";
@@ -50,31 +49,31 @@ onMounted(() => {
 
   <v-form  ref="ElForm" class="_flex _flex-col _gap-4" @submit.prevent="validateForm">
     <div class="_flex _gap-2">
-      <v-text-field v-model="teacherForm.first_name" :rules="$rules('required', 'First Name')"
+      <v-text-field variant="solo" v-model="teacherForm.first_name" :rules="$rules('required', 'First Name')"
                     label="First Name" outlined></v-text-field>
       <v-text-field v-model="teacherForm.last_name" :rules="$rules('required', 'Last Name')"
                     label="First Name" outlined></v-text-field>
     </div>
 <!--    <v-text-field v-if="dialogEdit" :value="teacherForm.email" active disabled-->
 <!--                  label="Email"></v-text-field>-->
-    <v-text-field  v-model="teacherForm.email" :rules="$rules('required|email', 'Email')"
+    <v-text-field variant="solo" v-model="teacherForm.email" :rules="$rules('required|email', 'Email')"
                   label="Email" outlined></v-text-field>
     <div class="_flex _gap-2">
-      <v-text-field v-model="teacherForm.infos.phone1" :rules="$rules('required|phone', 'Phone')"
+      <v-text-field variant="solo" v-model="teacherForm.infos.phone1" :rules="$rules('required|phone', 'Phone')"
                     label="Phone 1" outlined></v-text-field>
-      <v-text-field v-model="teacherForm.infos.phone2" :rules="$rules('phone', 'Phone')"
+      <v-text-field variant="solo" v-model="teacherForm.infos.phone2" :rules="$rules('phone', 'Phone')"
                     label="Phone 2" outlined></v-text-field>
     </div>
     <div class="_flex _gap-2">
-      <v-text-field v-model="teacherForm.infos.address.street"
+      <v-text-field variant="solo" v-model="teacherForm.infos.address.street"
                     label="Street" outlined></v-text-field>
-      <v-text-field v-model="teacherForm.infos.address.city"
+      <v-text-field variant="solo" v-model="teacherForm.infos.address.city"
                     label="City" outlined></v-text-field>
     </div>
     <div class="_flex _gap-2">
-      <v-text-field v-model="teacherForm.infos.address.state"
+      <v-text-field variant="solo" v-model="teacherForm.infos.address.state"
                     label="State" outlined></v-text-field>
-      <v-text-field v-model="teacherForm.infos.address.zip"
+      <v-text-field variant="solo" v-model="teacherForm.infos.address.zip"
                     label="Zip" outlined></v-text-field>
     </div>
   </v-form>

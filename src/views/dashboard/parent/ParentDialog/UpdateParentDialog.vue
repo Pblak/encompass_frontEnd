@@ -4,18 +4,16 @@
       <v-btn v-bind="props" color="primary"
              density="comfortable"
              icon="fa fa-edit !_text-sm"
-             @click="toggleDialog = true"> </v-btn>
+             @click="toggleDialog = true"></v-btn>
     </template>
   </v-tooltip>
   <v-dialog v-model="toggleDialog" scrollable width="auto">
     <v-card prepend-icon="fa-duotone fa-graduation-cap" width="600">
-      <template v-slot:title>
-        Update parent
-      </template>
+      <template v-slot:title>Update parent</template>
       <template v-slot:text>
         <UpdateParentForm :push-data="attemptSave"
                           :parent-selected="parentSelected"
-                             eventForValidate="update-parent-event"></UpdateParentForm>
+                          eventForValidate="update-parent-event"></UpdateParentForm>
       </template>
       <template v-slot:actions>
         <v-btn class="ms-auto" color="success" text="Update " variant="tonal" @click="sendEvent"></v-btn>
@@ -26,13 +24,16 @@
 <script setup lang="ts">
 import {ref} from "vue";
 import UpdateParentForm from "@/views/dashboard/parent/ParentDialog/UpdateParentForm.vue";
-import {useParent ,exeGlobalGetParents} from "@/api/useParent";
+import {useParent} from "@/api/useParent";
 import {useEventBus} from "@vueuse/core";
 import type {ParentType} from "@/stats/parentState";
+import {parentState} from "@/stats/parentState";
+
 
 defineProps<{
-  parentSelected:ParentType
+  parentSelected: ParentType
 }>();
+const {ParentList} = parentState();
 const {useUpdateParent} = useParent();
 const {onResultSuccess: onSuccessUpdateParent, execute: exeUpdateParent} = useUpdateParent();
 const toggleDialog = ref(false)
@@ -46,8 +47,15 @@ const attemptSave = (res) => {
     data: res.data
   });
 }
-onSuccessUpdateParent(() => {
+onSuccessUpdateParent((res) => {
+  let result = res.data.result
   toggleDialog.value = false;
-  exeGlobalGetParents();
+  ParentList.value = ParentList.value.map((parent)=>{
+    if(parent.id === result.id){
+      parent = {...parent, ...result};
+    }
+    return parent;
+  })
+
 })
 </script>

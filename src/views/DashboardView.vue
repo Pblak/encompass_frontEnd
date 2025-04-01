@@ -5,7 +5,17 @@
                              permanent update:rail="()=>drawer"
                              @click="rail = false">
             <v-list color="blue">
-                <v-list-item prepend-avatar="https://randomuser.me/api/portraits/women/85.jpg">
+                <v-list-item >
+                    <template v-slot:prepend>
+                        <v-avatar color="primary" size="40">
+
+                            <v-img v-if="userLogin.infos.avatar"
+                                alt="John" :src="APP_URL+userLogin.infos.avatar"></v-img>
+                          <span v-else>
+                            {{ userLogin.name.slice( 0, 2).toUpperCase() }}
+                          </span>
+                        </v-avatar>
+                    </template>
                     <template v-slot:append>
                         <v-btn :icon="true" variant="text" size="20" @click.stop="rail = !rail">
                             <v-icon size="10">{{ rail ? 'fa fa-chevron-left' : 'fa fa-chevron-right' }}</v-icon>
@@ -130,6 +140,7 @@ const dashboardChildren: Ref<UnwrapRef<RouteRecordRaw>[]> = ref(dashboardRoute?.
 const dataLoaded = ref(false);
 const loadingProgress = ref(0);
 const rail = ref(false);
+const APP_URL = import.meta.env.VITE_APP_URL;
 
 if(!isLogin.value) {
     window.location.href = '/login';

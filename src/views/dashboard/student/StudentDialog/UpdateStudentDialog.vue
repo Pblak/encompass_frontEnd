@@ -1,5 +1,5 @@
 <template>
-  <v-tooltip text="Create student" location="bottom">
+  <v-tooltip text="Update student" location="bottom">
     <template v-slot:activator="{ props }">
       <v-btn v-bind="props" color="primary" density="comfortable" icon="fa fa-edit !_text-sm" @click="toggleDialog = true"></v-btn>
     </template>
@@ -25,9 +25,10 @@
 <script setup lang="ts">
 import {ref} from "vue";
 import UpdateStudentForm from "@/views/dashboard/student/StudentDialog/UpdateStudentForm.vue";
-import {useStudent, exeGlobalGetStudents} from "@/api/useStudent";
+import {useStudent} from "@/api/useStudent";
 import {useEventBus} from "@vueuse/core";
-import type {StudentType} from "@/stats/studentState";
+import {studentState, StudentType} from "@/stats/studentState";
+const {StudentList} = studentState();
 
 defineProps<{
     selectedStudent: StudentType
@@ -44,12 +45,19 @@ const sendEvent = () => {
 };
 
 const attemptSave = (res) => {
+
   exeUpdateStudent({
     data: res.data
   });
 }
 onSuccessUpdateStudent((res) => {
   toggleDialog.value = false;
-  exeGlobalGetStudents();
+  StudentList.value = StudentList.value.map((student) => {
+    if (student.id === res.data.result.id) {
+      student = {...student, ...res.data.result};
+    }
+    return student;
+  });
+
 })
 </script>
