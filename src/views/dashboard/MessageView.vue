@@ -1,15 +1,6 @@
 <template>
   <v-layout ref="app" class="_m-[-1rem]">
-    <v-app-bar
-        app
-        color="grey-lighten-3"
-        height="64"
-        name="app-bar">
-      <template v-slot:prepend></template>
-      <v-app-bar-title v-if="chattingWith">
-        {{ chattingWith?.name }}
-      </v-app-bar-title>
-    </v-app-bar>
+
     <v-navigation-drawer
         color="grey-lighten-4"
         location="end"
@@ -81,11 +72,19 @@
       </div>
     </v-navigation-drawer>
 
-    <v-main class=" " scrollable id="messageContainer">
-      <div class="">
-        <div class="  ">
+        <v-app-bar
+          flat
+            color="grey-lighten-4"
+            height="56"
+            name="app-bar">
+          <template v-slot:prepend></template>
+          <v-app-bar-title v-if="chattingWith">
+            {{ chattingWith?.name }}
+          </v-app-bar-title>
+        </v-app-bar>
+    <v-main class="relative" scrollable id="messageContainer">
 
-        </div>
+
         <div class="_p-3">
           <div v-for="(TimeBlockMessages , key) in renderConvMessages" :key="key">
             <div v-for="(userBlockMessages , i) in TimeBlockMessages" :key="i" class="py-4 pr-8 pl-4">
@@ -139,7 +138,6 @@
             </div>
           </div>
         </div>
-      </div>
 
     </v-main>
 

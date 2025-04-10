@@ -10,6 +10,15 @@ interface LoginData {
     password: string;
     accountType: string;
 }
+interface RegisterData {
+    email: string;
+    username?: string;
+    first_name: string;
+    last_name: string;
+    password: string;
+    confirmPassword: string;
+    accountType: string;
+}
 
 interface UserModel extends StudentType{
 
@@ -48,6 +57,22 @@ export const loginState = createGlobalState(() => {
                 throw error;
             });
     };
+    const register = async (credentials: RegisterData) => {
+        return await axios.post(import.meta.env.VITE_API_URL + "/register", credentials)
+            .then((response) => {
+                isLogin.value = true;
+                userLogin.value = response.data.user;
+                loginToken.value = response.data.token;
+
+                window.location.href ="/dashboard"
+            })
+            .catch((error) => {
+                console.log(error)
+                loginError.value = error.response.data.message;
+                throw error;
+            });
+    }
+
     const logout = () => {
 
         axios.post(import.meta.env.VITE_API_URL + "/logout", {}, {
@@ -64,5 +89,5 @@ export const loginState = createGlobalState(() => {
     }   );
     }
 
-    return {isLogin, userLogin, loginToken, loginError, logout, login};
+    return {isLogin, userLogin, loginToken, loginError, logout, login ,register};
 });

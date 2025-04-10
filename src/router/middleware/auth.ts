@@ -10,7 +10,8 @@ interface MiddlewareContext {
 }
 
 
-export default async function auth({to, from, next, router, params}: MiddlewareContext) {
+export default async function auth({to, from, next, router, params}: MiddlewareContext)
+{
     // console.log('auth middleware called with to:', to, 'from:', from, 'params:', params)
     const {isLogin, userLogin} = loginState();
     // console.log('isLogin', isLogin, 'userLogin', userLogin)
@@ -19,7 +20,7 @@ export default async function auth({to, from, next, router, params}: MiddlewareC
         // console.log('You are not logged in')
         return false
     }
-    if (params && !params.includes(userLogin.value.accountType)) {
+    if (params && !params.includes(<string>userLogin.value.accountType)) {
         // console.log('You are not allowed to access this page', params);
         // console.log('You are not allowed to access this page' , params);
         return Promise.reject(false)

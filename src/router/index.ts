@@ -88,7 +88,6 @@ const routes: Array<RouteRecordRaw> = [
                     __name: 'Lesson',
                     __auth: true,
                     icon: 'fa-thin fa-book-open',
-                    middleware: ['auth:users|parent']
                 },
                 redirect: {name: 'LessonsList'},
                 children: [
@@ -98,6 +97,7 @@ const routes: Array<RouteRecordRaw> = [
                         meta: {
                             __name: 'Create lesson',
                             __auth: true,
+                            middleware: ['auth:users']
                         },
                         components: {
                             dashboard: () => import('../views/dashboard/lesson/createLessons.vue')
@@ -124,7 +124,7 @@ const routes: Array<RouteRecordRaw> = [
                     __name: 'room',
                     __auth: true,
                     icon: 'fa-thin fa-door-open',
-                    middleware: ['auth:web']
+                    middleware: ['auth:users']
                 },
                 components: {
                     dashboard: () => import('@/views/dashboard/RoomView.vue')
@@ -176,7 +176,7 @@ const routes: Array<RouteRecordRaw> = [
                     __name: 'student',
                     __auth: true,
                     icon: 'fa-thin fa-children',
-                    middleware: ['auth:users|parent']
+                    middleware: ['auth:users|parents']
                 },
                 components: {
                     dashboard: () => import('@/views/dashboard/StudentView.vue')
@@ -294,6 +294,7 @@ const routes: Array<RouteRecordRaw> = [
                     __name: 'transaction',
                     __auth: true,
                     icon: 'fa-thin fa-money-bill-wave',
+                    middleware: ['auth:users']
                 },
                 components: {
                     dashboard: () => import('@/views/dashboard/TransactionView.vue')
