@@ -2,3 +2,14 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
+.fc-disabled-day {
+    background-color: #f0f0f0 !important;
+    pointer-events: none;     /* Disables interaction */
+    opacity: 0.6;
+}
+
+.fc-allowed-day {
+    background-color: #e6f7ff !important; /* Light blue */
+}

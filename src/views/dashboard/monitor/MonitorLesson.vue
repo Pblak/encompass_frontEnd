@@ -17,7 +17,7 @@
                                             <v-card-title class="!_font-black !_text-sm !_text-md">
                                                 {{ lesson.student.name }}
                                             </v-card-title>
-                                            <v-card-subtitle class="!_text-xs">{{
+                                            <v-card-subtitle class="!_text-xs" >{{
                                                     lesson.student.email
                                                 }}
                                             </v-card-subtitle>
@@ -250,6 +250,7 @@ import {exeGlobalGetLessons, useLesson} from "@/api/useLesson";
 import {toCurrency} from "@/stats/Utils";
 import {CalendarOptions} from "@fullcalendar/core";
 import LessonInstancesTable from "@/components/lesson/lessonInstances/lessonInstancesTable.vue";
+import {debuggerStatement} from "@babel/types";
 
 const APP_URL = import.meta.env.VITE_APP_URL;
 const cal = ref(null)
@@ -341,6 +342,7 @@ const lessonsInstrument = computed(() => {
 onMounted(() => {
     exeGlobalGetLessons()
     renderEvent()
+  console.log(LessonList)
 })
 
 watch(() => LessonsSelected.value, () => {

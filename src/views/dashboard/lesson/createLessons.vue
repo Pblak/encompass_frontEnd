@@ -17,6 +17,7 @@
             <v-select v-model="formData.teacher_id" :items="TeacherList"
                       :rules="$rules('required|number' ,'Teacher')" density="compact" item-title="name"
                       item-value="id"
+                      @change="selectTeacher"
                       label="Teacher" variant="solo"></v-select>
           </v-col>
           <v-col cols="12" lg="3" md="3" sm="6">
@@ -55,30 +56,31 @@
                           label="Plan"
                           return-object variant="solo"></v-select>
               </v-col>
-              <v-col>
-                <v-menu>
-                  <template v-slot:activator="{ props }">
-                    <v-card>
-                      <v-card-item>
-                        <v-card-title>
-                          Start date
-                        </v-card-title>
-                        <v-card-subtitle>
-                          {{ moment(formData.start_date).format('LLL') }}
-                        </v-card-subtitle>
-                        <template v-slot:append>
-                          <v-btn :icon="true" density="compact" v-bind="props">
-                            <v-icon size="14">fa fa-calendar</v-icon>
-                          </v-btn>
-                        </template>
-                      </v-card-item>
-                    </v-card>
-                  </template>
-                  <v-date-picker
-                      :min="moment().add(1, 'days').add('6','hours').format('YYYY-MM-DD')"
-                      @update:model-value="(ev)=>formData.start_date = moment(ev as string).add('8','hours')
-                             .toISOString()"></v-date-picker>
-                </v-menu>
+              <v-col cols="12" >
+                <!--                <v-menu>-->
+                <!--                  <template v-slot:activator="{ props }">-->
+                <v-card>
+
+<!--                    <v-card-title>-->
+<!--                      Start date-->
+<!--                    </v-card-title>-->
+<!--                    <v-card-subtitle>-->
+<!--                      {{ moment(formData.start_date).format('LLL') }}-->
+<!--                    </v-card-subtitle>-->
+                    <!--                        <template v-slot:append>-->
+                    <!--                          <v-btn :icon="true" density="compact" v-bind="props">-->
+                    <!--                            <v-icon size="14">fa fa-calendar</v-icon>-->
+                    <!--                          </v-btn>-->
+                    <!--                        </template>-->
+
+                  <v-card-text>
+                    <v-date-picker width="100%"
+                        :min="moment().add('6','hours').format('YYYY-MM-DD')"
+                        @update:modelValue="updateLessonStartDate"></v-date-picker>
+                  </v-card-text>
+                </v-card>
+                <!--                  </template>-->
+                <!--                </v-menu>-->
               </v-col>
 
               <v-col v-if="formData.instrument_plan" cols="12">
@@ -113,7 +115,7 @@
           </v-col>
 
           <v-col cols="12" lg="8" md="8" sm="12">
-            <v-card>
+            <v-card  >
               <v-card-title>
                 <div class="_flex _gap-4 _flex-wrap _py-4">
                   <template
@@ -151,14 +153,16 @@ import {teacherState} from "@/stats/teacherState";
 import {studentState} from "@/stats/studentState";
 import {instrumentState} from "@/stats/instrumentState";
 import {roomState} from "@/stats/roomState";
-import {useLesson, exeGlobalGetLessons} from "@/api/useLesson";
-import {computed, ref, watch} from 'vue';
 import FullCalendar from "@fullcalendar/vue3";
 import interactionPlugin from "@fullcalendar/interaction";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from '@fullcalendar/timegrid';
-import moment from "moment";
+import {computed, ref, watch, watchEffect} from 'vue';
+import {useLesson, exeGlobalGetLessons} from "@/api/useLesson";
+import {useLessonInstance} from "@/api/useLessonInstance";
 import {toCurrency} from "@/stats/Utils";
+import moment from "moment";
+import {update} from "lodash";
 
 interface planning {
   [key: number]: Array<{
@@ -177,6 +181,11 @@ const {
   execute: exeCreateLesson,
   onResultSuccess: onResultSuccessCreateLesson,
 } = useCreateLesson();
+const {useGetTeacherLessonInstances} = useLessonInstance()
+const {
+  execute: exeGetTeacherLessonInstances,
+} = useGetTeacherLessonInstances();
+
 const formData = ref({
   teacher_id: '',
   student_id: '',
@@ -193,10 +202,14 @@ const formData = ref({
 const calendarOptions = ref({
   plugins: [dayGridPlugin, interactionPlugin, timeGridPlugin],
   initialView: 'timeGridWeek',
+  initialDate: formData.value.start_date,
+  handleWindowResize: true,
+  nowIndicator: true,
+  now: formData.value.start_date,
   headerToolbar: {
     left: '',
     center: '',
-    right: '',
+    right: 'prev,next',
   },
   slotLabelFormat: {
     hour: 'numeric',
@@ -207,6 +220,7 @@ const calendarOptions = ref({
   dayHeaderFormat: {
     weekday: 'short'
   },
+
   slotMinTime: '08:00:00',
   slotMaxTime: '18:00:00',
   selectable: true,
@@ -216,15 +230,83 @@ const calendarOptions = ref({
   events: [],
   eventClick: (info: any) => {
     removeEvent(info)
-  }
+  },
+  // ✅ Prevent selecting outside of today + 6 days
+  selectAllow: function(selectInfo) {
+    const today = moment().startOf('day');
+    const maxDate = moment().startOf('day').add(6, 'days');
+    const start = moment(selectInfo.start);
+    const end = moment(selectInfo.end);
+
+    return (
+        start.isBetween(today.clone().subtract(1, 'minute'), maxDate.clone().add(1, 'day'), null, '[)') &&
+        end.isBetween(today.clone().subtract(1, 'minute'), maxDate.clone().add(1, 'day'), null, '[)')
+    );
+  },
+  dayCellDidMount: (info)=> {
+    const cellDate = moment(info.date).startOf('day');
+    const today = moment().startOf('day');
+    const maxDate = moment().startOf('day').add(6, 'days');
+
+    if (cellDate.isBefore(today) || cellDate.isAfter(maxDate)) {
+      // Disable outside range
+      info.el.classList.add('fc-disabled-day');
+    } else {
+      // Mark allowed range
+      info.el.classList.add('fc-allowed-day');
+    }
+    console.log(info.el.classList , info.el)
+  },
+
 })
 const removeEvent = (info: any) => {
   // remove event from calendar
+  if (info.event.extendedProps.marker) {
+    return;
+  }
   calendarOptions.value.events = calendarOptions.value.events.filter((ev: any) => {
     return !moment(ev.start).isSame(info.event.start)
   })
 }
+
+const updateLessonStartDate = (event) => {
+  // update the start date of the lesson
+
+  formData.value.start_date = moment(event as string).add('8','hours')
+      .format('YYYY-MM-DD HH:mm:ss');
+  calendarOptions.value.initialDate = formData.value.start_date;
+}
+
+const selectTeacher = async () => {
+  let id = formData.value.teacher_id;
+  // get the teacher lesson instances
+  await exeGetTeacherLessonInstances({
+    data: {
+      teacher_id: id,
+    }
+  }).then((res) => {
+    let markeUPevents = res.data!.value.instances.map((ev: any) => {
+
+      // console.log(moment(ev.start).format("YYYY-MM-DD HH:mm:ss")  , ev.start)
+      // let moment = moment().utc()
+      return {
+        title: "",
+        start: moment(ev.start).format("YYYY-MM-DD HH:mm:ss"),
+        end: moment(ev.start).add(ev.duration, 'minutes') .format("YYYY-MM-DD HH:mm:ss"),
+        allDay: false,
+        extendedProps: {
+          marker: true
+        }
+      }
+    })
+
+    console.log(markeUPevents)
+    calendarOptions.value.events = markeUPevents;
+  })
+
+}
 const addEvent = (info: any) => {
+
   let day = moment(info.start).day();
   let time = moment(info.start).format('HH:mm:ss');
   // limit 3 events per day
@@ -238,10 +320,9 @@ const addEvent = (info: any) => {
     let evDay = moment(ev.start).day();
     let evTime = moment(ev.start).format('HH:mm:ss');
 
-    return !(evDay === day &&
-        (evTime === time || evTime <= moment(info.start).add(duration, 'minutes').format('HH:mm:ss') ||
-            evTime === moment(info.start).subtract(duration, 'minutes').format('HH:mm:ss'))
-    )
+    return !(evDay === day
+        && (evTime === time || evTime <= moment(info.start).add(duration, 'minutes').format('HH:mm:ss') ||
+            evTime === moment(info.start).subtract(duration, 'minutes').format('HH:mm:ss')))
   })
   p.push({
     title: '--',
@@ -249,7 +330,10 @@ const addEvent = (info: any) => {
     end: moment(info.start).add(formData.value.instrument_plan?.duration, 'minutes').toISOString(),
     allDay: info.allDay
   } as never)
+
   calendarOptions.value.events = p;
+  console.log(calendarOptions.value.events)
+
 }
 const getPlaningDay = (i: string) => {
   let day = formData.value.planning[parseInt(moment().day(i).format('d'))]
@@ -308,6 +392,13 @@ watch(() => formData.value.instrument_plan, () => {
   calendarOptions.value.events = []
 }, {deep: true})
 
+watch(() => formData.value.teacher_id, () => {
+  selectTeacher()
+}, {deep: true})
+
+watch(() => formData.value.start_date, () => {
+  calendarOptions.value.initialDate = formData.value.start_date;
+}, {deep: true})
 watch(
     () => calendarOptions.value.events,
     (newVal) => {
