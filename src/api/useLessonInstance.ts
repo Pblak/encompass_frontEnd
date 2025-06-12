@@ -35,8 +35,26 @@ export function useLessonInstance() {
         }
     }
 
+    // get student's lesson instances
+    const useGetStudentLessonInstances = () => {
+        const q = useApi("/getStudentLessonInstances", {
+            method: "post",
+        }, {
+            immediate: false,
+        });
+        const execute = ({data}: any) => {
+            return q.execute({
+                data
+            });
+        }
+        return {
+            ...q, execute,
+        }
+    }
+
     return {
         useUpdateLessonInstance,
-        useGetTeacherLessonInstances
+        useGetTeacherLessonInstances,
+        useGetStudentLessonInstances
     }
 }

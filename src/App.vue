@@ -15,7 +15,7 @@ onMounted(() => {
       .listen('LessonInstanceStatusUpdatedEvent',
           (event: any) => {
             console.log('Lesson instance status updated:', event);
-            exeGetLessons()
+            exeGetLessons({})
             // Update your Vue component state or perform actions based on the event
           });
 });
@@ -28,4 +28,3 @@ onGetLessonsSuccess((res: any) => {
 <template>
   <RouterView/>
 </template>
-

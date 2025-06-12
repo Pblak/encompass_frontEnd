@@ -1,6 +1,6 @@
 // src/shims-vue.d.ts
 
-import { ComponentCustomProperties } from '@vue/runtime-core';
+import { ComponentCustomProperties } from 'vue';
 
 declare module '@vue/runtime-core' {
     /**

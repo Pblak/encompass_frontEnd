@@ -104,10 +104,10 @@ const maxAmountRule = computed(() => {
 
 const initPaypalPayment = () => {
     loadScript({
-        "client-id": import.meta.env.VITE_CLIENT_PAYPAL_ID,
+        clientId: import.meta.env.VITE_CLIENT_PAYPAL_ID,
         currency: "USD",
     } as PayPalScriptOptions).then((paypal) => {
-        if ("Buttons" in paypal) {
+        if (paypal && "Buttons" in paypal) {
             if (paypal.Buttons) {
                 paypal.Buttons({
                     style: {
@@ -117,14 +117,12 @@ const initPaypalPayment = () => {
                         tagline: 'false',
                         height: 40
                     },
-                    createOrder: () => {
-                        return validateForm().then(() => {
-                            return props.createOrder({...transactionForm.value})
-                        })
+                    createOrder: async () => {
+                        await validateForm();
+                        return props.createOrder({...transactionForm.value}) as Promise<string>
                     },
-                    onApprove: (data) => {
+                    onApprove: async (data) => {
                         props.approuveOrder({...data, ...transactionForm.value})
-
                     }
                 } as PayPalButtonsComponentOptions).render('#paypal-button-container');
             }
@@ -137,12 +135,12 @@ onMounted(() => {
     // on(() => {
     //     validateForm();
     // });
-    exeGlobalGetLessons()
+    exeGlobalGetLessons({})
     initPaypalPayment()
 })
 // onSucGlobalGetTransactions(() => {
 //     props.setLoader && props.setLoader(false)
-//     exeGlobalGetLessons()
+//     exeGlobalGetLessons({})
 // })
 // watch(() => transactionForm.value.lesson_id, (val) => {
 //

@@ -13,88 +13,67 @@
     <v-form ref="FormEl">
       <v-card-text class="_bg-gray-100 overflow-y-auto _h-[calc(100vh-10rem)]">
         <v-row>
-          <v-col cols="12" lg="3" md="3" sm="6">
-            <v-select v-model="formData.teacher_id" :items="TeacherList"
-                      :rules="$rules('required|number' ,'Teacher')" density="compact" item-title="name"
-                      item-value="id"
-                      @change="selectTeacher"
-                      label="Teacher" variant="solo"></v-select>
-          </v-col>
-          <v-col cols="12" lg="3" md="3" sm="6">
-            <v-select v-model="formData.student_id" :items="StudentList"
-                      :rules="$rules('required|number' ,'Student')" density="compact" item-title="name"
-                      item-value="id"
-                      label="Student" variant="solo"></v-select>
-          </v-col>
-          <v-col cols="12" lg="3" md="3" sm="6" v-if="InstrumentList">
-
-            <v-select v-model="formData.instrument_id" :items="InstrumentList"
-                      :rules="$rules('required|number' ,'Instrument')" density="compact" item-title="name"
-                      item-value="id"
-                      label="Instrument" variant="solo"></v-select>
-          </v-col>
-          <v-col cols="12" lg="3" md="3" sm="6">
-            <v-select v-model="formData.room_id" :items="RoomList"
-                      :rules="$rules('required|number' ,'Room')" density="compact" item-title="name"
-                      item-value="id"
-                      label="Room" variant="solo"></v-select>
-          </v-col>
           <v-col cols="12" lg="4" md="4" sm="12">
             <v-row>
-              <v-col cols="12" lg="6" sm="6">
+              <v-col cols="12" lg="6">
+                <v-select v-model="formData.teacher_id" :items="TeacherList"
+                          :rules="$rules('required|number' ,'Teacher')" density="compact" item-title="name"
+                          item-value="id" @change="selectTeacher"
+                          label="Teacher" variant="solo"></v-select>
+              </v-col>
+              <v-col cols="12" lg="6">
+                <v-select v-model="formData.student_id" :items="StudentList"
+                          :rules="$rules('required|number' ,'Student')" density="compact" item-title="name"
+                          item-value="id" @change="selectStudent"
+                          label="Student" variant="solo"></v-select>
+              </v-col>
+              <v-col cols="12" lg="6" v-if="InstrumentList">
+                <v-select v-model="formData.instrument_id" :items="InstrumentList"
+                          :rules="$rules('required|number' ,'Instrument')" density="compact" item-title="name"
+                          item-value="id" label="Instrument" variant="solo"></v-select>
+              </v-col>
+              <v-col cols="12" lg="6">
+                <v-select v-model="formData.room_id" :items="RoomList"
+                          :rules="$rules('required|number' ,'Room')" density="compact" item-title="name"
+                          item-value="id" label="Room" variant="solo"></v-select>
+              </v-col>
+              <v-col cols="12" lg="6" >
                 <v-text-field v-model="formData.frequency"
                               :rules="$rules('required|number' ,'Duration')" density="compact" label="Frequency"
                               variant="solo">
-                  <v-tooltip slot="append" activator="parent" location="bottom">
-                    How many times the planing will repeat
-                  </v-tooltip>
+                  <template v-slot:append>
+                    <v-tooltip activator="parent" location="bottom">
+                      How many times the planing will repeat
+                    </v-tooltip>
+                  </template>
                 </v-text-field>
               </v-col>
-              <v-col cols="12" lg="6" sm="6">
+              <v-col cols="12" lg="6" >
                 <v-select v-model="formData.instrument_plan" :items="getPlans" :rules="$rules('object' ,'Plan')"
                           density="compact" item-title="name" item-value="id"
-                          label="Plan"
-                          return-object variant="solo"></v-select>
+                          label="Plan" return-object variant="solo"></v-select>
               </v-col>
-              <v-col cols="12" >
-                <!--                <v-menu>-->
-                <!--                  <template v-slot:activator="{ props }">-->
+              <v-col cols="12">
                 <v-card>
-
-<!--                    <v-card-title>-->
-<!--                      Start date-->
-<!--                    </v-card-title>-->
-<!--                    <v-card-subtitle>-->
-<!--                      {{ moment(formData.start_date).format('LLL') }}-->
-<!--                    </v-card-subtitle>-->
-                    <!--                        <template v-slot:append>-->
-                    <!--                          <v-btn :icon="true" density="compact" v-bind="props">-->
-                    <!--                            <v-icon size="14">fa fa-calendar</v-icon>-->
-                    <!--                          </v-btn>-->
-                    <!--                        </template>-->
-
                   <v-card-text>
                     <v-date-picker width="100%"
-                        :min="moment().add('6','hours').format('YYYY-MM-DD')"
-                        @update:modelValue="updateLessonStartDate"></v-date-picker>
+                                   :min="moment().add('6','hours').format('YYYY-MM-DD')"
+                                   @update:modelValue="(value: any) => updateLessonStartDate(value)"></v-date-picker>
                   </v-card-text>
                 </v-card>
-                <!--                  </template>-->
-                <!--                </v-menu>-->
               </v-col>
-
               <v-col v-if="formData.instrument_plan" cols="12">
                 <v-card :title="formData.instrument_plan.name" subtitle="These values are for each lesson">
                   <v-card-text>
                     <v-list>
-                      <v-list-item title="Price ">
+                      <v-list-item title="Price">
                         <template v-slot:append>
                           <v-chip color="green">
                             {{ toCurrency(formData.instrument_plan.price) }}
                           </v-chip>
                         </template>
                       </v-list-item>
-                      <v-list-item title="Duration ">
+                      <v-list-item title="Duration">
                         <template v-slot:append>
                           <v-chip color="purple">
                             {{ moment.duration(formData.instrument_plan.duration, 'minutes').humanize() }}
@@ -105,17 +84,14 @@
                   </v-card-text>
                 </v-card>
               </v-col>
-
               <v-col cols="12">
                 <v-textarea v-model="formData.notes" :rules="$rules('max:255' ,'Notes')" counter
                             dense label="Notes" variant="solo"></v-textarea>
               </v-col>
-
             </v-row>
           </v-col>
-
           <v-col cols="12" lg="8" md="8" sm="12">
-            <v-card  >
+            <v-card>
               <v-card-title>
                 <div class="_flex _gap-4 _flex-wrap _py-4">
                   <template
@@ -125,9 +101,14 @@
                             size="small">
                       <v-badge v-if="getPlaningDay(i as string).length>0"
                                :content="getPlaningDay(i as string).length"
-                               color="success" inline>
-                      </v-badge>
+                               color="success" inline></v-badge>
                       {{ i }}
+                      <v-badge v-if="getPlaningDayTeacherMarker(i as string).length>0"
+                               :content="getPlaningDayTeacherMarker(i as string).length"
+                               color="error" inline></v-badge>
+                      <v-badge v-if="getPlaningDayStudentMarker(i as string).length>0"
+                               :content="getPlaningDayStudentMarker(i as string).length"
+                               color="warning" inline></v-badge>
                     </v-chip>
                   </template>
                 </div>
@@ -148,212 +129,55 @@
     </v-form>
   </v-card>
 </template>
+
 <script lang="ts" setup>
 import {teacherState} from "@/stats/teacherState";
 import {studentState} from "@/stats/studentState";
 import {instrumentState} from "@/stats/instrumentState";
 import {roomState} from "@/stats/roomState";
 import FullCalendar from "@fullcalendar/vue3";
-import interactionPlugin from "@fullcalendar/interaction";
-import dayGridPlugin from "@fullcalendar/daygrid";
-import timeGridPlugin from '@fullcalendar/timegrid';
-import {computed, ref, watch, watchEffect} from 'vue';
-import {useLesson, exeGlobalGetLessons} from "@/api/useLesson";
-import {useLessonInstance} from "@/api/useLessonInstance";
+import {watch} from 'vue';
+import {exeGlobalGetLessons, useLesson} from "@/api/useLesson";
 import {toCurrency} from "@/stats/Utils";
 import moment from "moment";
-import {update} from "lodash";
 
-interface planning {
-  [key: number]: Array<{
-    time: string,
-    day: number
-  }>
-}
+import {useCalendarLogic} from "@/composables/useCalendarLogic";
+import {useLessonForm} from "@/composables/useLessonForm";
+import {useTeacherStudentSelection} from "@/composables/useTeacherStudentSelection";
 
 const {TeacherList} = teacherState();
 const {StudentList} = studentState();
 const {InstrumentList} = instrumentState();
 const {RoomList} = roomState();
-const FormEl = ref(null);
+
+const {FormEl, formData, getPlans, calculatePrice, resetForm, getPlaningDay} = useLessonForm(InstrumentList);
+
+const {
+  cal,
+  calendarOptions,
+  createFakeLessonInstances,
+  addEvent,
+  removeEvent,
+  updateLessonStartDate
+} = useCalendarLogic(formData);
+
+const {
+  selectTeacher,
+  selectStudent,
+  getPlaningDayTeacherMarker,
+  getPlaningDayStudentMarker
+} = useTeacherStudentSelection(formData, calendarOptions);
+
 const {useCreateLesson} = useLesson()
 const {
   execute: exeCreateLesson,
   onResultSuccess: onResultSuccessCreateLesson,
 } = useCreateLesson();
-const {useGetTeacherLessonInstances} = useLessonInstance()
-const {
-  execute: exeGetTeacherLessonInstances,
-} = useGetTeacherLessonInstances();
 
-const formData = ref({
-  teacher_id: '',
-  student_id: '',
-  instrument_id: '',
-  room_id: '',
-  planning: {} as planning,
-  frequency: 1,
-  start_date: moment().add('8', 'hours').toISOString(),
-  instrument_plan: "" as any,
-  price: 0,
-  active: 1,
-  notes: ''
-})
-const calendarOptions = ref({
-  plugins: [dayGridPlugin, interactionPlugin, timeGridPlugin],
-  initialView: 'timeGridWeek',
-  initialDate: formData.value.start_date,
-  handleWindowResize: true,
-  nowIndicator: true,
-  now: formData.value.start_date,
-  headerToolbar: {
-    left: '',
-    center: '',
-    right: 'prev,next',
-  },
-  slotLabelFormat: {
-    hour: 'numeric',
-    minute: '2-digit',
-    omitZeroMinute: false,
-    meridiem: 'short'
-  },
-  dayHeaderFormat: {
-    weekday: 'short'
-  },
+calendarOptions.value.select = addEvent;
+calendarOptions.value.eventClick = removeEvent;
 
-  slotMinTime: '08:00:00',
-  slotMaxTime: '18:00:00',
-  selectable: true,
-  select: (info: any) => {
-    addEvent(info)
-  },
-  events: [],
-  eventClick: (info: any) => {
-    removeEvent(info)
-  },
-  // ✅ Prevent selecting outside of today + 6 days
-  selectAllow: function(selectInfo) {
-    const today = moment().startOf('day');
-    const maxDate = moment().startOf('day').add(6, 'days');
-    const start = moment(selectInfo.start);
-    const end = moment(selectInfo.end);
-
-    return (
-        start.isBetween(today.clone().subtract(1, 'minute'), maxDate.clone().add(1, 'day'), null, '[)') &&
-        end.isBetween(today.clone().subtract(1, 'minute'), maxDate.clone().add(1, 'day'), null, '[)')
-    );
-  },
-  dayCellDidMount: (info)=> {
-    const cellDate = moment(info.date).startOf('day');
-    const today = moment().startOf('day');
-    const maxDate = moment().startOf('day').add(6, 'days');
-
-    if (cellDate.isBefore(today) || cellDate.isAfter(maxDate)) {
-      // Disable outside range
-      info.el.classList.add('fc-disabled-day');
-    } else {
-      // Mark allowed range
-      info.el.classList.add('fc-allowed-day');
-    }
-    console.log(info.el.classList , info.el)
-  },
-
-})
-const removeEvent = (info: any) => {
-  // remove event from calendar
-  if (info.event.extendedProps.marker) {
-    return;
-  }
-  calendarOptions.value.events = calendarOptions.value.events.filter((ev: any) => {
-    return !moment(ev.start).isSame(info.event.start)
-  })
-}
-
-const updateLessonStartDate = (event) => {
-  // update the start date of the lesson
-
-  formData.value.start_date = moment(event as string).add('8','hours')
-      .format('YYYY-MM-DD HH:mm:ss');
-  calendarOptions.value.initialDate = formData.value.start_date;
-}
-
-const selectTeacher = async () => {
-  let id = formData.value.teacher_id;
-  // get the teacher lesson instances
-  await exeGetTeacherLessonInstances({
-    data: {
-      teacher_id: id,
-    }
-  }).then((res) => {
-    let markeUPevents = res.data!.value.instances.map((ev: any) => {
-
-      // console.log(moment(ev.start).format("YYYY-MM-DD HH:mm:ss")  , ev.start)
-      // let moment = moment().utc()
-      return {
-        title: "",
-        start: moment(ev.start).format("YYYY-MM-DD HH:mm:ss"),
-        end: moment(ev.start).add(ev.duration, 'minutes') .format("YYYY-MM-DD HH:mm:ss"),
-        allDay: false,
-        extendedProps: {
-          marker: true
-        }
-      }
-    })
-
-    console.log(markeUPevents)
-    calendarOptions.value.events = markeUPevents;
-  })
-
-}
-const addEvent = (info: any) => {
-
-  let day = moment(info.start).day();
-  let time = moment(info.start).format('HH:mm:ss');
-  // limit 3 events per day
-  if ((formData.value.planning[day] && formData.value.planning[day].length >= 2) || !formData.value.instrument_plan) {
-    return;
-  }
-  let duration = formData.value.instrument_plan?.duration ? formData.value.instrument_plan?.duration : 30;
-  // remove event from calendar if there is an event at the same time or plus the duration
-
-  let p = calendarOptions.value.events.filter((ev: any) => {
-    let evDay = moment(ev.start).day();
-    let evTime = moment(ev.start).format('HH:mm:ss');
-
-    return !(evDay === day
-        && (evTime === time || evTime <= moment(info.start).add(duration, 'minutes').format('HH:mm:ss') ||
-            evTime === moment(info.start).subtract(duration, 'minutes').format('HH:mm:ss')))
-  })
-  p.push({
-    title: '--',
-    start: info.start,
-    end: moment(info.start).add(formData.value.instrument_plan?.duration, 'minutes').toISOString(),
-    allDay: info.allDay
-  } as never)
-
-  calendarOptions.value.events = p;
-  console.log(calendarOptions.value.events)
-
-}
-const getPlaningDay = (i: string) => {
-  let day = formData.value.planning[parseInt(moment().day(i).format('d'))]
-  return day ? day : []
-}
-
-const getPlans = computed(() => {
-  if (!formData.value.instrument_id) return []
-  return InstrumentList.value.find((res: any) => res.id === formData.value.instrument_id)?.plans
-})
-const calculatePrice = () => {
-  if (!formData.value.instrument_plan) return 0;
-  let total = Object.values(formData.value.planning).reduce((acc, val) => {
-    return acc + val.length
-  }, 0)
-  formData.value.price = total * parseInt(formData.value.instrument_plan?.price) * formData.value.frequency
-  return toCurrency(formData.value.price)
-}
 const save = async () => {
-  // save the lesson
   if (!FormEl.value) return;
   let {valid} = await (FormEl.value as any).validate()
   if (!valid) return;
@@ -361,57 +185,76 @@ const save = async () => {
     data: formData.value
   })
 }
+
 onResultSuccessCreateLesson(() => {
-  // clear the form
-  if (FormEl.value) (FormEl.value as any).reset();
-  formData.value = {
-    teacher_id: '',
-    student_id: '',
-    instrument_id: '',
-    room_id: '',
-    planning: {} as planning,
-    frequency: 1,
-    instrument_plan: "" as any,
-    start_date: moment().add('8', 'hours').toISOString(),
-    price: 0,
-    active: 1,
-    notes: ''
-  }
+  resetForm()
   calendarOptions.value.events = []
-  exeGlobalGetLessons()
+  exeGlobalGetLessons({})
 })
 
 watch(() => formData.value.instrument_id, () => {
   formData.value.instrument_plan = null;
-  formData.value.planning = {} as planning;
-  calendarOptions.value.events = []
+  formData.value.planning = {};
+  calendarOptions.value.events = calendarOptions.value.events.filter((event: any) => {
+    return event.extendedProps.marker
+  })
 }, {deep: true})
 
 watch(() => formData.value.instrument_plan, () => {
-  formData.value.planning = {} as planning;
-  calendarOptions.value.events = []
+  formData.value.planning = {};
+  calendarOptions.value.events = calendarOptions.value.events.filter((event: any) => {
+    return event.extendedProps.marker
+  })
 }, {deep: true})
 
 watch(() => formData.value.teacher_id, () => {
   selectTeacher()
 }, {deep: true})
 
-watch(() => formData.value.start_date, () => {
-  calendarOptions.value.initialDate = formData.value.start_date;
+watch(() => formData.value.student_id, () => {
+  selectStudent()
 }, {deep: true})
-watch(
-    () => calendarOptions.value.events,
-    (newVal) => {
-      formData.value.planning = {} as planning;
-      newVal.map((ev: any) => {
-        let day = new Date(ev.start).getDay();
-        if (!formData.value.planning[day]) formData.value.planning[day] = [];
-        formData.value.planning[day].push({
-          time: new Date(ev.start).toLocaleTimeString(),
-          day: day
-        })
+
+watch(() => formData.value.frequency, () => {
+  createFakeLessonInstances()
+}, {deep: true})
+
+watch(() => formData.value.start_date, () => {
+  calendarOptions.value.events = calendarOptions.value.events.filter((event: any) => {
+    return event.extendedProps.marker
+  })
+  calendarOptions.value.initialDate = moment(formData.value.start_date).format('YYYY-MM-DD');
+  calendarOptions.value.firstDay = moment(formData.value.start_date).day();
+  calendarOptions.value.visibleRange = {
+    start: moment(formData.value.start_date).format('YYYY-MM-DD'),
+    end: moment(formData.value.start_date).add(7, 'days').format('YYYY-MM-DD')
+  };
+
+  if (cal.value) {
+    const calendarApi = cal.value.getApi();
+    calendarApi.gotoDate(moment(formData.value.start_date).format('YYYY-MM-DD'));
+    calendarApi.setOption('visibleRange', {
+      start: moment(formData.value.start_date).format('YYYY-MM-DD'),
+      end: moment(formData.value.start_date).add(7, 'days').format('YYYY-MM-DD')
+    });
+  }
+}, {deep: true})
+
+watch(() => calendarOptions.value.events, (newVal) => {
+  formData.value.planning = {};
+  newVal.map((ev: any) => {
+    let day = new Date(ev.start).getDay();
+    if (!ev.extendedProps.marker && !ev.extendedProps.fake) {
+      if (!formData.value.planning[day]) formData.value.planning[day] = [];
+      formData.value.planning[day].push({
+        time: new Date(ev.start).toLocaleTimeString(),
+        day: day
       })
-
-    }, {deep: true})
-
+    }
+  })
+}, {deep: true})
 </script>
+
+<style scoped>
+@import '@/styles/lessonCalendar.css';
+</style>

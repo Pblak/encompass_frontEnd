@@ -22,6 +22,7 @@
 </template>
 <script lang="ts" setup>
 import {lessonInstanceStatus} from "@/stats/lessonInstanceState";
+import type {LessonInstanceType} from "@/stats/lessonInstanceState";
 import {lessonState} from "@/stats/lessonState";
 import {useLessonInstance} from "@/api/useLessonInstance";
 import {ref} from "vue";
@@ -32,19 +33,22 @@ const {
   execute: exeUpdateLessonInstance,
   onResultSuccess: onSuccessUpdateLessonInstance
 } = useUpdateLessonInstance()
+
 const {lessonInstance} = defineProps<{
-  lessonInstance,
+  lessonInstance: LessonInstanceType,
 }>();
-const selectedStatus = ref(null);
-const getStatusName = (status = null) => {
-  return lessonInstanceStatus[status ? status : lessonInstance.status].name;
+const selectedStatus = ref<string | null>(null);
+const getStatusName = (status: string | null = null) => {
+  const statusKey = status ? status : lessonInstance.status;
+  return lessonInstanceStatus[statusKey as keyof typeof lessonInstanceStatus].name;
 };
 
-const getStatusIcon = (status = null) => {
-  return lessonInstanceStatus[status ? status : lessonInstance.status].icon;
+const getStatusIcon = (status: string | null = null) => {
+  const statusKey = status ? status : lessonInstance.status;
+  return lessonInstanceStatus[statusKey as keyof typeof lessonInstanceStatus].icon;
 };
 
-const updateLessonInstanceStatus = (status) => {
+const updateLessonInstanceStatus = (status: string) => {
   selectedStatus.value = status
   exeUpdateLessonInstance({
     data: {
@@ -54,7 +58,7 @@ const updateLessonInstanceStatus = (status) => {
   })
 };
 
-onSuccessUpdateLessonInstance((res) => {
+onSuccessUpdateLessonInstance((res: any) => {
   for (const k in Object.keys(lessonInstance)) {
     let key = Object.keys(lessonInstance)[k]
     lessonInstance[key] = res.data.data[key]

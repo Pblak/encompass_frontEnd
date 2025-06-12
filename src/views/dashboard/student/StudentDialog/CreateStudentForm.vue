@@ -12,7 +12,7 @@ const props = defineProps<{
     eventForValidate: string,
     pushData: PushDataType;
 }>();
-const {userLogin} = loginState
+const {userLogin} = loginState()
 const {on} = useEventBus(props.eventForValidate as unknown as string);
 const {ParentList} = parentState();
 const studentForm = ref({
@@ -21,9 +21,10 @@ const studentForm = ref({
     last_name: "",
     username: "",
     email: "",
-    parent_id: "",
+    parent_id: 0,
     password: "",
     infos: {
+        username: "",
         phone1: "",
         address: {
             street: "",
@@ -31,7 +32,7 @@ const studentForm = ref({
             zip: "",
             state: "",
         },
-        gender: "male",
+        gender: "male" as "male" | "female",
     },
 } as StudentType)
 

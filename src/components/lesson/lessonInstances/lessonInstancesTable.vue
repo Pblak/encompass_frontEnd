@@ -4,7 +4,7 @@
             <tr>
                 <template v-for="column in columns" :key="column.key">
                     <td class="_capitalize">
-                        <span class="mr-2 cursor-pointer" @click="() => toggleSort(column)">{{ column.text }}</span>
+                        <span class="mr-2 cursor-pointer" @click="() => toggleSort(column)">{{ column.title }}</span>
                         <template v-if="isSorted(column)">
                             <v-icon :icon="getSortIcon(column)"></v-icon>
                         </template>
@@ -112,36 +112,42 @@ const {TeacherList} = teacherState();
 
 const selectedTeachers = ref<{
     // selected teacher for each lesson instance
-    [key: number]: TeacherType
+    [key: number]: TeacherType & { loading?: boolean }
 }>({});
 
 const instancesToRecycle = ref<{
-    [key: any]: any
+    [key: number]: any
 }>({});
 
-const attemptRecycle = async (instance_id) => {
-    props.setLoading(true)
+const attemptRecycle = async (instance_id: number) => {
+    props.setLoading?.(true)
     let instance = instancesToRecycle.value[instance_id];
     await updateLessonInstance(instance_id, {...instance}).then(() => {
         delete instancesToRecycle.value[instance_id];
     })
 }
 const updateLessonInstance = async (instance_id: number, value: any) => {
-    props.setLoading(true)
-    selectedTeachers.value[instance_id].loading = true;
+    props.setLoading?.(true)
+    if (selectedTeachers.value[instance_id]) {
+        selectedTeachers.value[instance_id].loading = true;
+    }
     return await exeUpdateLessonInstance({
         data: {
             id: instance_id,
             ...value
         }
     }).then(() => {
-        selectedTeachers.value[instance_id].loading = false;
-        exeGlobalGetLessons().then(() => {
-            props.setLoading(false)
+        if (selectedTeachers.value[instance_id]) {
+            selectedTeachers.value[instance_id].loading = false;
+        }
+        exeGlobalGetLessons({}).then(() => {
+            props.setLoading?.(false)
         })
     }).catch(() => {
-        selectedTeachers.value[instance_id].loading = false;
-        props.setLoading(false)
+        if (selectedTeachers.value[instance_id]) {
+            selectedTeachers.value[instance_id].loading = false;
+        }
+        props.setLoading?.(false)
     })
 }
 const updateLessonInstanceTeacher = async (instance: LessonInstanceType, teacher_id: number) => {
@@ -155,14 +161,14 @@ const updateLessonInstanceTeacher = async (instance: LessonInstanceType, teacher
 }
 
 const headers = [
-    {text: 'id', align: 'start', sortable: false, key: 'id',},
-    {text: 'Start/End', key: 'start'},
-    {text: 'Duration', key: 'duration'},
-    {text: 'Room', key: 'room_id'},
-    {text: 'Teacher', key: 'teacher'},
-    {text: 'Status', key: 'status'},
-    {text: 'updated at', key: 'updated_at'},
-]
+    {title: 'id', align: 'start' as const, sortable: false, key: 'id'},
+    {title: 'Start/End', key: 'start'},
+    {title: 'Duration', key: 'duration'},
+    {title: 'Room', key: 'room_id'},
+    {title: 'Teacher', key: 'teacher'},
+    {title: 'Status', key: 'status'},
+    {title: 'updated at', key: 'updated_at'},
+] as const
 
 const renderTeacherList = computed(() => {
     return TeacherList.value.map((teacher: TeacherType) => {
