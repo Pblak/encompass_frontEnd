@@ -86,7 +86,7 @@
                 <v-btn elevation="0" icon="fa-thin fa-calendar _text-sm" color="primary" variant="tonal"
                        size="small" @click="showLessonInstances(item.id)"></v-btn>
 
-                <v-btn elevation="0" icon="fa-brands fa-apple-pay _text-sm" color="green" variant="tonal"
+                <v-btn v-roles="'admin|parent|student'" elevation="0" icon="fa-brands fa-apple-pay _text-sm" color="green" variant="tonal"
                        size="small" @click="showTransactionForm(item)"></v-btn>
 
                 <v-btn elevation="0" icon="fa-thin fa-trash _text-sm" v-if="item.deleted_at == null"
@@ -140,10 +140,14 @@ import {exeGlobalGetLessons, useLesson} from "@/api/useLesson";
 import {ref, watch} from "vue";
 import {useEventBus} from "@vueuse/core";
 import type {LessonInstanceType} from "@/stats/lessonInstanceState";
+import isRole from '@/plugins/roles';
 
 const APP_URL = import.meta.env.VITE_APP_URL;
 const {emit} = useEventBus('toggle-transaction-dialog-event');
 const {useDeleteLesson} = useLesson();
+
+// Register the role directive
+const vRoles = isRole;
 const toggleDialogInstances = ref(false);
 const toggleTransactionDialog = ref(false);
 const {LessonList} = lessonState();

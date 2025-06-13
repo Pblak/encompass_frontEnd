@@ -10,128 +10,126 @@
                             <!--                                   label="Lessons" variant="outlined"></v-text-field>-->
                         </v-card-title>
                         <v-card-text class="_bg-gray-100 overflow-y-auto _h-[calc(100vh-5.5rem)] !_pt-4">
-                            <v-row>
-                                <v-col v-for="lesson in LessonList" :key="lesson.id" cols="12">
-                                    <v-card>
-                                        <v-card-item prepend-avatar="https://cdn.vuetifyjs.com/images/cards/foster.jpg">
-                                            <v-card-title class="!_font-black !_text-sm !_text-md">
+                            <v-expansion-panels v-model="expandedLessons" multiple variant="accordion">
+                                <v-expansion-panel v-for="lesson in LessonList" :key="lesson.id" :value="lesson.id">
+                                    <v-expansion-panel-title class="!_px-4 !_py-2">
+                                        <v-card-item prepend-avatar="https://cdn.vuetifyjs.com/images/cards/foster.jpg" class="!_px-0">
+                                            <v-card-title class="!_font-black !_text-sm">
                                                 {{ lesson.student.name }}
                                             </v-card-title>
-                                            <v-card-subtitle class="!_text-xs" >{{
-                                                    lesson.student.email
-                                                }}
+                                            <v-card-subtitle class="!_text-xs">
+                                                {{ lesson.student.email }}
                                             </v-card-subtitle>
                                             <template v-slot:append>
-                                                <v-checkbox v-model="LessonsSelected" :value="lesson.id"
-                                                            hide-details></v-checkbox>
+                                                <v-checkbox 
+                                                    v-model="LessonsSelected" 
+                                                    :value="lesson.id"
+                                                    hide-details
+                                                    @click.stop></v-checkbox>
                                             </template>
-
                                         </v-card-item>
-                                        <v-divider class="_border-gray-800"></v-divider>
-                                        <v-card-text class="!_px-0 !_pb-1">
-                                            <VList class=" ">
-                                                <v-list-item :append-avatar="APP_URL+lesson.instrument.image">
-                                                    <v-list-item-title>Instrument</v-list-item-title>
-                                                    <v-list-item-subtitle class="!_capitalize">
-                                                        {{ lesson.instrument.name }}
-                                                    </v-list-item-subtitle>
-                                                    <template #append>
-                                                        <v-avatar rounded="sm">
-                                                            <v-img :src="APP_URL+lesson.instrument.image"></v-img>
-                                                        </v-avatar>
-
-                                                    </template>
-                                                </v-list-item>
-                                                <v-list-item>
-                                                    <template v-slot:append>
-                                                        <div class="_flex _flex-col ">
-                                                            <v-list-item-title>
-                                                                Payed price
-                                                            </v-list-item-title>
-                                                            <v-chip density="compact" color="success">
-                                                                {{ toCurrency(lesson.payed_price) }}
-                                                            </v-chip>
-                                                        </div>
-                                                    </template>
-                                                    <v-list-item-title>
-                                                        Lesson price
-                                                    </v-list-item-title>
-                                                    <v-list-item-subtitle>
-                                                        <v-chip density="compact" color="primary">
-                                                            {{ toCurrency(lesson.price) }}
+                                    </v-expansion-panel-title>
+                                    <v-expansion-panel-text>
+                                        <v-divider class="_border-gray-800 !_mb-4"></v-divider>
+                                        <VList>
+                                            <v-list-item :append-avatar="APP_URL+lesson.instrument.image">
+                                                <v-list-item-title>Instrument</v-list-item-title>
+                                                <v-list-item-subtitle class="!_capitalize">
+                                                    {{ lesson.instrument.name }}
+                                                </v-list-item-subtitle>
+                                                <template #append>
+                                                    <v-avatar rounded="sm">
+                                                        <v-img :src="APP_URL+lesson.instrument.image"></v-img>
+                                                    </v-avatar>
+                                                </template>
+                                            </v-list-item>
+                                            <v-list-item>
+                                                <template v-slot:append>
+                                                    <div class="_flex _flex-col">
+                                                        <v-list-item-title>
+                                                            Payed price
+                                                        </v-list-item-title>
+                                                        <v-chip density="compact" color="success">
+                                                            {{ toCurrency(lesson.payed_price) }}
                                                         </v-chip>
-                                                    </v-list-item-subtitle>
-                                                </v-list-item>
-                                                <v-list-item>
-                                                    <template v-slot:append>
-                                                        <v-badge :content="1" color="primary"></v-badge>
-                                                    </template>
-                                                    <v-list-item-title>
-                                                        Lessons frequency
-                                                    </v-list-item-title>
-                                                    <v-list-item-subtitle>
-                                                        {{ lesson.frequency }}
-                                                    </v-list-item-subtitle>
-                                                </v-list-item>
-                                                <v-list-item>
-                                                    <v-list-item-title>Teacher</v-list-item-title>
-                                                    <v-list-item-subtitle class="!_capitalize">{{
-                                                            lesson.teacher.name
+                                                    </div>
+                                                </template>
+                                                <v-list-item-title>
+                                                    Lesson price
+                                                </v-list-item-title>
+                                                <v-list-item-subtitle>
+                                                    <v-chip density="compact" color="primary">
+                                                        {{ toCurrency(lesson.price) }}
+                                                    </v-chip>
+                                                </v-list-item-subtitle>
+                                            </v-list-item>
+                                            <v-list-item>
+                                                <template v-slot:append>
+                                                    <v-badge :content="lesson.frequency" color="primary"></v-badge>
+                                                </template>
+                                                <v-list-item-title>
+                                                    Lessons frequency
+                                                </v-list-item-title>
+                                                <v-list-item-subtitle>
+                                                    {{ lesson.frequency }}
+                                                </v-list-item-subtitle>
+                                            </v-list-item>
+                                            <v-list-item>
+                                                <v-list-item-title>Teacher</v-list-item-title>
+                                                <v-list-item-subtitle class="!_capitalize">
+                                                    {{ lesson.teacher.name }}
+                                                </v-list-item-subtitle>
+                                            </v-list-item>
+                                            <v-list-item @click="planningsToggle(lesson.id+'_planning')">
+                                                <v-list-item-title>Schedule</v-list-item-title>
+                                                <v-list-item-subtitle class="!_capitalize">
+                                                    Lesson's planning
+                                                </v-list-item-subtitle>
+                                                <template v-slot:append>
+                                                    <v-icon>{{
+                                                            !planningsContainers.includes(`${lesson.id}_planning` as never) ?
+                                                                'fa-thin fa-caret-down' : 'fa-thin fa-caret-up'
                                                         }}
-                                                    </v-list-item-subtitle>
-                                                </v-list-item>
-                                                <v-list-item @click="planningsToggle(lesson.id+'_planning')">
-                                                    <v-list-item-title>Schedule</v-list-item-title>
-                                                    <v-list-item-subtitle class="!_capitalize">
-                                                        Lesson's planning
-                                                    </v-list-item-subtitle>
-                                                    <template v-slot:append>
-                                                        <v-icon>{{
-                                                                !planningsContainers.includes(`${lesson.id}_planning` as never) ?
-                                                                    'fa-thin fa-caret-down' : 'fa-thin fa-caret-up'
-                                                            }}
-                                                        </v-icon>
-                                                    </template>
-                                                </v-list-item>
-                                            </VList>
-                                            <v-expansion-panels v-model="planningsContainers" class="!_p-0" multiple>
-                                                <v-expansion-panel :value="lesson.id+'_planning'" elevation="0">
-                                                    <v-expansion-panel-text>
-                                                        <v-divider class="_border-gray-800 !_py-4"></v-divider>
-                                                        <v-row class="_px-2">
-                                                            <v-col
-                                                                v-for="day in Object.keys(transformDataToDays(lesson.planning))"
-                                                                :key="day"
-                                                                cols="4">
-                                                                <div class="_flex _flex-col _gap-4">
-                                                                    <span class="_capitalize _font-bold _text-xs">{{
-                                                                            day
-                                                                        }}</span>
-                                                                    <v-chip
-                                                                        v-for="item in transformDataToDays(lesson.planning)[day]"
-                                                                        :key="item.id"
-                                                                        color="secondary">
-                                       <span class="_text-xs">
-                                          {{ moment(item.time, 'h:mm:ss A').format('hh:mm A') }}
-                                       </span>
-                                                                    </v-chip>
-                                                                    <div
-                                                                        v-if="transformDataToDays(lesson.planning)[day].length === 0"
-                                                                        class="_text-center">
-                                                                        <span
-                                                                            class="_text-xs _text-gray-400">----</span>
-                                                                    </div>
+                                                    </v-icon>
+                                                </template>
+                                            </v-list-item>
+                                        </VList>
+                                        <v-expansion-panels v-model="planningsContainers" class="!_p-0" multiple>
+                                            <v-expansion-panel :value="lesson.id+'_planning'" elevation="0">
+                                                <v-expansion-panel-text>
+                                                    <v-divider class="_border-gray-800 !_py-4"></v-divider>
+                                                    <v-row class="_px-2">
+                                                        <v-col
+                                                            v-for="day in Object.keys(transformDataToDays(lesson.planning))"
+                                                            :key="day"
+                                                            cols="4">
+                                                            <div class="_flex _flex-col _gap-4">
+                                                                <span class="_capitalize _font-bold _text-xs">{{
+                                                                        day
+                                                                    }}</span>
+                                                                <v-chip
+                                                                    v-for="item in transformDataToDays(lesson.planning)[day]"
+                                                                    :key="item.id"
+                                                                    color="secondary">
+                                   <span class="_text-xs">
+                                      {{ moment(item.time, 'h:mm:ss A').format('hh:mm A') }}
+                                   </span>
+                                                                </v-chip>
+                                                                <div
+                                                                    v-if="transformDataToDays(lesson.planning)[day].length === 0"
+                                                                    class="_text-center">
+                                                                    <span
+                                                                        class="_text-xs _text-gray-400">----</span>
                                                                 </div>
-                                                            </v-col>
-                                                        </v-row>
-                                                    </v-expansion-panel-text>
-                                                </v-expansion-panel>
-                                            </v-expansion-panels>
-                                        </v-card-text>
-                                        <v-divider class="_border-gray-800"></v-divider>
-                                    </v-card>
-                                </v-col>
-                            </v-row>
+                                                            </div>
+                                                        </v-col>
+                                                    </v-row>
+                                                </v-expansion-panel-text>
+                                            </v-expansion-panel>
+                                        </v-expansion-panels>
+                                    </v-expansion-panel-text>
+                                </v-expansion-panel>
+                            </v-expansion-panels>
                         </v-card-text>
                     </v-card>
                 </v-col>
@@ -308,6 +306,10 @@ const renderEvent = () => {
     const selectedLessons = LessonList.value.filter((lesson: any) => LessonsSelected.value.includes(lesson.id))
     const events = selectedLessons.map((lesson: LessonType) => {
         let instances = lesson.instances.map((instance: any) => {
+            // Check if lesson instance is overdue (scheduled and past current day)
+            const isOverdue = instance.status === 'scheduled' && 
+                             moment(instance.start).isBefore(moment(), 'day');
+            
             return {
                 title: lesson.student.name + ' | ' + lesson.instrument.name,
                 start: instance.start,
@@ -319,9 +321,7 @@ const renderEvent = () => {
                     status: instance.status,
                     start: instance.start
                 },
-
-//              color: instance.status === 'scheduled' ? '#0b6ab9' : instance.status === 'in_progress' ? 'yellow' : instance.status === 'completed' ? 'green' : 'red',
-
+                className: isOverdue ? 'overdue-scheduled' : undefined,
                 color: lessonInstanceStatus[instance.status].color,
             }
         })
@@ -342,7 +342,10 @@ const lessonsInstrument = computed(() => {
 onMounted(() => {
     exeGlobalGetLessons()
     renderEvent()
-  console.log(LessonList)
+    // Select all lessons by default after a short delay to ensure LessonList is populated
+    setTimeout(() => {
+        selectAllLessons()
+    }, 100)
 })
 
 watch(() => LessonsSelected.value, () => {
@@ -351,6 +354,11 @@ watch(() => LessonsSelected.value, () => {
 
 watch(() => LessonList.value, () => {
     renderEvent()
+    
+    // Auto-select all lessons when lesson list changes
+    if (LessonList.value.length > 0) {
+        selectAllLessons()
+    }
 
     if (selectedLesson.value) {
         selectedLesson.value = LessonList.value
@@ -371,6 +379,8 @@ watch(() => LessonList.value, () => {
 }, {deep: true})
 
 const planningsContainers = ref([])
+const expandedLessons = ref([])
+
 const planningsToggle = (planning: number | string) => {
     // if planning is already in the array remove it
     // else add it
@@ -381,4 +391,15 @@ const planningsToggle = (planning: number | string) => {
     }
 }
 
+// Function to select all lessons by default
+const selectAllLessons = () => {
+    LessonsSelected.value = LessonList.value.map((lesson: any) => lesson.id)
+}
+
 </script>
+
+<style scoped>
+:deep(.fc-event.overdue-scheduled) {
+  opacity: 0.4;
+}
+</style>
