@@ -230,6 +230,82 @@ export const useCalendarLogic = (formData: Ref<any>) => {
     }
   }
 
+  /**
+   * Prefill calendar with events from lesson instances
+   */
+  const prefillCalendarEvents = (instances: any[], isRenewal: boolean = false) => {
+    const existingMarkers = calendarOptions.value.events.filter((event: any) => 
+      event.extendedProps?.marker
+    );
+
+    const instanceEvents = instances.map(instance => ({
+      title: isRenewal ? 'Previous Instance' : 'Existing Instance',
+      start: moment(instance.start).format('YYYY-MM-DD HH:mm:ss'),
+      end: moment(instance.start).add(instance.duration, 'minutes').format('YYYY-MM-DD HH:mm:ss'),
+      allDay: false,
+      className: isRenewal ? 'previous-lesson-instance' : 'existing-lesson-instance',
+      extendedProps: {
+        marker: true,
+        subject: isRenewal ? 'previous' : 'existing',
+        lessonInstanceId: instance.id,
+        status: instance.status,
+        readonly: true
+      }
+    }));
+
+    calendarOptions.value.events = [...existingMarkers, ...instanceEvents];
+  }
+
+  /**
+   * Prefill calendar with planning events for renewal
+   */
+  const prefillPlanningEvents = (planning: any, startDate: string, duration: number = 30) => {
+    const planningEvents: any[] = [];
+    
+    Object.entries(planning).forEach(([dayStr, timeSlots]: [string, any]) => {
+      const day = parseInt(dayStr);
+      
+      if (Array.isArray(timeSlots)) {
+        timeSlots.forEach(slot => {
+          const eventDate = moment(startDate).startOf('week').day(day);
+          const [hours, minutes, seconds] = slot.time.split(':');
+          eventDate.set({
+            hour: parseInt(hours),
+            minute: parseInt(minutes),
+            second: parseInt(seconds || '0')
+          });
+
+          planningEvents.push({
+            title: 'Renewed Lesson',
+            start: eventDate.format('YYYY-MM-DD HH:mm:ss'),
+            end: eventDate.clone().add(duration, 'minutes').format('YYYY-MM-DD HH:mm:ss'),
+            allDay: false,
+            className: 'renewed-lesson-event',
+            extendedProps: {
+              marker: false,
+              subject: 'renewed'
+            }
+          });
+        });
+      }
+    });
+
+    const existingEvents = calendarOptions.value.events.filter((event: any) => 
+      !event.extendedProps?.subject || event.extendedProps.subject !== 'renewed'
+    );
+
+    calendarOptions.value.events = [...existingEvents, ...planningEvents];
+  }
+
+  /**
+   * Clear calendar events by type
+   */
+  const clearEventsByType = (eventType: string) => {
+    calendarOptions.value.events = calendarOptions.value.events.filter((event: any) => 
+      event.extendedProps?.subject !== eventType
+    );
+  }
+
   return {
     cal,
     calendarOptions,
@@ -237,6 +313,9 @@ export const useCalendarLogic = (formData: Ref<any>) => {
     createFakeLessonInstances,
     addEvent,
     removeEvent,
-    updateLessonStartDate
+    updateLessonStartDate,
+    prefillCalendarEvents,
+    prefillPlanningEvents,
+    clearEventsByType
   }
 }

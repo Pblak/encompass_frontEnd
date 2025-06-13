@@ -2,49 +2,47 @@
   <v-card>
     <v-card-title class="_flex _items-center _gap-2">
       <v-icon color="orange">fa-duotone fa-exclamation-triangle</v-icon>
-    Lessons Ending Soon
+      Lessons Ending Soon
       <v-spacer></v-spacer>
-      <v-chip 
-        v-if="lessonsNearingEnd.length > 0" 
-        :color="getUrgencyColor()" 
-        size="small">
+      <v-chip
+          v-if="lessonsNearingEnd.length > 0"
+          :color="getUrgencyColor()"
+          size="small">
         {{ lessonsNearingEnd.length }} lesson{{ lessonsNearingEnd.length > 1 ? 's' : '' }}
       </v-chip>
     </v-card-title>
-    
+
     <v-card-text v-if="!isAdmin" class="_text-center _py-8">
       <v-icon size="48" color="grey">fa-duotone fa-lock</v-icon>
       <p class="_text-grey _mt-4">Admin access required</p>
     </v-card-text>
-    
+
     <v-card-text v-else-if="loading" class="_text-center _py-8">
       <v-progress-circular indeterminate color="primary"></v-progress-circular>
       <p class="_mt-4">Loading lesson data...</p>
     </v-card-text>
-    
+
     <v-card-text v-else-if="lessonsNearingEnd.length === 0" class="_text-center _py-8">
       <v-icon size="48" color="green">fa-duotone fa-check-circle</v-icon>
       <p class="_text-green _mt-4">All lessons are on track!</p>
     </v-card-text>
-    
+
     <v-card-text v-else class="!_p-0">
       <v-list>
-        <v-list-item 
-          v-for="analysis in lessonsNearingEnd" 
-          :key="analysis.lesson.id"
-          :prepend-avatar="getStudentAvatar(analysis.lesson)"
-          @click="$emit('lessonSelected', analysis.lesson)">
-          
+        <v-list-item
+            v-for="analysis in lessonsNearingEnd"
+            :key="analysis.lesson.id"
+            :prepend-avatar="getStudentAvatar(analysis.lesson)"
+            @click="$emit('lessonSelected', analysis.lesson)">
+
           <v-list-item-title class="_flex _items-center _gap-2">
             {{ analysis.lesson.student?.name || 'Unknown Student' }}
-            <v-chip 
-              :color="getUrgencyChipColor(analysis.urgencyLevel)" 
-              size="x-small"
-              :variant="analysis.urgencyLevel === 'critical' ? 'elevated' : 'tonal'">
+            <v-chip :color="getUrgencyChipColor(analysis.urgencyLevel)" size="x-small"
+                    :variant="analysis.urgencyLevel === 'critical' ? 'elevated' : 'tonal'">
               {{ analysis.urgencyLevel.toUpperCase() }}
             </v-chip>
           </v-list-item-title>
-          
+
           <v-list-item-subtitle class="_text-xs">
             <div class="_flex _flex-col _gap-1">
               <span>{{ analysis.lesson.instrument?.name || 'Unknown Instrument' }}</span>
@@ -56,40 +54,54 @@
               </span>
             </div>
           </v-list-item-subtitle>
-          
+
           <template v-slot:append>
+
             <div class="_flex _flex-col _items-end _gap-1">
               <v-progress-circular
-                :model-value="analysis.completionPercentage"
-                :color="getProgressColor(analysis.completionPercentage)"
-                size="32"
-                width="3">
+                  :model-value="analysis.completionPercentage"
+                  :color="getProgressColor(analysis.completionPercentage)"
+                  size="32"
+                  width="3">
                 <span class="_text-xs">{{ analysis.completionPercentage }}%</span>
               </v-progress-circular>
+              <!--                <v-btn-->
+              <!--                    icon="fa-thin fa-chevron-right"-->
+              <!--                    variant="text"-->
+              <!--                    size="x-small"-->
+              <!--                    color="grey"-->
+              <!--                    @click="$emit('lessonSelected', analysis.lesson)"></v-btn>-->
               <v-btn
-                icon="fa-thin fa-chevron-right"
-                variant="text"
-                size="x-small"
-                color="grey"></v-btn>
+                  icon=""
+                  variant="flat"
+                  size="32"
+                  color="blue"
+                  @click.stop="handleRenewLesson(analysis.lesson)">
+                <v-icon>fa-duotone fa-arrows-repeat-1</v-icon>
+                <v-tooltip activator="parent"
+                           location="top">Renew this lesson with new instances
+                </v-tooltip>
+              </v-btn>
+
             </div>
           </template>
         </v-list-item>
       </v-list>
     </v-card-text>
-    
+
     <v-card-actions v-if="lessonsNearingEnd.length > 0">
       <v-spacer></v-spacer>
-      <v-btn 
-        color="primary" 
-        variant="text" 
-        @click="refreshData">
+      <v-btn
+          color="primary"
+          variant="text"
+          @click="refreshData">
         <v-icon left>fa-thin fa-refresh</v-icon>
         Refresh
       </v-btn>
-      <v-btn 
-        color="orange" 
-        variant="tonal" 
-        @click="$emit('viewAllLessons')">
+      <v-btn
+          color="orange"
+          variant="tonal"
+          @click="$emit('viewAllLessons')">
         View All Lessons
       </v-btn>
     </v-card-actions>
@@ -97,10 +109,11 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
-import { lessonState } from '@/stats/lessonState'
-import { loginState } from '@/stats/loginState'
-import { getLessonsNeedingAttention, type LessonEndAnalysis } from '@/utils/lessonEndDetector'
+import {computed, onMounted, ref} from 'vue'
+import {useRouter} from 'vue-router'
+import {lessonState} from '@/stats/lessonState'
+import {loginState} from '@/stats/loginState'
+import {getLessonsNeedingAttention, type LessonEndAnalysis} from '@/utils/lessonEndDetector'
 import moment from 'moment'
 
 // Props and Emits
@@ -110,8 +123,9 @@ defineEmits<{
 }>()
 
 // State
-const { LessonList } = lessonState()
-const { userLogin } = loginState()
+const {LessonList} = lessonState()
+const {userLogin} = loginState()
+const router = useRouter()
 const loading = ref(false)
 const APP_URL = import.meta.env.VITE_APP_URL;
 // Computed
@@ -119,14 +133,14 @@ const isAdmin = computed(() => userLogin.value?.accountType === 'users')
 
 const lessonsNearingEnd = computed((): LessonEndAnalysis[] => {
   if (!isAdmin.value || !LessonList.value.length) return []
-return getLessonsNeedingAttention(LessonList.value, 3)
+  return getLessonsNeedingAttention(LessonList.value, 3)
 })
 
 // Methods
 const getUrgencyColor = (): string => {
   const criticalCount = lessonsNearingEnd.value.filter(l => l.urgencyLevel === 'critical').length
   const highCount = lessonsNearingEnd.value.filter(l => l.urgencyLevel === 'high').length
-  
+
   if (criticalCount > 0) return 'red'
   if (highCount > 0) return 'orange'
   return 'yellow'
@@ -134,10 +148,14 @@ const getUrgencyColor = (): string => {
 
 const getUrgencyChipColor = (urgency: string): string => {
   switch (urgency) {
-    case 'critical': return 'red'
-    case 'high': return 'orange'
-    case 'medium': return 'yellow'
-    default: return 'grey'
+    case 'critical':
+      return 'red'
+    case 'high':
+      return 'orange'
+    case 'medium':
+      return 'yellow'
+    default:
+      return 'grey'
   }
 }
 
@@ -151,9 +169,9 @@ const getProgressColor = (percentage: number): string => {
 const getStudentAvatar = (lesson: any): string => {
   if (lesson.student?.infos?.avatar) {
     return `${APP_URL}${lesson.student.infos.avatar}`
-  }else {
+  } else {
 
-    return  'https://cdn.vuetifyjs.com/images/cards/foster.jpg'
+    return 'https://cdn.vuetifyjs.com/images/cards/foster.jpg'
   }
 }
 
@@ -171,6 +189,17 @@ const refreshData = async (): Promise<void> => {
   } finally {
     loading.value = false
   }
+}
+
+const handleRenewLesson = (lesson: any): void => {
+  // Navigate to createLesson page with renewal parameters
+  router.push({
+    name: 'createLessons',
+    query: {
+      renew: 'true',
+      lessonId: lesson.id.toString()
+    }
+  })
 }
 
 // Lifecycle

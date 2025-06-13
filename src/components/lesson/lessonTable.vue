@@ -86,8 +86,15 @@
                 <v-btn elevation="0" icon="fa-thin fa-calendar _text-sm" color="primary" variant="tonal"
                        size="small" @click="showLessonInstances(item.id)"></v-btn>
 
-                <v-btn v-roles="'admin|parent|student'" elevation="0" icon="fa-brands fa-apple-pay _text-sm" color="green" variant="tonal"
+                <v-btn v-roles="'users|parent|student'" elevation="0" icon="fa-brands fa-apple-pay _text-sm" color="green" variant="tonal"
                        size="small" @click="showTransactionForm(item)"></v-btn>
+
+                <v-btn v-if="canRenewLesson(item)" elevation="0" icon="fa-thin fa-rotate _text-sm" color="orange" variant="tonal"
+                       size="small" @click="renewLesson(item)">
+                    <v-tooltip activator="parent" location="top">
+                        Renew Lesson
+                    </v-tooltip>
+                </v-btn>
 
                 <v-btn elevation="0" icon="fa-thin fa-trash _text-sm" v-if="item.deleted_at == null"
                        @click="openDeleteDialog(item)" color="red" variant="tonal" size="small"></v-btn>
@@ -141,10 +148,14 @@ import {ref, watch} from "vue";
 import {useEventBus} from "@vueuse/core";
 import type {LessonInstanceType} from "@/stats/lessonInstanceState";
 import isRole from '@/plugins/roles';
+import {useRenewLesson} from "@/composables/useRenewLesson";
+import {useRouter} from "vue-router";
 
 const APP_URL = import.meta.env.VITE_APP_URL;
 const {emit} = useEventBus('toggle-transaction-dialog-event');
 const {useDeleteLesson} = useLesson();
+const router = useRouter();
+const {canRenewLesson, transformLessonForRenewal} = useRenewLesson();
 
 // Register the role directive
 const vRoles = isRole;
@@ -199,6 +210,17 @@ const showLessonInstances = (lesson_id:number) => {
 const showTransactionForm = (lesson: any) => {
     emit({
         lesson: {...lesson},
+    })
+}
+
+const renewLesson = (lesson: LessonType) => {
+    // Navigate to create lesson page with renewal data
+    router.push({
+        name: 'createLessons',
+        query: {
+            renew: 'true',
+            lessonId: lesson.id.toString()
+        }
     })
 }
 watch(()=>LessonList.value,()=>{

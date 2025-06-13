@@ -20,7 +20,7 @@ export const useLessonForm = (InstrumentList: any) => {
     planning: {} as Planning,
     frequency: 1,
     start_date: moment().add('8', 'hours').toISOString(),
-    instrument_plan: "" as any,
+    instrument_plan: null as any,
     price: 0,
     active: 1,
     notes: ''
@@ -36,7 +36,7 @@ export const useLessonForm = (InstrumentList: any) => {
     const total = Object.values(formData.value.planning).reduce((acc, val) => {
       return acc + val.length
     }, 0)
-    formData.value.price = total * parseInt(formData.value.instrument_plan?.price) * formData.value.frequency
+    formData.value.price = total * parseInt(formData.value.instrument_plan?.price || 0) * formData.value.frequency
     return toCurrency(formData.value.price)
   }
 
@@ -49,12 +49,53 @@ export const useLessonForm = (InstrumentList: any) => {
       room_id: '',
       planning: {} as Planning,
       frequency: 1,
-      instrument_plan: "" as any,
+      instrument_plan: null as any,
       start_date: moment().add('8', 'hours').toISOString(),
       price: 0,
       active: 1,
       notes: ''
     }
+  }
+
+  /**
+   * Prefill form with lesson data (for renewal)
+   */
+  const prefillForm = (lessonData: any) => {
+    formData.value = {
+      teacher_id: lessonData.teacher_id || '',
+      student_id: lessonData.student_id || '',
+      instrument_id: lessonData.instrument_id || '',
+      room_id: lessonData.room_id || '',
+      planning: lessonData.planning || {} as Planning,
+      frequency: lessonData.frequency || 1,
+      instrument_plan: lessonData.instrument_plan || null as any,
+      start_date: lessonData.start_date || moment().add('8', 'hours').toISOString(),
+      price: lessonData.price || 0,
+      active: lessonData.active || 1,
+      notes: lessonData.notes || ''
+    }
+  }
+
+  /**
+   * Get next available date after lesson instances
+   */
+  const getNextAvailableDate = (instances: any[]): string => {
+    if (!instances || instances.length === 0) {
+      return moment().add('1', 'day').format('YYYY-MM-DD HH:mm:ss')
+    }
+
+    // Sort instances by start date to find the latest
+    const sortedInstances = [...instances].sort((a, b) => 
+      moment(a.start).isAfter(moment(b.start)) ? -1 : 1
+    )
+
+    const lastInstance = sortedInstances[0]
+    const lastInstanceDate = moment(lastInstance.start)
+    
+    // Add the duration to get the end time, then add buffer for next week
+    const nextStartDate = lastInstanceDate.clone().add(7, 'days')
+    
+    return nextStartDate.format('YYYY-MM-DD HH:mm:ss')
   }
 
   const getPlaningDay = (i: string) => {
@@ -68,6 +109,8 @@ export const useLessonForm = (InstrumentList: any) => {
     getPlans,
     calculatePrice,
     resetForm,
+    prefillForm,
+    getNextAvailableDate,
     getPlaningDay
   }
 }
