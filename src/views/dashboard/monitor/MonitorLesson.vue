@@ -1,7 +1,14 @@
 <template>
     <v-row>
+        <!-- Lesson End Notifications for Admins -->
+
         <v-col cols="12" md="4">
             <v-row>
+              <v-col cols="12" >
+                  <LessonEndNotifications
+                      @lesson-selected="selectLessonFromNotification"
+                      @view-all-lessons="scrollToLessons" />
+              </v-col>
                 <v-col cols="12">
                     <v-card class="">
                         <v-card-title>
@@ -248,6 +255,7 @@ import {exeGlobalGetLessons, useLesson} from "@/api/useLesson";
 import {toCurrency} from "@/stats/Utils";
 import {CalendarOptions} from "@fullcalendar/core";
 import LessonInstancesTable from "@/components/lesson/lessonInstances/lessonInstancesTable.vue";
+import LessonEndNotifications from "@/components/admin/LessonEndNotifications.vue";
 import {debuggerStatement} from "@babel/types";
 
 const APP_URL = import.meta.env.VITE_APP_URL;
@@ -394,6 +402,30 @@ const planningsToggle = (planning: number | string) => {
 // Function to select all lessons by default
 const selectAllLessons = () => {
     LessonsSelected.value = LessonList.value.map((lesson: any) => lesson.id)
+}
+
+// Event handlers for LessonEndNotifications component
+const selectLessonFromNotification = (lesson: LessonType) => {
+    // Expand the specific lesson in the expansion panels
+    if (!expandedLessons.value.includes(lesson.id as never)) {
+        expandedLessons.value.push(lesson.id as never)
+    }
+    
+    // Select this lesson if not already selected
+    if (!LessonsSelected.value.includes(lesson.id)) {
+        LessonsSelected.value.push(lesson.id)
+    }
+    
+    // Optionally scroll to the lesson in the list
+    // This would require additional implementation if needed
+}
+
+const scrollToLessons = () => {
+    // Scroll to the lessons section
+    const lessonsSection = document.querySelector('.v-expansion-panels')
+    if (lessonsSection) {
+        lessonsSection.scrollIntoView({ behavior: 'smooth' })
+    }
 }
 
 </script>
