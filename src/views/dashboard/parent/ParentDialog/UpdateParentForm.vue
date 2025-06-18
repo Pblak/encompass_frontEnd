@@ -3,7 +3,8 @@
         <div class="_flex _flex-col _gap-4">
             <div class="_flex _justify-center">
                 <v-avatar size="170">
-                    <v-img alt="John" :src="imageAvatar" ></v-img>
+                    <v-img alt="Parent Avatar" :src="imageAvatar" v-if="imageAvatar"></v-img>
+                    <v-icon v-else size="80">fa-user</v-icon>
                 </v-avatar>
             </div>
             <v-file-input v-model="parentForm.infos.avatar as File"
@@ -77,7 +78,7 @@
 </template>
 <script lang="ts" setup>
 import type {ParentType} from "@/stats/parentState";
-import {onMounted, ref} from "vue";
+import {onMounted, ref, computed, watch, watchEffect} from "vue";
 import {useEventBus} from "@vueuse/core";
 
 
@@ -88,27 +89,100 @@ const props = defineProps<{
     pushData: PushDataType;
 }>();
 
+console.log('UpdateParentForm props:', props);
+console.log('parentSelected:', props.parentSelected);
+
 const {on} = useEventBus(props.eventForValidate as unknown as string);
-const parentForm = props.parentSelected
+
+// Initialize with safe defaults
+const parentForm = ref({
+    id: props.parentSelected?.id || '',
+    first_name: props.parentSelected?.first_name || '',
+    last_name: props.parentSelected?.last_name || '',
+    email: props.parentSelected?.email || '',
+    infos: {
+        gender: props.parentSelected?.infos?.gender || '',
+        allergies: props.parentSelected?.infos?.allergies || '',
+        phone1: props.parentSelected?.infos?.phone1 || '',
+        phone2: props.parentSelected?.infos?.phone2 || '',
+        avatar: props.parentSelected?.infos?.avatar || '',
+        address: props.parentSelected?.infos?.address || {
+            street: '',
+            city: '',
+            state: '',
+            zip: ''
+        }
+    }
+});
+
+// Watch for prop changes
+watchEffect(() => {
+    if (props.parentSelected) {
+        parentForm.value = {
+            id: props.parentSelected.id || '',
+            first_name: props.parentSelected.first_name || '',
+            last_name: props.parentSelected.last_name || '',
+            email: props.parentSelected.email || '',
+            infos: {
+                gender: props.parentSelected.infos?.gender || '',
+                allergies: props.parentSelected.infos?.allergies || '',
+                phone1: props.parentSelected.infos?.phone1 || '',
+                phone2: props.parentSelected.infos?.phone2 || '',
+                avatar: props.parentSelected.infos?.avatar || '',
+                address: props.parentSelected.infos?.address || {
+                    street: '',
+                    city: '',
+                    state: '',
+                    zip: ''
+                }
+            }
+        };
+    }
+});
 const APP_URL = import.meta.env.VITE_APP_URL;
 const ElForm = ref<any>(null);
-const imageAvatar:string = APP_URL+parentForm.infos.avatar
+const selectedFile = ref<File | null>(null);
+const imageAvatar = computed(() => {
+    if (selectedFile.value) {
+        return URL.createObjectURL(selectedFile.value);
+    }
+    return parentForm.value.infos?.avatar ? APP_URL + parentForm.value.infos.avatar : '';
+});
+
+watch(() => parentForm.value.infos.avatar, (newAvatar) => {
+    if (newAvatar instanceof File) {
+        selectedFile.value = newAvatar;
+    }
+});
 const validateForm = async () => {
     const {valid} = await ElForm.value.validate()
-    console.log(parentForm)
+    console.log(parentForm.value)
     if(!valid) return;
+    
+    const formData = new FormData();
+    formData.append('id', parentForm.value.id.toString());
+    formData.append('first_name', parentForm.value.first_name);
+    formData.append('last_name', parentForm.value.last_name);
+    formData.append('email', parentForm.value.email);
+    
+    // Handle infos as JSON or individual fields
+    formData.append('infos[phone1]', parentForm.value.infos.phone1 || '');
+    formData.append('infos[phone2]', parentForm.value.infos.phone2 || '');
+    formData.append('infos[gender]', parentForm.value.infos.gender || '');
+    formData.append('infos[allergies]', parentForm.value.infos.allergies || '');
+    formData.append('infos[address][street]', parentForm.value.infos.address.street || '');
+    formData.append('infos[address][city]', parentForm.value.infos.address.city || '');
+    formData.append('infos[address][state]', parentForm.value.infos.address.state || '');
+    formData.append('infos[address][zip]', parentForm.value.infos.address.zip || '');
+    
+    if (selectedFile.value) {
+        formData.append('avatar', selectedFile.value);
+    }
+    
     props.pushData({
         validate: valid,
-        data: {
-            id: parentForm.id,
-            first_name: parentForm.first_name,
-            last_name: parentForm.last_name,
-            email: parentForm.email,
-            infos: parentForm.infos,
-            // avatar: parentForm.infos.avatar
-        }
+        data: formData
     });
-
 };
 onMounted(() => {
     on(() => {

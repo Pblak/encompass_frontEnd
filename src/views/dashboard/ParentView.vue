@@ -63,8 +63,10 @@
                 </div>
             </template>
             <template v-slot:item.infos.address="{ item }">
-                {{ item.infos.address.street }}, {{ item.infos.address.city }}, {{ item.infos.address.state }},
-                {{ item.infos.address.zip }}
+                <span v-if="item.infos?.address">
+                    {{ item.infos.address.street }}, {{ item.infos.address.city }}, {{ item.infos.address.state }}, {{ item.infos.address.zip }}
+                </span>
+                <span v-else>-</span>
             </template>
             <template v-slot:item.created_at="{ value }">
                 <p>
@@ -95,11 +97,11 @@
                 </template>
                 <template v-slot:text>
                     <v-alert type="error" variant="tonal">
-                        Are you sure you want to delete this Parent {{ selectedDeleteParent.name }}} ?
+                        Are you sure you want to delete this Parent {{ selectedDeleteParent.name }} ?
                     </v-alert>
                 </template>
                 <template v-slot:actions>
-                    <v-btn color="success" @click="deleteStudent" variant="tonal">
+                    <v-btn color="success" @click="deleteParent" variant="tonal">
                         confirm
                     </v-btn>
                 </template>
@@ -145,7 +147,7 @@ const openDeleteDialog = (parent: ParentType) => {
     selectedDeleteParent.value = parent;
 }
 
-const deleteStudent = async () => {
+const deleteParent = async () => {
     await exeDeleteParent({
         data: {
             id: selectedDeleteParent.value.id

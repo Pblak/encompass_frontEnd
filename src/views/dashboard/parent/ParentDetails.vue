@@ -32,10 +32,13 @@
                     </v-col>
                     <v-col cols="6">
                         <p class="text-h6">Address</p>
-                        <p>{{ Parent.infos.address.street }}</p>
-                        <p>{{ Parent.infos.address.city }}, {{ Parent.infos.address.state }} {{
-                                Parent.infos.address.zip
-                            }}</p>
+                        <div v-if="Parent.infos?.address">
+                            <p>{{ Parent.infos.address.street }}</p>
+                            <p>{{ Parent.infos.address.city }}, {{ Parent.infos.address.state }} {{
+                                    Parent.infos.address.zip
+                                }}</p>
+                        </div>
+                        <p v-else>No address available</p>
                     </v-col>
                 </v-row>
             </v-card-text>
