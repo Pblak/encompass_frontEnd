@@ -141,7 +141,6 @@
         </v-row>
 
       </v-card-text>
-        {{calendarOptions.events}}
       <v-card-actions>
         <v-spacer></v-spacer>
         <v-btn color="success" prepend-icon="fa fa-plus" variant="tonal"
