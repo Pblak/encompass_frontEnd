@@ -36,14 +36,14 @@
                 {{ getRoomName(value) }}
             </p>
         </template>
-        <template v-slot:item.teacher="{ item,value }">
+        <template v-slot:item.teacher="{ item }">
             <div class="_flex _flex-col _gap-4">
                 <div class="_flex _gap-2 _items-center _cursor-pointer _py-1" @dblclick="()=>item.dbClick= !item.dbClick">
                     <b>
-                        Default:
+                        {{ item.teacher_id ? 'Instance' : 'Default' }}:
                     </b>
                     <p>
-                        {{ value.name }}
+                        {{ item.teacher.name }}
                     </p>
                     <v-btn v-if="instancesToRecycle[item.id] && instancesToRecycle[item.id].hasOwnProperty('teacher_id')"
                            @click="attemptRecycle(item.id)"

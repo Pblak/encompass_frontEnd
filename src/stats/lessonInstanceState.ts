@@ -8,10 +8,13 @@ export interface LessonInstanceType {
     duration:  number,
     lesson_id: number,
     room_id: number,
+    teacher_id?: number,
     start:  string,
     status: "in_progress" | "scheduled" | "completed" | "cancelled",
     updated_at:  string,
     created_at:  string,
+    teacher?: any,
+    lesson?: any,
     [key: string]: any,
 }
 export const lessonInstanceStatus = {

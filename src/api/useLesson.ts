@@ -97,6 +97,23 @@ export function useLesson() {
         }
     }
 
+    const useAddLessonInstances = () => {
+        const q = useApi("/addLessonInstances", {
+            method: "POST",
+        }, {
+            immediate: false,
+        });
+        const execute = ({data}: any) => {
+            return q.execute({
+                headers: headers, 
+                data: data,
+            });
+        };
+        return {
+            ...q, execute,
+        }
+    }
+
     return {
         useCreateLesson,
         useGetLessons,
@@ -104,6 +121,7 @@ export function useLesson() {
         useUpdateLesson,
         getLessonsByParent,
         useDeleteLesson,
+        useAddLessonInstances,
     }
 }
 

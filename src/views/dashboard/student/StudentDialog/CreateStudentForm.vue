@@ -74,6 +74,7 @@ onMounted(() => {
                           :rules="$rules('required', 'username')"
                           density="comfortable" label="Username" variant="solo"></v-text-field>
         </div>
+
         <v-select v-model="studentForm.parent_id" v-if="isRole('admin')"
                   :items="ParentList.map((item: any) => {return {name:item.name, id:item.id}})"
                   :rules="$rules('required', 'Parent')"

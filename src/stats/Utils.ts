@@ -53,8 +53,18 @@ export const  canGoTo = async (route: { name: string })=> {
 }
 export const isRole = (roles: string | string[]): boolean =>{
     const allowedRoles = Array.isArray(roles) ? roles : [roles];
-    // replace 'admin' with the 'web' in allowedRoles
-    allowedRoles[allowedRoles.indexOf('admin')] = 'web';
+    
+    // Map frontend role names to backend account types
+    const roleMapping: { [key: string]: string[] } = {
+        'admin': ['web','users'],       // Admin can be either 'web' or 'users'
+        'users': ['web','users'],       // 'users' also maps to both
+        'students': ['students'],
+        'teachers': ['teachers'],
+        'parents': ['parents']
+    };
+    
+    // Flatten the mapped roles array
+    const mappedRoles = allowedRoles.flatMap(role => roleMapping[role] || [role]);
 
     const user = JSON.parse(<string>localStorage.getItem('userLogin'));
 
@@ -63,8 +73,8 @@ export const isRole = (roles: string | string[]): boolean =>{
         return false;
     }
 
-    // Check if the user's role is in the allowedRoles array
-    return allowedRoles.includes(user.accountType);
+    // Check if the user's role is in the mapped allowed roles array
+    return mappedRoles.includes(user.accountType);
 }
 export const  watchDebounced = (
     sources: WatchSource | WatchSource[],

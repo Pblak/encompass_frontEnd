@@ -20,13 +20,14 @@
             <v-row v-if="isRenewMode && originalLesson">
               <v-col cols="12">
                 <v-alert type="info" variant="tonal" class="_mb-4">
-                  <v-alert-title>Renewing Lesson</v-alert-title>
+                  <v-alert-title>Renewing Lesson - Adding More Sessions</v-alert-title>
                   <div class="_mt-2">
-                    <p><strong>Student:</strong> {{ originalLesson.student?.name }}</p>
-                    <p><strong>Teacher:</strong> {{ originalLesson.teacher?.name }}</p>
-                    <p><strong>Instrument:</strong> {{ originalLesson.instrument?.name }}</p>
+                    <p><strong>Student:</strong> {{ originalLesson.student?.name }} (cannot be changed)</p>
+                    <p><strong>Teacher:</strong> {{ originalLesson.teacher?.name }} (can be changed)</p>
+                    <p><strong>Instrument:</strong> {{ originalLesson.instrument?.name }} (cannot be changed)</p>
                     <p><strong>Previous sessions:</strong> {{ originalLesson.instances?.length || 0 }}</p>
-                    <p><strong>New lessons will start after the current series</strong></p>
+                    <p><strong>🔄 Adding new lesson instances to existing lesson</strong></p>
+                    <p><strong>✅ Teacher, room, planning and frequency can be modified</strong></p>
                   </div>
                 </v-alert>
               </v-col>
@@ -43,12 +44,14 @@
                 <v-select v-model="formData.student_id" :items="StudentList"
                           :rules="$rules('required|number' ,'Student')" density="compact" item-title="name"
                           item-value="id" @change="selectStudent"
+                          :readonly="isRenewMode"
                           label="Student" variant="solo"></v-select>
               </v-col>
               <v-col cols="12" lg="6" v-if="InstrumentList">
                 <v-select v-model="formData.instrument_id" :items="InstrumentList"
                           :rules="$rules('required|number' ,'Instrument')" density="compact" item-title="name"
-                          item-value="id" label="Instrument" variant="solo"></v-select>
+                          item-value="id" label="Instrument" variant="solo"
+                          :readonly="isRenewMode"></v-select>
               </v-col>
               <v-col cols="12" lg="6">
                 <v-select v-model="formData.room_id" :items="RoomList"
@@ -158,7 +161,7 @@ import {instrumentState} from "@/stats/instrumentState";
 import {roomState} from "@/stats/roomState";
 import {lessonState} from "@/stats/lessonState";
 import FullCalendar from "@fullcalendar/vue3";
-import {watch, onMounted} from 'vue';
+import {watch, onMounted ,ref} from 'vue';
 import {exeGlobalGetLessons, useLesson} from "@/api/useLesson";
 import {toCurrency} from "@/stats/Utils";
 import moment from "moment";
@@ -167,7 +170,7 @@ import {useCalendarLogic} from "@/composables/useCalendarLogic";
 import {useLessonForm} from "@/composables/useLessonForm";
 import {useTeacherStudentSelection} from "@/composables/useTeacherStudentSelection";
 import {useRenewLesson} from "@/composables/useRenewLesson";
-import {useRoute} from "vue-router";
+import {useRoute, useRouter} from "vue-router";
 
 const {TeacherList} = teacherState();
 const {StudentList} = studentState();
@@ -175,6 +178,7 @@ const {InstrumentList} = instrumentState();
 const {RoomList} = roomState();
 const {LessonList} = lessonState();
 const route = useRoute();
+const router = useRouter();
 
 const {FormEl, formData, getPlans, calculatePrice, resetForm, prefillForm, getPlaningDay} = useLessonForm(InstrumentList);
 const {isRenewMode, originalLesson, initializeRenewal, resetRenewal, extractPlanningFromInstances, calculateFrequencyFromInstances} = useRenewLesson();
@@ -197,11 +201,16 @@ const {
   getPlaningDayStudentMarker
 } = useTeacherStudentSelection(formData, calendarOptions);
 
-const {useCreateLesson} = useLesson()
+const {useCreateLesson, useAddLessonInstances} = useLesson()
 const {
   execute: exeCreateLesson,
   onResultSuccess: onResultSuccessCreateLesson,
 } = useCreateLesson();
+
+const {
+  execute: exeAddLessonInstances,
+  onResultSuccess: onResultSuccessAddLessonInstances,
+} = useAddLessonInstances();
 
 calendarOptions.value.select = addEvent;
 calendarOptions.value.eventClick = removeEvent;
@@ -210,17 +219,51 @@ const save = async () => {
   if (!FormEl.value) return;
   let {valid} = await (FormEl.value as any).validate()
   if (!valid) return;
-  await exeCreateLesson({
-    data: formData.value
-  })
+  
+  if (isRenewMode.value && originalLesson.value) {
+    // Renew lesson - add instances to existing lesson
+    await exeAddLessonInstances({
+      data: {
+        lesson_id: originalLesson.value.id,
+        teacher_id: formData.value.teacher_id,
+        room_id: formData.value.room_id,
+        planning: formData.value.planning,
+        frequency: formData.value.frequency,
+        start_date: formData.value.start_date,
+        instrument_plan: formData.value.instrument_plan,
+        notes: formData.value.notes
+      }
+    })
+  } else {
+    // Create new lesson
+    await exeCreateLesson({
+      data: formData.value
+    })
+  }
 }
 
 onResultSuccessCreateLesson(() => {
   resetForm()
   resetRenewal()
+  renewalInitialized.value = false
   calendarOptions.value.events = []
   exeGlobalGetLessons({})
+  // Navigate to monitor
+  router.push({ name: 'monitorLesson' })
 })
+
+onResultSuccessAddLessonInstances(() => {
+  resetForm()
+  resetRenewal()
+  renewalInitialized.value = false
+  calendarOptions.value.events = []
+  exeGlobalGetLessons({})
+  // Navigate to monitor
+  router.push({ name: 'monitorLesson' })
+})
+
+// Track if renewal initialization is complete
+const renewalInitialized = ref(false)
 
 // Handle renewal mode initialization
 const initializeRenewalMode = () => {
@@ -322,6 +365,10 @@ const initializeRenewalMode = () => {
         // Generate fake events for future weeks based on frequency
         setTimeout(() => {
           createFakeLessonInstances()
+          // Mark renewal initialization as complete
+          setTimeout(() => {
+            renewalInitialized.value = true
+          }, 200)
         }, 100)
       }, 300)
       
@@ -393,8 +440,8 @@ watch(() => formData.value.instrument_id, () => {
 
 watch(() => formData.value.instrument_plan, () => {
   // Don't clear planning during renewal mode initialization
-  // The planning should be preserved from the original lesson
-  if (!isRenewMode.value) {
+  // But allow clearing after initialization is complete (when user changes plan)
+  if (!isRenewMode.value || (isRenewMode.value && renewalInitialized.value)) {
     formData.value.planning = {};
   }
   calendarOptions.value.events = calendarOptions.value.events.filter((event: any) => {
@@ -452,8 +499,13 @@ watch(() => formData.value.start_date, () => {
 
 watch(() => calendarOptions.value.events, (newVal) => {
   // Don't rebuild planning from calendar events during renewal initialization
-  // The planning should come from the original lesson data
-  if (!isRenewMode.value) {
+  // But allow updates after initialization is complete
+  if (!isRenewMode.value || (isRenewMode.value && renewalInitialized.value)) {
+    console.log('Updating planning from calendar events', {
+      isRenewMode: isRenewMode.value,
+      renewalInitialized: renewalInitialized.value,
+      eventCount: newVal.length
+    });
     formData.value.planning = {};
     newVal.map((ev: any) => {
       let day = new Date(ev.start).getDay();
@@ -465,6 +517,9 @@ watch(() => calendarOptions.value.events, (newVal) => {
         })
       }
     })
+    console.log('Updated planning:', formData.value.planning);
+  } else {
+    console.log('Skipping planning update during renewal initialization');
   }
 }, {deep: true})
 </script>
